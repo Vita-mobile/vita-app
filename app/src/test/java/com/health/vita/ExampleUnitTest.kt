@@ -1,4 +1,4 @@
-package icesi.edu.vita
+package com.health.vita
 
 import org.junit.Test
 
