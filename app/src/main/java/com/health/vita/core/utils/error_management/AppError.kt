@@ -7,11 +7,9 @@ open class AppError(
 )
 
 class NetworkError(
-
     message: String =  "Network error.",
     cause: Throwable? = null
 ) : AppError(message, cause )
-
 
 class DatabaseError(
     message: String = "Database error.",
