@@ -10,3 +10,5 @@ val MintGreen = Color(0xFF19e096)
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF000000)
 val LightGray = Color(0xFFEFEFEF)
+
+val LightTurquoise2  =Color(0xFFc8f1f7)
