@@ -20,7 +20,10 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun PrimaryIconButton(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
+        .fillMaxWidth()
+        .height(56.dp)
+        .padding(start = 12.dp, end = 12.dp),
     onClick: () -> Unit = {},
     text: String = "Placeholder",
     arrow: Boolean = true,
@@ -28,17 +31,18 @@ fun PrimaryIconButton(
     blackContent: Boolean = false
 ) {
     Button(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .padding(start = 12.dp, end = 12.dp),
+        modifier = modifier,
         shape = RoundedCornerShape(19.dp),
         colors = ButtonDefaults.buttonColors(
             color
         ),
         onClick = onClick
     ) {
-        Text(text = text, style = MaterialTheme.typography.bodyMedium, color = if (blackContent) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onPrimary)
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = if (blackContent) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onPrimary
+        )
         Icon(
             if (arrow) Icons.AutoMirrored.Rounded.ArrowForward else Icons.Outlined.Lock,
             modifier = Modifier
