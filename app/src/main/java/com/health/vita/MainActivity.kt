@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.core.navigation.NavGraph
-import com.health.vita.feature_auth.presentation.login.LoginScreen
 import com.health.vita.ui.theme.VitaTheme
 
 class MainActivity : ComponentActivity() {

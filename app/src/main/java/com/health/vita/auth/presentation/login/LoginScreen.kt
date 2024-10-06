@@ -1,5 +1,7 @@
-package com.health.vita.feature_auth.presentation.login
+package com.health.vita.auth.presentation.login
 
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -11,9 +13,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -37,6 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.health.vita.R
 import com.health.vita.ui.theme.Dimens.borderRadius
@@ -44,7 +49,7 @@ import com.health.vita.ui.theme.Dimens.paddingScreen
 
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavController = rememberNavController()) {
 
     var email by remember {
         mutableStateOf("")
@@ -104,7 +109,6 @@ fun LoginScreen() {
                 .padding(top = paddingScreen)
         ) {
 
-
             Column(
                 modifier = Modifier
                     .fillMaxHeight(0.4F)
@@ -112,6 +116,8 @@ fun LoginScreen() {
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
+                //APP icon
                 Image(
                     painterResource(id = R.drawable.vita_icon),
                     contentDescription = "Vita logo",
@@ -120,6 +126,7 @@ fun LoginScreen() {
                         .size(100.dp)
                         .background(MaterialTheme.colorScheme.primary)
                 )
+
                 Box(modifier = Modifier.size(32.dp))
 
                 Text(
@@ -139,21 +146,134 @@ fun LoginScreen() {
                 Box(modifier = Modifier.size(24.dp))
             }
 
+            Column (modifier = Modifier.weight(1F)){
+
+                //Credential inputs
+                CredentialInput(
+                    "Correo electrónico",
+                    email,
+                    icon = R.drawable.outline_email_24,
+                    "Email icon",
+                    onValueChange = { newValue -> email = newValue })
+
+                Box(modifier = Modifier.size(20.dp))
+
+                CredentialInput(
+                    "Contraseña",
+                    password, icon = R.drawable.outline_password_24, "Password icon",
+                    onValueChange = { newValue -> password = newValue },
+                    isPassword = true
+                )
+
+                Box(modifier = Modifier.size(20.dp))
+
+                //Log-in button
+
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(62.dp),
+                    enabled = email.isNotEmpty() && password.isNotEmpty()
+                ) {
+                    Text(
+                        "Iniciar sesión",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = Color.White
+                    )
+                }
+            }
 
 
-            CredentialInput(
-                "Email",
-                email,
-                icon = R.drawable.outline_email_24,
-                "Email icon",
-                onValueChange = { newValue -> email = newValue })
 
-            CredentialInput(
-                "Password",
-                password, icon = R.drawable.outline_password_24, "Password icon",
-                onValueChange = { newValue -> password = newValue },
-                isPassword = true
-            )
+            //Google login
+
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Text(
+                    "También podés iniciar sesión con:",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Box(modifier = Modifier.size(20.dp))
+
+                Row(
+
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+
+                ) {
+
+                    Box(
+                        modifier = Modifier
+                            .clip(shape = RoundedCornerShape(borderRadius))
+                            .border(
+                                4.dp,
+                                MaterialTheme.colorScheme.surfaceContainer,
+                                shape = RoundedCornerShape(borderRadius)
+                            )
+                            .clickable {  }
+
+
+
+                    ) {
+
+                        Image(
+                            painterResource(id = R.drawable.google),
+                            contentDescription = "Google icon",
+                            modifier = Modifier
+                                .size(64.dp)
+                                .padding(12.dp)
+
+
+                        )
+                    }
+                }
+
+                Box(modifier = Modifier.size(12.dp))
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+
+                        Text(
+                            "¿No tienes cuenta? ",
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                        Box(modifier = Modifier.size(12.dp))
+                        Text(
+                            "Regístrate",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.secondary,
+                            textDecoration = TextDecoration.Underline,
+                            modifier = Modifier.clickable { /*TODO*/ })
+                    }
+
+                    Box(modifier = Modifier.size(12.dp))
+
+                    Text(
+                        "Olvidé mi contraseña",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.secondary,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.clickable { /*TODO*/ })
+
+                }
+
+                Box(modifier = Modifier.size(32.dp))
+
+
+            }
+
+
+
+
         }
     }
 }
@@ -208,7 +328,7 @@ fun CredentialInput(
 
             Icon(
                 painter = painterResource(id = icon),
-                contentDescription = "Button",
+                contentDescription = contentDescription,
             )
             TextField(
                 value = value,
@@ -218,7 +338,11 @@ fun CredentialInput(
                         isFocus = focusState.isFocused
                     }
                     .padding(0.dp)
-                    .weight(1F),
+                    .weight(1F)
+                    .height(50.dp)
+
+                ,
+
 
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -277,7 +401,5 @@ fun CredentialInput(
     }
 }
 
-@Composable
-fun LoginButton() {
 
-}
+
