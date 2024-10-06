@@ -28,13 +28,14 @@ private val LightColorScheme = lightColorScheme(
     background = White, //Color de fondo de toda la aplicación
     onBackground = Black, //Color del texto de los elementos que se superponen al fondo
     surface = LightGray, //Elementos que pueden superponerse (Ej: Pop-ups)
-    onSurface = Black
+    onSurface = Black,
 )
 
 @Composable
 fun VitaTheme(
 
     content: @Composable () -> Unit
+
 ) {
     val colorScheme = LightColorScheme
 
