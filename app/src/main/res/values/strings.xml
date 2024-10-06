@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Vita</string>
+    <string name="shopping_cart_content_desc">Cart</string>
 </resources>
