@@ -21,9 +21,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.core.navigation.NavGraph
 import com.health.vita.ui.components.general.GeneralTopBar
+import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.DarkBlue
 import com.health.vita.ui.theme.LightGray
 import com.health.vita.ui.theme.MediumGray
@@ -70,12 +75,10 @@ fun App(modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         //Modo Claro
         GeneralTopBar(
-            text = "Valoración", step = 2, total = 6, onClick = { navController.navigateUp()}
+            text = "Valoración", step = 2, total = 6, onClick = { navController.navigateUp() }
         )
-        //Modo Oscuro
-        GeneralTopBar(
-            text = "Valoración", step = 2, total = 6, onClick = { navController.navigateUp()}, lightMode = false
-        )
+        PrimaryIconButton(arrow = true, blackContent = false)
+
     }
 
 }

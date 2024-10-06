@@ -70,7 +70,7 @@ fun GeneralTopBar(
             Text(
                 text = text,
                 style = MaterialTheme.typography.titleMedium,
-                color = if (lightMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.background
+                color = if (lightMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onPrimary
             )
             Box(modifier = Modifier.weight(1f))
             Box(

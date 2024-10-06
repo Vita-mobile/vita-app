@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Vita</string>
     <string name="shopping_cart_content_desc">Cart</string>
+    <string name="icon_desc">Icon description\n</string>
 </resources>
