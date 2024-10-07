@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.health.vita.auth.presentation.LoginScreen
+import com.health.vita.auth.presentation.login.LoginScreen
 import com.health.vita.auth.presentation.ResetPasswordConfirmationScreen
 import com.health.vita.auth.presentation.ResetPasswordScreen
 import com.health.vita.auth.presentation.SelectAvatarScreen
@@ -52,7 +52,7 @@ import com.health.vita.sports.presentation.WorkoutPreviewScreen
 fun NavGraph(navController: NavHostController){
     NavHost(
         navController = navController,
-        startDestination = Screen.HOME
+        startDestination = Screen.LOGIN
     ) {
         // Main
         composable(Screen.HOME) {
