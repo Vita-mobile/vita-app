@@ -15,7 +15,7 @@ private val WorkSansFontFamily = FontFamily(
 
 val Typography = Typography(
 
-    /*Titulos: Los titulos (El texto más grande de cada screen) tienen tres variaciones*/
+    /*Titles: The titles (the largest text on each screen) have three variations*/
 
     titleLarge =  TextStyle(
 
@@ -46,7 +46,7 @@ val Typography = Typography(
 
     ),
 
-    /*Contenido: El contenido general(Botones y texto) tiene las siguientes variaciones*/
+    /*Content: The general content (Buttons and text) has the following variations*/
 
     bodyLarge = TextStyle(
         fontFamily = WorkSansFontFamily,
@@ -72,7 +72,7 @@ val Typography = Typography(
         letterSpacing = 0.5.sp
     ),
 
-    /*Elementos más pequeños de la screen*/
+    /*Smallest elements of the screen*/
 
     labelLarge = TextStyle(
         fontFamily = WorkSansFontFamily,

@@ -21,13 +21,13 @@ private val DarkColorScheme = darkColorScheme(
 
 private val LightColorScheme = lightColorScheme(
 
-    primary = MainBlue , //Color principal de la app - Es el mas frecuente
-    onPrimary = White, //Color de texto o iconos que superponen al color primario - Usado de contraste con el color primario
-    secondary = LightTurquoise, //Color secundario utilizado en algunos elementos de la app (Complementarios)
+    primary = MainBlue , //Main color
+    onPrimary = White, //Color of text or icons overlaying the primary color
+    secondary = LightTurquoise, //Complementary color - Secondary color used in some elements of the app
     tertiary = Aquamarine,
-    background = White, //Color de fondo de toda la aplicación
-    onBackground = Black, //Color del texto de los elementos que se superponen al fondo
-    surface = LightGray, //Elementos que pueden superponerse (Ej: Pop-ups)
+    background = White, //Background color
+    onBackground = Black, //Color of the text that will be superimposed on the background of the app
+    surface = LightGray, //Elements that can overlap (e.g. pop-ups)
     onSurface = Black,
 )
 
