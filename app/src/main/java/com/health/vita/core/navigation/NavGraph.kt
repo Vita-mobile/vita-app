@@ -82,7 +82,7 @@ fun NavGraph(navController: NavHostController){
             ResetPasswordConfirmationScreen(navController)
         }
         composable(Screen.SELECT_AVATAR) {
-            SelectAvatarScreen(navController)
+            SelectAvatarScreen(navController = navController)
         }
 
         // Profile
@@ -96,10 +96,10 @@ fun NavGraph(navController: NavHostController){
             ProfileEditionScreen(navController)
         }
         composable(Screen.WEIGHT_SELECTION) {
-            WeightSelectionScreen(navController)
+            WeightSelectionScreen(navController = navController)
         }
         composable(Screen.HEIGHT_SELECTION) {
-            HeightSelectionScreen(navController)
+            HeightSelectionScreen(navController = navController)
         }
         composable(Screen.AGE_SELECTION) {
             AgeSelectionScreen(navController)
