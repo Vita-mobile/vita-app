@@ -5,6 +5,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun FitnessGoalSelectionScreen(navController: NavController = rememberNavController()) {
+fun EditHeightScreen(navController: NavController = rememberNavController()) {
 
 }
