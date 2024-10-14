@@ -9,21 +9,29 @@ object Screen {
 
     // Auth
     const val LOGIN = "LogIn"
+    //Signup
     const val SIGN_UP = "SignUp"
-    const val RESET_PASSWORD = "ResetPassword"
-    const val RESET_PASSWORD_CONFIRMATION = "ResetPasswordConfirmation"
     const val SELECT_AVATAR = "SelectAvatar"
-
-    // Profile
-    const val PROFILE = "Profile"
-    const val NOTIFICATIONS = "Notifications"
-    const val PROFILE_EDITION = "ProfileEdition"
     const val WEIGHT_SELECTION = "WeightSelection"
     const val HEIGHT_SELECTION = "HeightSelection"
     const val AGE_SELECTION = "AgeSelection"
     const val FITNESS_LEVEL_SELECTION = "FitnessLevelSelection"
     const val SEX_SELECTION = "SexSelection"
     const val FITNESS_GOAL_SELECTION = "FitnessGoalSelection"
+
+    //Utils
+    const val RESET_PASSWORD = "ResetPassword"
+    const val RESET_PASSWORD_CONFIRMATION = "ResetPasswordConfirmation"
+
+
+
+    // Profile
+    const val PROFILE = "Profile"
+    const val NOTIFICATIONS = "Notifications"
+    const val PROFILE_EDITION = "ProfileEdition"
+    const val EDIT_WEIGHT_SELECTION = "EditWeight"
+    const val EDIT_HEIGHT_SELECTION = "EditHeight"
+
 
     // Meals
     const val MEAL_HOME = "MealHome"
