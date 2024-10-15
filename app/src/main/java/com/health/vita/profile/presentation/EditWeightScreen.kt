@@ -5,6 +5,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun SexSelectionScreen(navController: NavController = rememberNavController()) {
+fun EditWeightScreen(navController: NavController = rememberNavController()) {
 
 }

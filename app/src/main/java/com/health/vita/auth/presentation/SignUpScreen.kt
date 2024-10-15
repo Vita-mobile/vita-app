@@ -23,6 +23,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,15 +43,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.health.vita.auth.presentation.viewmodel.SignupViewModel
 import com.health.vita.R
 import com.health.vita.ui.components.general.CredentialInput
 import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.Dimens.borderRadius
 import com.health.vita.ui.theme.Dimens.paddingScreen
+import com.health.vita.ui.theme.VitaTheme
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun SignUpScreen(navController: NavController = rememberNavController()) {
+fun SignUpScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel = SignupViewModel()) {
 
     var fullName by remember {
         mutableStateOf("")
