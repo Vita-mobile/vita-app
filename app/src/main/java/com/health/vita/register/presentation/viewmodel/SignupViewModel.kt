@@ -1,50 +1,61 @@
 package com.health.vita.register.presentation.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.health.vita.core.utils.error_management.DatabaseError
+import com.health.vita.core.utils.error_management.ErrorManager
+import com.health.vita.core.utils.error_management.NetworkError
+import com.health.vita.core.utils.error_management.UnknownError
+import com.health.vita.core.utils.states_management.UiHandler
+import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.domain.model.User
-import com.health.vita.repository.AuthRepository
-import com.health.vita.repository.AuthRepositoryImpl
+import com.health.vita.register.presentation.repository.AuthRepository
+import com.health.vita.register.presentation.repository.AuthRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.IOException
+import java.sql.SQLException
 
 class SignupViewModel(
-    val repo: AuthRepository = AuthRepositoryImpl()
-): ViewModel() {
-    private val _name = MutableLiveData<String>()
-    val name: LiveData<String> get() = _name;
+    private val repo: AuthRepository = AuthRepositoryImpl()
+) : ViewModel() {
 
-    private val _password = MutableLiveData<String>()
-    val password: LiveData<String> get() = _password;
+    private val _name = MutableLiveData("")
+    val name: LiveData<String> get() = _name
 
-    private val _email = MutableLiveData<String>()
-    val email: LiveData<String> get() = _email;
+    private val _password = MutableLiveData("")
+    val password: LiveData<String> get() = _password
 
-    private val _photoUri = MutableLiveData<String>()
-    val photoUri: LiveData<String> get() = _photoUri;
+    private val _email = MutableLiveData("")
+    val email: LiveData<String> get() = _email
 
-    private val _age = MutableLiveData<Int>()
-    val age: LiveData<Int> get() = _age;
+    private val _photoUri = MutableLiveData("")
+    val photoUri: LiveData<String> get() = _photoUri
 
-    private val _weight = MutableLiveData<Float>()
-    val weight: LiveData<Float> get() = _weight;
+    private val _age = MutableLiveData(0)
+    val age: LiveData<Int> get() = _age
 
-    private val _height = MutableLiveData<Float>()
-    val height: LiveData<Float> get() = _height;
+    private val _weight = MutableLiveData(0f)
+    val weight: LiveData<Float> get() = _weight
 
-    private val _gender = MutableLiveData<String>()
-    val gender: LiveData<String> get() = _gender;
+    private val _height = MutableLiveData(0f)
+    val height: LiveData<Float> get() = _height
 
-    private val _activityLevel = MutableLiveData<Int>()
-    val activityLevel: LiveData<Int> get() = _activityLevel;
+    private val _gender = MutableLiveData("")
+    val gender: LiveData<String> get() = _gender
 
-    private val _goal = MutableLiveData<String>()
-    val goal: LiveData<String> get() = _goal;
+    private val _activityLevel = MutableLiveData(0)
+    val activityLevel: LiveData<Int> get() = _activityLevel
+
+    private val _goal = MutableLiveData("")
+    val goal: LiveData<String> get() = _goal
+
+    private val uiHandler = UiHandler()
+
+    val uiState: LiveData<UiState> get() = uiHandler.uiState
 
     fun setName(name: String) {
         _name.value = name
@@ -82,24 +93,51 @@ class SignupViewModel(
         _gender.value = gender
     }
 
-    fun getValue(data: MutableLiveData<String>): String {
-        return data.value ?: ""
-    }
-    fun getValue(data: MutableLiveData<Float>): Float {
-        return data.value ?: 0.0f
-    }
+    fun registerOperation() {
 
-    fun getValue(data: MutableLiveData<Int>): Int {
-        return data.value ?: 0
-    }
-
-
-    fun completeSignup() {
-        val user = User("", getValue(_name), getValue(_email), getValue(_photoUri), getValue(_weight), getValue(_age), getValue(_height), getValue(_gender), getValue(_goal), getValue(_activityLevel))
         viewModelScope.launch(Dispatchers.IO) {
-            repo.signup(user, getValue(_password))
+            uiHandler.setLoadingState()
+
+            try {
+
+                val user = User(
+                    id = "",
+                    name = _name.value ?: "",
+                    email = _email.value ?: "",
+                    //photoUri = _photoUri.value ?: "",
+                    weight = _weight.value ?: 0f,
+                    age = _age.value ?: 0,
+                    height = _height.value ?: 0f,
+                    gender = _gender.value ?: "",
+                    goal = _goal.value ?: "",
+                    activityLevel = _activityLevel.value ?: 0
+                )
+
+                repo.signup(user, _password.value ?: "")
+
+                uiHandler.setSuccess()
+
+            } catch (e: IOException) {
+
+                uiHandler.setErrorState(NetworkError("Fallo de conexión", e))
+                ErrorManager.postError(NetworkError(cause = e))
+
+
+
+            } catch (e: SQLException) {
+
+                uiHandler.setErrorState(DatabaseError("Error en la base de datos", e))
+                ErrorManager.postError(NetworkError(cause = e))
+
+
+            } catch (e: Exception) {
+
+                uiHandler.setErrorState(UnknownError("Error desconocido", e))
+                ErrorManager.postError(NetworkError(cause = e))
+
+
+            }
         }
     }
-
 
 }
