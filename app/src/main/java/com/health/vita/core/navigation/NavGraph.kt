@@ -1,14 +1,16 @@
 package com.health.vita.core.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.health.vita.auth.presentation.LoginScreen
 import com.health.vita.auth.presentation.ResetPasswordConfirmationScreen
 import com.health.vita.auth.presentation.ResetPasswordScreen
-import com.health.vita.auth.presentation.SelectAvatarScreen
-import com.health.vita.auth.presentation.SignUpScreen
+import com.health.vita.register.presentation.SelectAvatarScreen
+import com.health.vita.register.presentation.SignUpScreen
+import com.health.vita.register.presentation.viewmodel.SignupViewModel
 import com.health.vita.main.presentation.AccountSettingsScreen
 import com.health.vita.main.presentation.HomeScreen
 import com.health.vita.main.presentation.SplashScreen
@@ -21,15 +23,16 @@ import com.health.vita.meals.presentation.MealDetailScreen
 import com.health.vita.meals.presentation.MealHomeScreen
 import com.health.vita.meals.presentation.MealTrackingScreen
 import com.health.vita.meals.presentation.NutritionWelcomeScreen
-import com.health.vita.profile.presentation.AgeSelectionScreen
-import com.health.vita.profile.presentation.FitnessGoalSelectionScreen
-import com.health.vita.profile.presentation.FitnessLevelSelectionScreen
-import com.health.vita.profile.presentation.HeightSelectionScreen
+import com.health.vita.profile.presentation.EditWeightScreen
+import com.health.vita.register.presentation.AgeSelectionScreen
+import com.health.vita.register.presentation.FitnessGoalSelectionScreen
+import com.health.vita.register.presentation.FitnessLevelSelectionScreen
+import com.health.vita.register.presentation.HeightSelectionScreen
 import com.health.vita.profile.presentation.NotificationsScreen
 import com.health.vita.profile.presentation.ProfileEditionScreen
 import com.health.vita.profile.presentation.ProfileScreen
-import com.health.vita.profile.presentation.SexSelectionScreen
-import com.health.vita.profile.presentation.WeightSelectionScreen
+import com.health.vita.register.presentation.SexSelectionScreen
+import com.health.vita.register.presentation.WeightSelectionScreen
 import com.health.vita.sports.presentation.DayWorkoutScreen
 import com.health.vita.sports.presentation.ExpressPreferenceScreen
 import com.health.vita.sports.presentation.ExpressTimeSettingScreen
@@ -50,6 +53,7 @@ import com.health.vita.sports.presentation.WorkoutPreviewScreen
 
 @Composable
 fun NavGraph(navController: NavHostController){
+    val signupViewModel: SignupViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = Screen.HOME
@@ -72,19 +76,39 @@ fun NavGraph(navController: NavHostController){
         composable(Screen.LOGIN) {
             LoginScreen(navController)
         }
+        //Signup
         composable(Screen.SIGN_UP) {
-            SignUpScreen(navController)
+            SignUpScreen(navController, signupViewModel)
         }
+        composable(Screen.SELECT_AVATAR) {
+            SelectAvatarScreen(navController)
+        }
+        composable(Screen.AGE_SELECTION) {
+            AgeSelectionScreen(navController, signupViewModel)
+        }
+        composable(Screen.WEIGHT_SELECTION) {
+            WeightSelectionScreen(navController, signupViewModel)
+        }
+        composable(Screen.HEIGHT_SELECTION) {
+            HeightSelectionScreen(navController, signupViewModel)
+        }
+        composable(Screen.FITNESS_LEVEL_SELECTION) {
+            FitnessLevelSelectionScreen(navController, signupViewModel)
+        }
+        composable(Screen.SEX_SELECTION) {
+            SexSelectionScreen(navController, signupViewModel)
+        }
+        composable(Screen.FITNESS_GOAL_SELECTION) {
+            FitnessGoalSelectionScreen(navController, signupViewModel)
+        }
+
+        //Utils
         composable(Screen.RESET_PASSWORD) {
             ResetPasswordScreen(navController)
         }
         composable(Screen.RESET_PASSWORD_CONFIRMATION) {
             ResetPasswordConfirmationScreen(navController)
         }
-        composable(Screen.SELECT_AVATAR) {
-            SelectAvatarScreen(navController)
-        }
-
         // Profile
         composable(Screen.PROFILE) {
             ProfileScreen(navController)
@@ -95,25 +119,12 @@ fun NavGraph(navController: NavHostController){
         composable(Screen.PROFILE_EDITION) {
             ProfileEditionScreen(navController)
         }
-        composable(Screen.WEIGHT_SELECTION) {
-            WeightSelectionScreen(navController)
+        composable(Screen.EDIT_WEIGHT_SELECTION) {
+            EditWeightScreen(navController)
         }
-        composable(Screen.HEIGHT_SELECTION) {
-            HeightSelectionScreen(navController)
+        composable(Screen.EDIT_HEIGHT_SELECTION) {
+            EditWeightScreen(navController)
         }
-        composable(Screen.AGE_SELECTION) {
-            AgeSelectionScreen(navController)
-        }
-        composable(Screen.FITNESS_LEVEL_SELECTION) {
-            FitnessLevelSelectionScreen(navController)
-        }
-        composable(Screen.SEX_SELECTION) {
-            SexSelectionScreen(navController)
-        }
-        composable(Screen.FITNESS_GOAL_SELECTION) {
-            FitnessGoalSelectionScreen(navController)
-        }
-
         // Meals
         composable(Screen.MEAL_HOME) {
             MealHomeScreen(navController)

@@ -40,7 +40,7 @@ import com.health.vita.ui.theme.VitaTheme
 
 
 @Composable
-fun FitnessGoalSelectionScreen(navController: NavController = rememberNavController()) {
+fun EditWeightScreen(navController: NavController = rememberNavController()) {
 
     var selectedObjective by remember { mutableStateOf("") }
 

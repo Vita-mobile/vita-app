@@ -44,7 +44,7 @@ import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.VitaTheme
 
 @Composable
-fun SexSelectionScreen(navController: NavController = rememberNavController()) {
+fun EditHeightScreen(navController: NavController = rememberNavController()) {
 
    // val registerState by registerViewModel.authState.observeAsState()
 
