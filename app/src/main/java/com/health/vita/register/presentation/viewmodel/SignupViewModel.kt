@@ -40,8 +40,8 @@ class SignupViewModel(
     private val _gender = MutableLiveData<String>()
     val gender: LiveData<String> get() = _gender;
 
-    private val _activityLevel = MutableLiveData<String>()
-    val activityLevel: LiveData<String> get() = _activityLevel;
+    private val _activityLevel = MutableLiveData<Int>()
+    val activityLevel: LiveData<Int> get() = _activityLevel;
 
     private val _goal = MutableLiveData<String>()
     val goal: LiveData<String> get() = _goal;
@@ -58,7 +58,7 @@ class SignupViewModel(
         _photoUri.value = uri
     }
 
-    fun setActivityLevel(activityLevel: String) {
+    fun setActivityLevel(activityLevel: Int) {
         _activityLevel.value = activityLevel
     }
 

@@ -8,9 +8,7 @@
     import androidx.compose.foundation.layout.fillMaxHeight
     import androidx.compose.foundation.layout.fillMaxSize
     import androidx.compose.foundation.layout.fillMaxWidth
-    import androidx.compose.foundation.layout.height
     import androidx.compose.foundation.layout.padding
-    import androidx.compose.foundation.layout.size
     import androidx.compose.foundation.shape.RoundedCornerShape
     import androidx.compose.material3.ExperimentalMaterial3Api
     import androidx.compose.material3.MaterialTheme
@@ -33,19 +31,17 @@
     import androidx.lifecycle.viewmodel.compose.viewModel
     import androidx.navigation.NavController
     import androidx.navigation.compose.rememberNavController
+    import com.health.vita.core.navigation.Screen.HEIGHT_SELECTION
+    import com.health.vita.core.navigation.Screen.SEX_SELECTION
     import com.health.vita.register.presentation.viewmodel.SignupViewModel
     import com.health.vita.ui.components.general.GeneralTopBar
     import com.health.vita.ui.components.general.PrimaryIconButton
-    import com.health.vita.ui.theme.LightGray
-    import com.health.vita.ui.theme.MainBlue
-    import kotlin.math.ceil
 
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun FitnessLevelSelectionScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
-        var sliderPosition by remember { mutableStateOf(1f) }
-        sliderPosition.inc()
+        var sliderPosition by remember { mutableStateOf(signupViewModel.activityLevel.value?.toFloat() ?: 1f)}
         val textForValue = mapOf(
             1 to "Sedentario",
             2 to "Ligero",
@@ -54,10 +50,8 @@
             5 to "Muy activo"
         )
         Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceAround) {
-            GeneralTopBar(onClick = { /*TODO*/ },text="Valoración", step = 4, total = 6)
+            GeneralTopBar(onClick = { navController.navigate(HEIGHT_SELECTION) },text="Valoración", step = 4, total = 6)
             Column(verticalArrangement = Arrangement.SpaceAround){
-
-
             Text(text = "¿Como calificarias tu nivel de estado físico?", textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.titleLarge)
             Row(modifier = Modifier
                 .fillMaxWidth()
@@ -72,7 +66,8 @@
             Slider(
                 value = sliderPosition,
                 onValueChange = { newValue ->
-                    sliderPosition = if (newValue < 1f) 1f else newValue // Evitar que baje de 1
+                    sliderPosition = if (newValue < 1f) 1f else newValue;
+                    signupViewModel.setActivityLevel(newValue.toInt());
                 },                colors = SliderDefaults.colors(
                     thumbColor = MaterialTheme.colorScheme.primary,
                     activeTrackColor = MaterialTheme.colorScheme.primary,
@@ -106,7 +101,7 @@
                 }
             }
                 Column(Modifier.fillMaxHeight().padding(vertical = 34.dp), verticalArrangement = Arrangement.Bottom){
-                    PrimaryIconButton(text="Continuar")
+                    PrimaryIconButton(text ="Continuar", onClick = { navController.navigate(SEX_SELECTION) })
                 }
             }
         }
