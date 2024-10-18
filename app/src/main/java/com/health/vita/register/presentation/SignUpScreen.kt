@@ -1,15 +1,11 @@
-package com.health.vita.auth.presentation
+package com.health.vita.register.presentation
 
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.health.vita.auth.presentation.viewmodel.SignupViewModel
+import com.health.vita.register.presentation.viewmodel.SignupViewModel
 
 @Composable
 fun SignUpScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {

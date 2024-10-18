@@ -1,4 +1,4 @@
-package com.health.vita.auth.presentation.viewmodel
+package com.health.vita.register.presentation.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -94,7 +94,6 @@ class SignupViewModel(
     }
 
 
-        // Método para enviar los datos al repositorio al final
     fun completeSignup() {
         val user = User("", getValue(_name), getValue(_email), getValue(_photoUri), getValue(_weight), getValue(_age), getValue(_height), getValue(_gender), getValue(_goal), getValue(_activityLevel))
         viewModelScope.launch(Dispatchers.IO) {
