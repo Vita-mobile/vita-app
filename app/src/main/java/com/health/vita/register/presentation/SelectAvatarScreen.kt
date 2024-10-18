@@ -1,4 +1,4 @@
-package com.health.vita.auth.presentation
+package com.health.vita.register.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController

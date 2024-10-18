@@ -12,5 +12,5 @@ data class User(
     var height:Float = 0f,
     var gender:String = "",
     var goal: String = "",
-    var activityLevel: String = ""
+    var activityLevel: Int = 0
     )

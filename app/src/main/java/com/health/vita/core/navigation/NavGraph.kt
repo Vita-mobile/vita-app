@@ -8,9 +8,9 @@ import androidx.navigation.compose.composable
 import com.health.vita.auth.presentation.LoginScreen
 import com.health.vita.auth.presentation.ResetPasswordConfirmationScreen
 import com.health.vita.auth.presentation.ResetPasswordScreen
-import com.health.vita.auth.presentation.SelectAvatarScreen
-import com.health.vita.auth.presentation.SignUpScreen
-import com.health.vita.auth.presentation.viewmodel.SignupViewModel
+import com.health.vita.register.presentation.SelectAvatarScreen
+import com.health.vita.register.presentation.SignUpScreen
+import com.health.vita.register.presentation.viewmodel.SignupViewModel
 import com.health.vita.main.presentation.AccountSettingsScreen
 import com.health.vita.main.presentation.HomeScreen
 import com.health.vita.main.presentation.SplashScreen
