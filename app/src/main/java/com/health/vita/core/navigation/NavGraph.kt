@@ -94,10 +94,10 @@ fun NavGraph(navController: NavHostController){
             AgeSelectionScreen(navController, signupViewModel)
         }
         composable(Screen.WEIGHT_SELECTION) {
-            WeightSelectionScreen(navController, signupViewModel)
+            WeightSelectionScreen(navController=navController,signupViewModel= signupViewModel)
         }
         composable(Screen.HEIGHT_SELECTION) {
-            HeightSelectionScreen(navController, signupViewModel)
+            HeightSelectionScreen(navController=navController,signupViewModel= signupViewModel)
         }
         composable(Screen.FITNESS_LEVEL_SELECTION) {
             FitnessLevelSelectionScreen(navController, signupViewModel)
