@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import com.health.vita.auth.presentation.login.LoginScreen
 import com.health.vita.core.navigation.NavGraph
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
@@ -36,15 +37,7 @@ class MainActivity : ComponentActivity() {
 fun App(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     NavGraph(navController = navController)
-    Column(modifier = modifier) {
-        //Modo Claro
-        GeneralTopBar(
-            text = "Valoración", step = 2, total = 6, onClick = { navController.navigateUp() }
-        )
-        PrimaryIconButton(arrow = true, blackContent = false)
-        PrimaryIconButton(arrow = false, blackContent = true, color = Cyan)
 
-    }
 
 }
 
