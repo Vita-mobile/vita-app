@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 
+
 private val DarkColorScheme = darkColorScheme(
     /**primary = Purple80,
     secondary = PurpleGrey80,
@@ -29,6 +30,7 @@ private val LightColorScheme = lightColorScheme(
     onBackground = Black, //Color of the text that will be superimposed on the background of the app
     surface = LightGray, //Elements that can overlap (e.g. pop-ups)
     onSurface = Black,
+    surfaceContainer = LightTurquoise2
 )
 
 @Composable

@@ -5,7 +5,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.health.vita.auth.presentation.LoginScreen
+import com.health.vita.auth.presentation.login.LoginScreen
 import com.health.vita.auth.presentation.ResetPasswordConfirmationScreen
 import com.health.vita.auth.presentation.ResetPasswordScreen
 import com.health.vita.register.presentation.SelectAvatarScreen
@@ -56,7 +56,7 @@ fun NavGraph(navController: NavHostController){
     val signupViewModel: SignupViewModel = viewModel()
     NavHost(
         navController = navController,
-        startDestination = Screen.HOME
+        startDestination = Screen.LOGIN
     ) {
         // Main
         composable(Screen.HOME) {

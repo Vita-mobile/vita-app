@@ -4,9 +4,9 @@ data class User (
     var id: String = "",
     var name: String = "",
     var email: String = "",
-    var weight: Double = 0.0,
+    var weight: Float = 0.0f,
     var age: Int = 0,
-    var height: Double = 0.0,
+    var height: Float = 0.0f,
     var gender: String = "",
     var goal: String = "",
     var activityLevel: Int = 0
