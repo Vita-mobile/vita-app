@@ -1,4 +1,4 @@
-package com.health.vita.register.presentation.service
+package com.health.vita.register.presentation.data.repository.service
 
 
 import com.google.firebase.firestore.ktx.firestore
@@ -14,7 +14,7 @@ interface UserServices {
    suspend fun getUserById(id: String): User?
 }
 
-class UserServicesImpl:UserServices{
+class UserServicesImpl: UserServices {
 
     override suspend fun createUser(user: User) {
 

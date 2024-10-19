@@ -1,11 +1,11 @@
-package com.health.vita.register.presentation.repository
+package com.health.vita.register.presentation.data.repository
 
 
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.health.vita.domain.model.User
-import com.health.vita.register.presentation.service.AuthService
-import com.health.vita.register.presentation.service.AuthServiceImpl
+import com.health.vita.register.presentation.data.repository.service.AuthService
+import com.health.vita.register.presentation.data.repository.service.AuthServiceImpl
 
 
 interface AuthRepository {
@@ -19,7 +19,7 @@ class AuthRepositoryImpl(
     val authService: AuthService = AuthServiceImpl(),
     val userRepository: UserRepository = UserRepositoryImpl()
 
-):AuthRepository{
+): AuthRepository {
 
     override suspend fun signup(user: User, password: String) {
 

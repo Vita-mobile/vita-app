@@ -1,4 +1,4 @@
-package com.health.vita.register.presentation.service
+package com.health.vita.register.presentation.data.repository.service
 
 
 import com.google.firebase.Firebase
@@ -11,7 +11,7 @@ interface AuthService {
     suspend fun loginWithEmailAndPassword(email: String, password: String)
 }
 
-class AuthServiceImpl:AuthService{
+class AuthServiceImpl: AuthService {
 
     override suspend fun createUser(email: String,password: String){
 

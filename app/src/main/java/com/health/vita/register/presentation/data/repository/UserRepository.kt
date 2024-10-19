@@ -1,10 +1,10 @@
-package com.health.vita.register.presentation.repository
+package com.health.vita.register.presentation.data.repository
 
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.health.vita.domain.model.User
-import com.health.vita.register.presentation.service.UserServices
-import com.health.vita.register.presentation.service.UserServicesImpl
+import com.health.vita.register.presentation.data.repository.service.UserServices
+import com.health.vita.register.presentation.data.repository.service.UserServicesImpl
 
 
 interface UserRepository {
@@ -18,7 +18,7 @@ class UserRepositoryImpl(
 
     val userServices: UserServices = UserServicesImpl()
 
-):UserRepository{
+): UserRepository {
 
     override suspend fun createUser(user: User) {
         userServices.createUser(user)

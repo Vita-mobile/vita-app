@@ -12,8 +12,8 @@ import com.health.vita.core.utils.error_management.UnknownError
 import com.health.vita.core.utils.states_management.UiHandler
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.domain.model.User
-import com.health.vita.register.presentation.repository.AuthRepository
-import com.health.vita.register.presentation.repository.AuthRepositoryImpl
+import com.health.vita.register.presentation.data.repository.AuthRepository
+import com.health.vita.register.presentation.data.repository.AuthRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
