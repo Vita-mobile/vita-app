@@ -9,7 +9,6 @@ interface AuthRepository {
 }
 
 class AuthRepositoryImpl (
-
     val authService: AuthService = AuthServiceImpl()
 ) : AuthRepository {
 
