@@ -37,6 +37,7 @@ private val LightColorScheme = lightColorScheme(
 fun VitaTheme(
 
     content: @Composable () -> Unit
+
 ) {
     val colorScheme = LightColorScheme
 

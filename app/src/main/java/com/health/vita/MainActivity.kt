@@ -8,13 +8,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.core.navigation.NavGraph
+import com.health.vita.ui.components.general.GeneralTopBar
+import com.health.vita.ui.components.general.PrimaryIconButton
+import com.health.vita.ui.theme.Cyan
 import com.health.vita.ui.theme.VitaTheme
 
 class MainActivity : ComponentActivity() {
@@ -32,7 +33,28 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun App(modifier: Modifier = Modifier){
+fun App(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     NavGraph(navController = navController)
+    Column(modifier = modifier) {
+        //Modo Claro
+        GeneralTopBar(
+            text = "Valoración", step = 2, total = 6, onClick = { navController.navigateUp() }
+        )
+        PrimaryIconButton(arrow = true, blackContent = false)
+        PrimaryIconButton(arrow = false, blackContent = true, color = Cyan)
+
+    }
+
 }
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun MyPreview() {
+    VitaTheme {
+        App()
+    }
+}
+
