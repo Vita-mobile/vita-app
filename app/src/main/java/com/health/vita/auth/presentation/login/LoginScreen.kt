@@ -48,6 +48,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.health.vita.R
+import com.health.vita.core.navigation.Screen
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.ui.theme.Dimens.borderRadius
 import com.health.vita.ui.theme.Dimens.paddingScreen
@@ -229,7 +230,6 @@ fun LoginScreen(
 
                     is UiState.Success -> {
 
-                        infoLogin = "Login done"
 
                         //On success navigate to the next screen.
 
@@ -321,7 +321,12 @@ fun LoginScreen(
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.secondary,
                             textDecoration = TextDecoration.Underline,
-                            modifier = Modifier.clickable { /*TODO*/ })
+                            modifier = Modifier.clickable {
+
+                                navController.navigate(Screen.SIGN_UP)
+
+                            })
+
                     }
 
                     Box(modifier = Modifier.size(12.dp))
