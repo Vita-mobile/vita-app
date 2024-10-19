@@ -103,7 +103,7 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
                                 // Box para centrar y darle estilo al número seleccionado
                                 Box(
                                     modifier = Modifier
-                                        .size(80.dp) // Tamaño del cuadrado azul
+                                        .size(90.dp) // Tamaño del cuadrado azul
                                         .background(MaterialTheme.colorScheme.primary, shape = MaterialTheme.shapes.medium) // Fondo azul y esquinas redondeadas
                                         .padding(12.dp), // Espacio interno
                                     contentAlignment = Alignment.Center
