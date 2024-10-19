@@ -10,7 +10,6 @@ interface AuthRepository {
 }
 
 class AuthRepositoryImpl (
-
     val authService: AuthService = AuthServiceImpl()
 ) : AuthRepository {
     override suspend fun signup(user: User, password: String) {

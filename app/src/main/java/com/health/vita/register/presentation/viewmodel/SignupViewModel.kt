@@ -12,15 +12,15 @@ import com.health.vita.core.utils.error_management.UnknownError
 import com.health.vita.core.utils.states_management.UiHandler
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.domain.model.User
-import com.health.vita.register.presentation.repository.AuthRepository
-import com.health.vita.register.presentation.repository.AuthRepositoryImpl
+import com.health.vita.register.data.repository.SignUpRepository
+import com.health.vita.register.data.repository.SignUpRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.sql.SQLException
 
 class SignupViewModel(
-    private val repo: AuthRepository = AuthRepositoryImpl()
+    private val signUpRepository: SignUpRepository = SignUpRepositoryImpl()
 ) : ViewModel() {
 
     private val _name = MutableLiveData("")
@@ -96,6 +96,7 @@ class SignupViewModel(
     fun registerOperation() {
 
         viewModelScope.launch(Dispatchers.IO) {
+
             uiHandler.setLoadingState()
 
             try {
@@ -113,7 +114,7 @@ class SignupViewModel(
                     activityLevel = _activityLevel.value ?: 0
                 )
 
-                repo.signup(user, _password.value ?: "")
+                signUpRepository.signup(user, _password.value ?: "")
 
                 uiHandler.setSuccess()
 
