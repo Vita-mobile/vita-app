@@ -20,3 +20,8 @@ class UnknownError(
     message: String = "Unknown error.",
     cause: Throwable? = null
 ) : AppError(message, cause)
+
+class AuthError(
+    message: String = "Authentication error.",
+    cause: Throwable? = null
+) : AppError(message, cause)
