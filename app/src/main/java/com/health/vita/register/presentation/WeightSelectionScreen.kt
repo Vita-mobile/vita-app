@@ -38,7 +38,7 @@ import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.components.profile.Ruler
 
 @Composable
-fun WeightSelectionScreen(modifier: Modifier = Modifier, navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
+    fun WeightSelectionScreen(modifier: Modifier = Modifier, navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
     val maxKgs = 200
     val maxLbs = 400
     var selectedValue by remember { mutableStateOf(50) }

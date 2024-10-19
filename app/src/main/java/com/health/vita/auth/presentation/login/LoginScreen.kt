@@ -231,8 +231,8 @@ fun LoginScreen(
                     is UiState.Success -> {
 
 
-                        //On success navigate to the next screen.
-
+                        navController.navigate(Screen.PROFILE)
+    
                     }
 
                     is UiState.Error -> {
