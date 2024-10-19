@@ -76,6 +76,13 @@ fun NavGraph(navController: NavHostController){
         composable(Screen.LOGIN) {
             LoginScreen(navController)
         }
+        composable(Screen.RESET_PASSWORD) {
+            ResetPasswordScreen(navController)
+        }
+        composable(Screen.RESET_PASSWORD_CONFIRMATION) {
+            ResetPasswordConfirmationScreen(navController)
+        }
+
         //Signup
         composable(Screen.SIGN_UP) {
             SignUpScreen(navController, signupViewModel)
@@ -102,13 +109,6 @@ fun NavGraph(navController: NavHostController){
             FitnessGoalSelectionScreen(navController, signupViewModel)
         }
 
-        //Utils
-        composable(Screen.RESET_PASSWORD) {
-            ResetPasswordScreen(navController)
-        }
-        composable(Screen.RESET_PASSWORD_CONFIRMATION) {
-            ResetPasswordConfirmationScreen(navController)
-        }
         // Profile
         composable(Screen.PROFILE) {
             ProfileScreen(navController)
