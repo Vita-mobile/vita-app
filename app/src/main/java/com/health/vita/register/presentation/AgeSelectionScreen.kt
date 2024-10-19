@@ -1,5 +1,6 @@
 package com.health.vita.register.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -96,22 +97,40 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
                             // Distancia desde el centro
                             val distanceFromCenter = abs(index - (listState.firstVisibleItemIndex + centerIndex))
                             val alpha = 1f - (distanceFromCenter * 0.2f) // Transparencia basada en la distancia
-                            val color = if (age == selectedAge) MaterialTheme.colorScheme.primary else Color.Gray.copy(alpha = alpha)
 
-                            // Box para centrar los números
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(48.dp), // Altura de cada elemento
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "$age",
-                                    fontSize = if (age == selectedAge) 36.sp else 28.sp, // Tamaño de fuente aumentado
-                                    color = color,
-                                    modifier = Modifier.graphicsLayer(alpha = alpha),
-                                    textAlign = TextAlign.Center
-                                )
+                            // Estilo para el número seleccionado
+                            if (age == selectedAge) {
+                                // Box para centrar y darle estilo al número seleccionado
+                                Box(
+                                    modifier = Modifier
+                                        .size(80.dp) // Tamaño del cuadrado azul
+                                        .background(MaterialTheme.colorScheme.primary, shape = MaterialTheme.shapes.medium) // Fondo azul y esquinas redondeadas
+                                        .padding(12.dp), // Espacio interno
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "$age",
+                                        fontSize = 48.sp, // Tamaño de fuente aumentado
+                                        color = Color.White, // Texto blanco
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            } else {
+                                // Box para centrar los números no seleccionados
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(48.dp), // Altura de cada elemento
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "$age",
+                                        fontSize = 36.sp, // Tamaño de fuente aumentado
+                                        color = Color.Gray.copy(alpha = alpha), // Color con transparencia
+                                        modifier = Modifier.graphicsLayer(alpha = alpha),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
                             }
                         }
                     }
@@ -132,11 +151,6 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
         }
     )
 }
-
-
-
-
-
 
 @Preview(showBackground = true)
 @Composable
