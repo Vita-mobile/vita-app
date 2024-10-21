@@ -47,6 +47,7 @@ val Typography = Typography(
     ),
 
     /*Content: The general content (Buttons and text) has the following variations*/
+
     bodyLarge = TextStyle(
         fontFamily = WorkSansFontFamily,
         fontWeight = FontWeight.Medium,

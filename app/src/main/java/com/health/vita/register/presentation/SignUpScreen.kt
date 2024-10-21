@@ -1,5 +1,6 @@
-package com.health.vita.auth.presentation
+package com.health.vita.register.presentation
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,11 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,17 +40,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.health.vita.auth.presentation.viewmodel.SignupViewModel
 import com.health.vita.R
+import com.health.vita.core.navigation.Screen.AGE_SELECTION
+import com.health.vita.register.presentation.viewmodel.SignupViewModel
 import com.health.vita.ui.components.general.CredentialInput
 import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.Dimens.borderRadius
 import com.health.vita.ui.theme.Dimens.paddingScreen
 import com.health.vita.ui.theme.VitaTheme
 
-@Preview(showBackground = true)
+
 @Composable
-fun SignUpScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel = SignupViewModel()) {
+fun SignUpScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
 
     var fullName by remember {
         mutableStateOf("")
@@ -154,7 +152,7 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
                 Box(modifier = Modifier.size(24.dp))
             }
 
-            Column (modifier = Modifier.weight(1F)){
+            Column (){
 
                 //Credential inputs
 
@@ -183,103 +181,59 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
                     isPassword = true
                 )
 
-                Box(modifier = Modifier.size(20.dp))
-
-                //Register button
-
+                Spacer(modifier = Modifier.height(50.dp))
 
                 PrimaryIconButton(
-                    arrow = true,
+                    text = "Comenzar",
+                    enabled = fullName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty(),
+                    onClick = {
+                       navController.navigate(AGE_SELECTION)
+                    },
+                    color = Color.Black,
                     blackContent = false,
-                    text = "Registrarse",
-                    enabled = fullName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()
+                    arrow = true
                 )
 
             }
 
+            Spacer(modifier = Modifier.height(30.dp))
 
 
-            //Google register
-
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
-                Text(
-                    "También podés registrarte con:",
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Box(modifier = Modifier.size(20.dp))
-
-                Row(
-
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Box(
-                        modifier = Modifier
-                            .clip(shape = RoundedCornerShape(borderRadius))
-                            .border(
-                                4.dp,
-                                MaterialTheme.colorScheme.surfaceContainer,
-                                shape = RoundedCornerShape(borderRadius)
-                            )
-                            .clickable { }
+                    Text(
+                        "¿Ya tienes cuenta? ",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
 
+                    Box(modifier = Modifier.size(12.dp))
 
-
-                    ) {
-
-                        Image(
-                            painterResource(id = R.drawable.google),
-                            contentDescription = "Google icon",
-                            modifier = Modifier
-                                .size(64.dp)
-                                .padding(12.dp)
-
-
-                        )
-                    }
+                    Text(
+                    "Inicia sesión",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.secondary,
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier.clickable { /*TODO*/ }
+                    )
                 }
-
-                Box(modifier = Modifier.size(12.dp))
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-
-
-                        Text(
-                            "¿Ya tienes cuenta? ",
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                        Box(modifier = Modifier.size(12.dp))
-                        Text(
-                            "Inicia sesión",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.secondary,
-                            textDecoration = TextDecoration.Underline,
-                            modifier = Modifier.clickable { /*TODO*/ })
-                    }
-
-
-                }
-
-                Box(modifier = Modifier.size(32.dp))
-
-
-            }
-
-
-
 
         }
     }
 
 }
+
+
+@Preview(showBackground = true)
+@Composable
+fun Preview() {
+    VitaTheme {
+        SignUpScreen(signupViewModel = SignupViewModel())
+    }
+}
+
+
+

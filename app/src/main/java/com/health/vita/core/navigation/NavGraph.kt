@@ -8,11 +8,12 @@ import androidx.navigation.compose.composable
 import com.health.vita.auth.presentation.login.LoginScreen
 import com.health.vita.auth.presentation.ResetPasswordConfirmationScreen
 import com.health.vita.auth.presentation.ResetPasswordScreen
-import com.health.vita.auth.presentation.SelectAvatarScreen
-import com.health.vita.auth.presentation.SignUpScreen
-import com.health.vita.auth.presentation.viewmodel.SignupViewModel
+import com.health.vita.register.presentation.SelectAvatarScreen
+import com.health.vita.register.presentation.SignUpScreen
+import com.health.vita.register.presentation.viewmodel.SignupViewModel
 import com.health.vita.main.presentation.AccountSettingsScreen
 import com.health.vita.main.presentation.HomeScreen
+import com.health.vita.main.presentation.LoadSimulationScreen
 import com.health.vita.main.presentation.SplashScreen
 import com.health.vita.main.presentation.WelcomeScreen
 import com.health.vita.meals.presentation.AddedFoodScreen
@@ -56,9 +57,14 @@ fun NavGraph(navController: NavHostController){
     val signupViewModel: SignupViewModel = viewModel()
     NavHost(
         navController = navController,
-        startDestination = Screen.LOGIN
+        startDestination = Screen.LOAD_SIMULATION
     ) {
         // Main
+
+        composable(Screen.LOAD_SIMULATION) {
+            LoadSimulationScreen(navController)
+        }
+
         composable(Screen.HOME) {
             HomeScreen(navController)
         }
@@ -76,6 +82,13 @@ fun NavGraph(navController: NavHostController){
         composable(Screen.LOGIN) {
             LoginScreen(navController)
         }
+        composable(Screen.RESET_PASSWORD) {
+            ResetPasswordScreen(navController)
+        }
+        composable(Screen.RESET_PASSWORD_CONFIRMATION) {
+            ResetPasswordConfirmationScreen(navController)
+        }
+
         //Signup
         composable(Screen.SIGN_UP) {
             SignUpScreen(navController, signupViewModel)
@@ -87,10 +100,10 @@ fun NavGraph(navController: NavHostController){
             AgeSelectionScreen(navController, signupViewModel)
         }
         composable(Screen.WEIGHT_SELECTION) {
-            WeightSelectionScreen(navController, signupViewModel)
+            WeightSelectionScreen(navController=navController,signupViewModel= signupViewModel)
         }
         composable(Screen.HEIGHT_SELECTION) {
-            HeightSelectionScreen(navController, signupViewModel)
+            HeightSelectionScreen(navController=navController,signupViewModel= signupViewModel)
         }
         composable(Screen.FITNESS_LEVEL_SELECTION) {
             FitnessLevelSelectionScreen(navController, signupViewModel)
@@ -102,13 +115,6 @@ fun NavGraph(navController: NavHostController){
             FitnessGoalSelectionScreen(navController, signupViewModel)
         }
 
-        //Utils
-        composable(Screen.RESET_PASSWORD) {
-            ResetPasswordScreen(navController)
-        }
-        composable(Screen.RESET_PASSWORD_CONFIRMATION) {
-            ResetPasswordConfirmationScreen(navController)
-        }
         // Profile
         composable(Screen.PROFILE) {
             ProfileScreen(navController)

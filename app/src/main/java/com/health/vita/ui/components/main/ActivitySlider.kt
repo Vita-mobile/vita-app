@@ -65,6 +65,5 @@ fun activitySlider(
 @Composable
 fun preview(){
     activitySlider(modifier = Modifier.size(250.dp).background(LightGray) ,initialValue = 1, primaryColor = MainBlue, secondaryColor = MainBlue, circleRadius = 230f) {
-
     }
 }

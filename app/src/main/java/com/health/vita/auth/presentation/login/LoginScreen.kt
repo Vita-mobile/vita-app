@@ -1,5 +1,6 @@
 package com.health.vita.auth.presentation.login
 
+import android.util.Log
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.foundation.Image
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -26,6 +28,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,13 +46,19 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.health.vita.R
+import com.health.vita.core.navigation.Screen
+import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.ui.theme.Dimens.borderRadius
 import com.health.vita.ui.theme.Dimens.paddingScreen
 
 
 @Composable
-fun LoginScreen(navController: NavController = rememberNavController()) {
+fun LoginScreen(
+    navController: NavController = rememberNavController(),
+    loginViewModel: LoginViewModel = viewModel()
+) {
 
     var email by remember {
         mutableStateOf("")
@@ -58,6 +67,13 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
     var password by remember {
         mutableStateOf("")
     }
+
+    var infoLogin by remember {
+
+        mutableStateOf("")
+    }
+
+    val uiState by loginViewModel.uiStaate.observeAsState(UiState.Idle)
 
     Scaffold() { innerPadding ->
 
@@ -146,7 +162,7 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                 Box(modifier = Modifier.size(24.dp))
             }
 
-            Column (modifier = Modifier.weight(1F)){
+            Column(modifier = Modifier.weight(1F)) {
 
                 //Credential inputs
                 CredentialInput(
@@ -170,20 +186,74 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                 //Log-in button
 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+
+                        Log.d("LoginScreen", "Email: $email, Password: $password")
+
+                        val trimmedEmail = email.trim()
+                        val trimmedPassword = password.trim()
+
+                        loginViewModel.login(trimmedEmail, trimmedPassword)
+
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(62.dp),
                     enabled = email.isNotEmpty() && password.isNotEmpty()
                 ) {
-                    Text(
-                        "Iniciar sesión",
-                        style = MaterialTheme.typography.titleSmall,
-                        color = Color.White
-                    )
+                    if (uiState is UiState.Loading) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    } else {
+                        Text(
+                            "Iniciar sesión",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = Color.White
+                        )
+                    }
                 }
-            }
 
+                Box(modifier = Modifier.size(2.dp))
+
+
+                when (uiState) {
+
+                    is UiState.Idle -> {
+                        infoLogin = ""
+                    }
+
+                    is UiState.Loading -> {
+                        infoLogin = ""
+                    }
+
+                    is UiState.Success -> {
+
+
+                        navController.navigate(Screen.PROFILE)
+    
+                    }
+
+                    is UiState.Error -> {
+
+                        infoLogin = (uiState as UiState.Error).error.message
+
+                    }
+
+
+                }
+
+                Text(
+                    text = infoLogin,
+                    style = MaterialTheme.typography.labelSmall,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+
+            }
 
 
             //Google login
@@ -194,7 +264,7 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                     "También podés iniciar sesión con:",
                     style = MaterialTheme.typography.bodySmall
                 )
-                Box(modifier = Modifier.size(20.dp))
+                Box(modifier = Modifier.size(12.dp))
 
                 Row(
 
@@ -211,8 +281,7 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                                 MaterialTheme.colorScheme.surfaceContainer,
                                 shape = RoundedCornerShape(borderRadius)
                             )
-                            .clickable {  }
-
+                            .clickable { }
 
 
                     ) {
@@ -252,7 +321,12 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.secondary,
                             textDecoration = TextDecoration.Underline,
-                            modifier = Modifier.clickable { /*TODO*/ })
+                            modifier = Modifier.clickable {
+
+                                navController.navigate(Screen.SIGN_UP)
+
+                            })
+
                     }
 
                     Box(modifier = Modifier.size(12.dp))
@@ -270,8 +344,6 @@ fun LoginScreen(navController: NavController = rememberNavController()) {
 
 
             }
-
-
 
 
         }
@@ -339,9 +411,7 @@ fun CredentialInput(
                     }
                     .padding(0.dp)
                     .weight(1F)
-                    .height(50.dp)
-
-                ,
+                    .height(55.dp),
 
 
                 colors = TextFieldDefaults.colors(
