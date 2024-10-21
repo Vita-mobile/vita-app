@@ -89,10 +89,7 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
                     .padding(top = paddingScreen),
                 contentScale = ContentScale.Crop,
                 alignment = Alignment.TopEnd
-
             )
-
-
         }
 
         Box(
