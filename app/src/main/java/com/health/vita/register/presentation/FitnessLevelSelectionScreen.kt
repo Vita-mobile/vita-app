@@ -1,134 +1,310 @@
-    package com.health.vita.register.presentation
+package com.health.vita.register.presentation
 
-    import androidx.compose.foundation.background
-    import androidx.compose.foundation.layout.Arrangement
-    import androidx.compose.foundation.layout.Box
-    import androidx.compose.foundation.layout.Column
-    import androidx.compose.foundation.layout.Row
-    import androidx.compose.foundation.layout.fillMaxHeight
-    import androidx.compose.foundation.layout.fillMaxSize
-    import androidx.compose.foundation.layout.fillMaxWidth
-    import androidx.compose.foundation.layout.padding
-    import androidx.compose.foundation.shape.RoundedCornerShape
-    import androidx.compose.material3.ExperimentalMaterial3Api
-    import androidx.compose.material3.MaterialTheme
-    import androidx.compose.material3.Slider
-    import androidx.compose.material3.SliderDefaults
-    import androidx.compose.material3.Text
-    import androidx.compose.runtime.Composable
-    import androidx.compose.runtime.getValue
-    import androidx.compose.runtime.mutableStateOf
-    import androidx.compose.runtime.remember
-    import androidx.compose.runtime.setValue
-    import androidx.compose.ui.Alignment
-    import androidx.compose.ui.Modifier
-    import androidx.compose.ui.graphics.Color
-    import androidx.compose.ui.text.font.FontWeight
-    import androidx.compose.ui.text.style.TextAlign
-    import androidx.compose.ui.tooling.preview.Preview
-    import androidx.compose.ui.unit.dp
-    import androidx.compose.ui.unit.sp
-    import androidx.lifecycle.viewmodel.compose.viewModel
-    import androidx.navigation.NavController
-    import androidx.navigation.compose.rememberNavController
-    import com.health.vita.core.navigation.Screen.HEIGHT_SELECTION
-    import com.health.vita.core.navigation.Screen.SEX_SELECTION
-    import com.health.vita.register.presentation.viewmodel.SignupViewModel
-    import com.health.vita.ui.components.general.GeneralTopBar
-    import com.health.vita.ui.components.general.PrimaryIconButton
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.draw
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+
+import com.health.vita.core.navigation.Screen.SEX_SELECTION
+import com.health.vita.register.presentation.viewmodel.SignupViewModel
+import com.health.vita.ui.components.general.GeneralTopBar
+import com.health.vita.ui.components.general.PrimaryIconButton
+import com.health.vita.ui.theme.VitaTheme
+
+@Composable
+fun FitnessLevelSelectionScreen(
+    navController: NavController = rememberNavController(),
+    signupViewModel: SignupViewModel
+) {
+    var sliderPosition by remember { mutableStateOf(signupViewModel.activityLevel.value?.toFloat() ?: 1f) }
+    val textForValue = mapOf(
+        1 to "Sedentario",
+        2 to "Ligero",
+        3 to "Moderado",
+        4 to "Atlético",
+        5 to "Muy activo"
+    )
 
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun FitnessLevelSelectionScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
-        var sliderPosition by remember { mutableStateOf(signupViewModel.activityLevel.value?.toFloat() ?: 1f)}
-        val textForValue = mapOf(
-            1 to "Sedentario",
-            2 to "Ligero",
-            3 to "Moderado",
-            4 to "Atlético",
-            5 to "Muy activo"
-        )
-        Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceAround) {
-            GeneralTopBar(onClick = { navController.navigate(HEIGHT_SELECTION) },text="Valoración", step = 4, total = 6)
-            Column(verticalArrangement = Arrangement.SpaceAround){
-            Text(text = "¿Como calificarias tu nivel de estado físico?", textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.titleLarge)
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp)){
-                thumb(icon = "?", 10, 5)
-                Column(modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(horizontal = 10.dp)) {
-                    Text(text = "Arrastre para ajustar")
-                }
-            }
-            Slider(
-                value = sliderPosition,
-                onValueChange = { newValue ->
-                    sliderPosition = if (newValue < 1f) 1f else newValue;
-                    signupViewModel.setActivityLevel(newValue.toInt());
-                },                colors = SliderDefaults.colors(
-                    thumbColor = MaterialTheme.colorScheme.primary,
-                    activeTrackColor = MaterialTheme.colorScheme.primary,
-                    inactiveTickColor = Color.Black
-                ),
-                steps = 4,
-                valueRange = 0f..5f,
-                modifier = Modifier.padding(horizontal = 24.dp),
-                thumb = { thumb("( )", 12, 10)}
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+
+        GeneralTopBar(text = "Valoración", step = 4, total = 6, onClick = { navController.navigateUp() })
+
+        Spacer(modifier = Modifier.height(35.dp))
+
+        Column(Modifier.weight(1f)) {
+
+            Text(
+                text = "¿Cómo calificarías tu nivel de estado físico?",
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleMedium
             )
 
-            Box(
+            Spacer(modifier = Modifier.height(60.dp))
+
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(end = 16.dp),
-                contentAlignment = Alignment.CenterEnd
+                    .padding(horizontal = 10.dp)
             ) {
-                Column(horizontalAlignment = Alignment.End) {
+                Thumb(icon = "?", h = 10, v = 5)
+
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(horizontal = 10.dp)
+                ) {
                     Text(
-                        text = sliderPosition.toInt().toString(),
-                        fontSize = 120.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = textForValue[sliderPosition.toInt()] ?: "Desconocido", // Usa el valor del Map o muestra "Desconocido" si no existe
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = Color.Black
+                        text = "Arrastre para ajustar",
+                        style = MaterialTheme.typography.labelSmall
                     )
                 }
             }
-                Column(Modifier.fillMaxHeight().padding(vertical = 34.dp), verticalArrangement = Arrangement.Bottom){
-                    PrimaryIconButton(text ="Continuar", onClick = { navController.navigate(SEX_SELECTION) })
-                }
-            }
+
+
+            CircularFitnessSlider(
+                currentValue = sliderPosition.toInt(),
+                onValueChange = { newValue ->
+                    sliderPosition = newValue.toFloat()
+                    signupViewModel.setActivityLevel(newValue)
+                },
+                textForValue = textForValue,
+                primaryColor = MaterialTheme.colorScheme.primary,
+
+            )
+
         }
+
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 34.dp),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            PrimaryIconButton(text = "Continuar", onClick = { navController.navigate(SEX_SELECTION) })
+        }
+
+
+    }
+}
+
+@Composable
+fun Thumb(icon: String, h: Int, v: Int) {
+    Box(
+        modifier = Modifier
+            .background(
+                MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(horizontal = h.dp, vertical = v.dp)
+    ) {
+        Text(text = icon, color = MaterialTheme.colorScheme.onPrimary)
+    }
+}
+
+@Composable
+fun CircularFitnessSlider(
+    currentValue: Int,
+    onValueChange: (Int) -> Unit,
+    textForValue: Map<Int, String>,
+    primaryColor: Color,
+
+) {
+
+    var sliderValue by remember { mutableStateOf(currentValue) }
+    var totalDrag by remember { mutableStateOf(0f) } //Total drag accumulator
+
+    /*
+            Modifier to handle drag gestures
+            Handling of drag gestures.
+          * specifically detects dragging gestures.
+          * "pointerInput": allows is used to detect the user's gestures.
+          *  “onDrag” is executed when the user drags the finger over the slider.
+          * "change":represents the change in the gesture.
+          *  "dragAmount":amount of movement in the x- and y-axis during the dragging process
+          *  "change.consume()":prevents the change from spreading to other components, as it has been consumed*/
+
+    val dragModifier = Modifier.pointerInput(Unit) {
+
+        detectDragGestures(
+            onDrag = { change, dragAmount ->
+                change.consume()
+
+                // Sensitivity adjustment(touch)
+                val dragSpeedFactor = 0.0085f
+
+                /*calculates the drag taking into account the horizontal movement of the finger
+                 multiplied by the drag speed factor.*/
+
+                totalDrag += dragAmount.x * dragSpeedFactor
+
+                //Calculation of the new slider value based on the cumulated total
+                val newSliderValue = (sliderValue + totalDrag.toInt()).coerceIn(0, 5)
+
+                if (newSliderValue != sliderValue) {
+                    sliderValue = newSliderValue
+                    totalDrag = 0f //resetting the accumulator when the value changes
+                    onValueChange(sliderValue)
+                }
+            }
+        )
     }
 
-    @Preview(showBackground = true)
-    @Composable
-    fun preview(){ 
-        FitnessLevelSelectionScreen(signupViewModel = viewModel())
-    }
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = dragModifier
+            .padding(16.dp)
+    ) {
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+        ) {
 
-    //@Preview(showBackground = true)
-    @Composable
-    fun prev2(){
-        thumb("( )", 15, 10);
-    }
+            val path = Path().apply {
+                moveTo(0f, size.height)
+                quadraticTo(
+                    size.width * 0.2f, size.height * 0.1f,
+                    size.width, 0f
+                )
+            }
 
-    @Composable
-    fun thumb(icon: String, h: Int, v: Int){
+            drawPath(
+                path = path,
+                color = primaryColor,
+                style = Stroke(width = 30f)
+            )
+
+            /*Generation of lines aligned with the curve: the direction of the curve at a
+            specific point is calculated and then use that direction to find a line perpendicular to
+            the curve.*/
+
+            val numberOfLines = 6
+            val controlX = size.width * 0.2f
+            val controlY = size.height * 0.1f
+
+            for (i in 0 until numberOfLines) {
+                val t = i / (numberOfLines - 1).toFloat()
+
+                // Calculation of the x, y position using the Bézier equation
+
+                val x = (1 - t) * (1 - t) * 0f + 2 * (1 - t) * t * controlX + t * t * size.width
+                val y = (1 - t) * (1 - t) * size.height + 2 * (1 - t) * t * controlY + t * t * 0f
+
+                //Calculate the tangent
+
+                //derivative of the Bézier curve at a point determined by the parameter t
+                val dx = 2 * (1 - t) * (controlX - 0f) + 2 * t * (size.width - controlX) //rate of change of the horizontal position (x-axis) along the curve
+                val dy = 2 * (1 - t) * (controlY - size.height) + 2 * t * (0f - controlY) //rate of change of the vertical position (y-axis) along the curve
+
+                //Standardization
+
+                //vector magnitude
+                val norm = kotlin.math.sqrt(dx * dx + dy * dy)
+                val length = 100f
+
+                //Calculation of the normal: vector perpendicular to vector (dx,dy)
+
+                val px = -dy / norm * length
+                val py = dx / norm * length
+
+                drawLine(
+                    color = Color.Black,
+                    start = Offset(x - px / 2, y - py / 2),
+                    end = Offset(x + px / 2, y + py / 2),
+                    strokeWidth = 4f
+                )
+            }
+
+            /*calculation of the position of the button in the slider, using the quadratic Bézier equation
+             to determine the location of the button as a function of the current value of the slider
+             (sliderValue)*/
+
+            //Adjustment of `t` to align it with the slider value, according to the bezier equation, t goes from 0 to 1
+            val t = sliderValue / 5f
+
+            //calculation of the x and y position: the position of the button on the Bézier curve
+
+            val x = (1 - t) * (1 - t) * 0f + 2 * (1 - t) * t * controlX + t * t * size.width
+            val y = (1 - t) * (1 - t) * size.height + 2 * (1 - t) * t * controlY + t * t * 0f
+
+            //button design
+            drawRoundRect(
+                color = Color(0xFF269be0),
+                topLeft = Offset(x - 60f, y - 60f),
+                size = androidx.compose.ui.geometry.Size(120f, 120f),
+                cornerRadius = androidx.compose.ui.geometry.CornerRadius(20f, 20f)
+            )
+
+
+        }
+
+
         Box(
             modifier = Modifier
-                .background(
-                    MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(8.dp)
-                ) // Esquinas redondeadas
-                .padding(horizontal = h.dp, vertical = v.dp)
+                .fillMaxSize()
+                .padding(end = 16.dp, top = 16.dp),
+            contentAlignment = Alignment.CenterEnd
         ) {
-            Text(text = icon, color = MaterialTheme.colorScheme.onPrimary);
+            Column(
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(
+                    text = sliderValue.toString(),
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontSize = 180.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = primaryColor
+                    )
+                )
+                Text(
+                    text = textForValue[sliderValue] ?: "Desconocido",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Preview() {
+    VitaTheme {
+        FitnessLevelSelectionScreen(signupViewModel = viewModel())
+    }
+}
+

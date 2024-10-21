@@ -106,9 +106,9 @@ class SignupViewModel(
                     name = _name.value ?: "",
                     email = _email.value ?: "",
                     //photoUri = _photoUri.value ?: "",
-                    weight = _weight.value ?: 0f,
+                    weight = (_weight.value ?: 0f).toDouble(),
                     age = _age.value ?: 0,
-                    height = _height.value ?: 0f,
+                    height = (_height.value ?: 0f).toDouble(),
                     gender = _gender.value ?: "",
                     goal = _goal.value ?: "",
                     activityLevel = _activityLevel.value ?: 0
