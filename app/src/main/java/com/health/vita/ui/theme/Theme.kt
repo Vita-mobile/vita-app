@@ -30,7 +30,8 @@ private val LightColorScheme = lightColorScheme(
     onBackground = Black, //Color of the text that will be superimposed on the background of the app
     surface = LightGray, //Elements that can overlap (e.g. pop-ups)
     onSurface = Black,
-    surfaceContainer = LightTurquoise2
+    surfaceContainer = LightTurquoise2,
+    tertiaryContainer = Cyan
 )
 
 @Composable

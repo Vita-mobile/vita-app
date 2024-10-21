@@ -13,6 +13,7 @@ import com.health.vita.register.presentation.SignUpScreen
 import com.health.vita.register.presentation.viewmodel.SignupViewModel
 import com.health.vita.main.presentation.AccountSettingsScreen
 import com.health.vita.main.presentation.HomeScreen
+import com.health.vita.main.presentation.LoadSimulationScreen
 import com.health.vita.main.presentation.SplashScreen
 import com.health.vita.main.presentation.WelcomeScreen
 import com.health.vita.meals.presentation.AddedFoodScreen
@@ -56,9 +57,14 @@ fun NavGraph(navController: NavHostController){
     val signupViewModel: SignupViewModel = viewModel()
     NavHost(
         navController = navController,
-        startDestination = Screen.LOGIN
+        startDestination = Screen.LOAD_SIMULATION
     ) {
         // Main
+
+        composable(Screen.LOAD_SIMULATION) {
+            LoadSimulationScreen(navController)
+        }
+
         composable(Screen.HOME) {
             HomeScreen(navController)
         }

@@ -1,160 +1,180 @@
 package com.health.vita.main.presentation
 
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.health.vita.R
-import com.health.vita.ui.theme.LightTurquoise
+import com.health.vita.core.navigation.Screen
+import com.health.vita.core.navigation.Screen.LOGIN
+import com.health.vita.core.navigation.Screen.SIGN_UP
+import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.VitaTheme
+import kotlinx.coroutines.delay
+
+
+@Composable
+fun LoadSimulationScreen(navController: NavController = rememberNavController()){
+
+    var isLoading by remember { mutableStateOf(true) }
+
+
+    LaunchedEffect(Unit) {
+
+        delay(2500)
+        isLoading = false
+    }
+
+    if (isLoading) {
+        SplashScreen()
+    } else {
+
+        WelcomeScreen(navController)
+    }
+}
 
 @Composable
 fun WelcomeScreen(navController: NavController = rememberNavController()) {
+
+
     Box(modifier = Modifier.fillMaxSize()) {
-        // Imagen de fondo sin márgenes
+
         Image(
-            painter = painterResource(id = R.drawable.welcome_background), // Cambia esto por el nombre de tu imagen
-            contentDescription = "Imagen de fondo",
-            modifier = Modifier.fillMaxSize(), // Asegura que cubra todo el fondo
-            contentScale = ContentScale.Crop // Escala la imagen para cubrir todo sin márgenes
+            painter = painterResource(id = R.drawable.welcome_background),
+            contentDescription = "Image background",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
         )
 
-        // Sombreado difuminado en la parte inferior
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(350.dp) // Ajusta la altura del sombreado
+                .height(350.dp)
                 .align(Alignment.BottomCenter)
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.6f)), // Degradado de transparente a negro
+                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.6f)),
                         startY = 0f,
-                        endY = 300f // Ajusta esta distancia para controlar el difuminado
+                        endY = 300f
                     )
                 )
         )
 
-        // Contenedor para los elementos centrados desde la mitad hacia abajo
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp) // Ajusta la separación horizontal
-                .align(Alignment.BottomCenter), // Alinea la columna en la parte inferior
+                .padding(horizontal = 16.dp)
+                .align(Alignment.BottomCenter),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom // Coloca los elementos en la parte inferior de la columna
+            verticalArrangement = Arrangement.Bottom
         ) {
-            // Espaciador para empujar los elementos hacia arriba
-            Spacer(modifier = Modifier.weight(1f)) // Controla la distancia desde el borde inferior
 
-            // Logo más pequeño
+            Spacer(modifier = Modifier.weight(1f))
+
+
             Image(
                 painter = painterResource(id = R.drawable.logo_v),
                 contentDescription = "Logo de Vita",
-                modifier = Modifier.size(90.dp) // Tamaño ajustado del logo
+                modifier = Modifier.size(90.dp)
             )
 
-            // Espaciado entre el logo y el texto
+
             Spacer(modifier = Modifier.height(23.dp))
 
-            // Texto de bienvenida en bold
+
             Text(
                 text = "Bienvenido a Vita",
                 style = MaterialTheme.typography.titleLarge.copy(
                     color = Color.White,
-                    fontWeight = FontWeight.Bold // Texto en bold
                 ),
-                textAlign = TextAlign.Center,
-                fontSize = 30.sp // Tamaño de fuente
+                textAlign = TextAlign.Center
             )
 
-            // Espaciado ajustable entre los textos
+
             Spacer(modifier = Modifier.height(25.dp))
 
-            // Texto auxiliar
+
             Text(
                 text = "Tu asistente personal de IA en fitness",
-                style = MaterialTheme.typography.bodyMedium.copy(
+                style = MaterialTheme.typography.bodyLarge.copy(
                     color = Color.White
                 ),
                 textAlign = TextAlign.Center,
-                fontSize = 15.sp // Tamaño de fuente
             )
 
-            // Espaciado entre el texto y el botón
+
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Botón con color Aquamarine y texto medium bold con ícono
-            Button(
-                onClick = { navController.navigate("HOME") },
-                shape = RoundedCornerShape(18.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = LightTurquoise),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(65.dp)
-                    .padding(horizontal = 80.dp) // Ajusta el ancho del botón
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "Vamos, ve",
-                        color = Color.White,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Bold // Texto medium bold
-                        )
-                    )
-                    Spacer(modifier = Modifier.width(8.dp)) // Espacio entre texto y ícono
-                    Icon(
-                        imageVector = Icons.Default.ArrowForward,
-                        contentDescription = "Flecha hacia adelante",
-                        tint = Color.White // Ícono de color blanco
-                    )
-                }
-            }
+            PrimaryIconButton(
 
-            // Espaciado entre el botón y el texto de hipervínculo
-            Spacer(modifier = Modifier.height(40.dp)) // Ajusta el espacio según sea necesario
+                modifier = Modifier.width(170.dp).height(55.dp),
 
-            // Texto de hipervínculo con los colores requeridos
+                onClick = {
+
+                    navController.navigate(SIGN_UP)
+
+                },
+                text = "Vamos, ve",
+                arrow = true,
+                color = MaterialTheme.colorScheme.secondary
+            )
+
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Texto de "¿Ya tienes una cuenta?"
+
                 Text(
                     text = "¿Ya tienes una cuenta? ",
-                    color = Color.White, // Texto en blanco
-                    textAlign = TextAlign.Center
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = Color.White
+                    ),
+
                 )
 
-                // Texto de "Inicia sesión" con hipervínculo
+
                 Text(
                     text = "Inicia sesión",
-                    color = LightTurquoise, // Mismo color que el botón
-                    textDecoration = TextDecoration.Underline,
-                    modifier = Modifier.clickable { navController.navigate("LoginScreen") }
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = Color(0xFF26C8E0),
+                        textDecoration = TextDecoration.Underline
+                    ),
+
+                    modifier = Modifier.clickable { navController.navigate(
+                        LOGIN
+                    ) }
                 )
             }
 
-            // Espaciador inferior para separar del borde inferior
-            Spacer(modifier = Modifier.height(64.dp)) // Ajusta esta distancia según tu imagen de fondo
+            Spacer(modifier = Modifier.height(64.dp))
         }
     }
 }

@@ -3,6 +3,7 @@ package com.health.vita.main.presentation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,39 +24,52 @@ import com.health.vita.ui.theme.VitaTheme
 
 @Composable
 fun SplashScreen(navController: NavController = rememberNavController()) {
+
     Box(modifier = Modifier
         .fillMaxSize()
-        .background(MaterialTheme.colorScheme.primary)) { // Fondo MainBlue
+        .background(MaterialTheme.colorScheme.primary)) {
 
-        // Contenedor para centrar el logo y el texto
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center // Centra el contenido verticalmente
+            verticalArrangement = Arrangement.Center
         ) {
-            // Imagen del logo
+
             Image(
-                painter = painterResource(id = R.drawable.logo_vita), // Cambia esto por el nombre de tu logo
+                painter = painterResource(id = R.drawable.vita_icon),
                 contentDescription = "Logo de Vita",
                 modifier = Modifier
-                    .size(200.dp) // Ajusta el tamaño según sea necesario
-                    .aspectRatio(0.4f), // Mantiene la relación de aspecto
-                contentScale = ContentScale.Fit // Cambia a Fit para ajustar sin recortes
+                    .size(150.dp)
+                    .aspectRatio(0.4f),
+                contentScale = ContentScale.Fit
             )
 
-            // Espaciado entre el logo y el texto
-            Spacer(modifier = Modifier.height(40.dp))
+            Text(
+                text = "Vita",
+                style =  MaterialTheme.typography.titleLarge.copy(
+                    color = MaterialTheme.colorScheme.background,
+                    fontWeight = FontWeight.W800
+                )
+            )
 
-            // Texto debajo del logo
+            Spacer(modifier = Modifier.height(30.dp))
+
+
             Text(
                 text = "Tu asistente personal de IA en fitness",
-                color = Color.White,
-                fontSize = 18.sp,
-                //fontWeight = FontWeight.SemiBold, // Texto en semibold
-                textAlign = TextAlign.Center
+                style =  MaterialTheme.typography.bodyLarge.copy(
+                    color = MaterialTheme.colorScheme.background
+                )
             )
+
+            Spacer(modifier = Modifier.height(100.dp))
+
+            CircularProgressIndicator(modifier = Modifier.size(80.dp),
+                color = MaterialTheme.colorScheme.background,
+                strokeWidth = 10.dp )
         }
     }
 }
