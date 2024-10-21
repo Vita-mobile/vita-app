@@ -28,7 +28,8 @@ fun PrimaryIconButton(
     text: String = "Placeholder",
     arrow: Boolean = true,
     color: Color = MaterialTheme.colorScheme.primary,
-    blackContent: Boolean = false
+    blackContent: Boolean = false,
+    enabled: Boolean = true
 ) {
     Button(
         modifier = modifier,
@@ -36,7 +37,8 @@ fun PrimaryIconButton(
         colors = ButtonDefaults.buttonColors(
             color
         ),
-        onClick = onClick
+        onClick = onClick,
+        enabled = enabled
     ) {
         Text(
             text = text,
