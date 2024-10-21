@@ -1,6 +1,5 @@
 package com.health.vita.profile.presentation
 
-import GeneralTopBar
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -27,6 +26,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.R
 import com.health.vita.profile.presentation.viewModel.ProfileViewModel
+import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.profile.UserInfoCard
 import com.health.vita.ui.components.profile.WeeklyBarChart
 import com.health.vita.ui.theme.DarkBlue
@@ -38,9 +38,12 @@ import com.health.vita.ui.theme.White
 @Composable
 fun ProfileScreen(navController: NavController = rememberNavController(), profileViewModel: ProfileViewModel = viewModel()) {
     val userState by profileViewModel.user.observeAsState()
+
+
     LaunchedEffect(true) {
         profileViewModel.getCurrentUser()
     }
+
     if(userState == null) {
         navController.navigate("login")
     }else {
@@ -52,7 +55,7 @@ fun ProfileScreen(navController: NavController = rememberNavController(), profil
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             GeneralTopBar(
-                text = "Regresar",
+                text = "Perfil",
                 hasStep = false,
                 onClick = { navController.navigateUp() })
 
@@ -68,17 +71,17 @@ fun ProfileScreen(navController: NavController = rememberNavController(), profil
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = userState?.name?:"Alejandro Londoño Bermudez",
+                text = userState?.name ?: "Desconocido",
                 color = DarkBlue,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp
             )
 
-            Text(
-                text = "Cali, Colombia",
-                color = MediumGray,
-                fontSize = 14.sp
-            )
+//            Text(
+//                text = "Cali, Colombia",
+//                color = MediumGray,
+//                fontSize = 14.sp
+//            )
 
             Spacer(modifier = Modifier.height(16.dp))
 

@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.health.vita.domain.model.User
-import com.health.vita.register.data.repository.UserRepository
-import com.health.vita.register.data.repository.UserRepositoryImpl
+import com.health.vita.profile.data.repository.UserRepository
+import com.health.vita.profile.data.repository.UserRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

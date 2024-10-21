@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen
-import GeneralTopBar
+import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.VitaTheme
 
