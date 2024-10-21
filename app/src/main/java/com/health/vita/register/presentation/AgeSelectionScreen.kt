@@ -28,13 +28,9 @@ import kotlin.math.abs
 @Composable
 fun AgeSelectionScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
 
-    var selectedAge by remember { mutableIntStateOf(18) } // default age
-
-    //minimum age: 11
+    var selectedAge by remember { mutableIntStateOf(18) }
     val ageRange = (11..99).toList()
     val listState = rememberLazyListState()
-
-    var firstVisibleItemIndex by remember { mutableIntStateOf(0) }
 
 
     LaunchedEffect(Unit) {
@@ -45,7 +41,6 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemIndex }
             .collect { index ->
-                firstVisibleItemIndex = index
                 val newSelectedAge = ageRange.getOrNull(index + 2)
                 if (newSelectedAge != null && newSelectedAge != selectedAge) {
                     selectedAge = newSelectedAge
@@ -63,79 +58,76 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
                     .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    GeneralTopBar(text = "Valoración", step = 1, total = 6, onClick = { navController.navigateUp() })
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Text(
-                        text = "¿Cuál es tu edad?",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                // Barra superior
+                GeneralTopBar(text = "Valoración", step = 1, total = 6, onClick = { navController.navigateUp() })
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = "¿Cuál es tu edad?",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = MaterialTheme.colorScheme.primary
                     )
-                }
+                )
 
-                Spacer(modifier = Modifier.height(130.dp))
+                Spacer(modifier = Modifier.height(60.dp))
 
-                Box {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+
                     LazyColumn(
                         state = listState,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(400.dp),
+                            .height(500.dp).padding(top = 40.dp, bottom = 40.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         itemsIndexed(ageRange) { index, age ->
+                            val distanceFromCenter = abs(index - listState.firstVisibleItemIndex)
+                            val alpha = 1f - (distanceFromCenter * 0.2f)
+                            val scale = if (age == selectedAge) 1.2f else 0.85f
 
-                            // Use the visible index stored in the firstVisibleItemIndex
-                            val distanceFromCenter = abs(index - firstVisibleItemIndex)
-
-                            //design elements
-                            val alpha = 1f - (distanceFromCenter * 0.15f) // Gradual reduction of opacity
-                            val scale = if (age == selectedAge) 1.2f else 0.9f // Scale
-
-                            if (age == selectedAge) {
-
-                                // Selected age
-                                Box(
-                                    modifier = Modifier
-                                        .graphicsLayer {
-                                            scaleX = scale
-                                            scaleY = scale
-                                        }
-                                        .size(100.dp)
-                                        .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(20.dp))
-                                        .padding(8.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "$age",
-                                        fontSize = 58.sp,
-                                        color = Color.White,
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
-                            } else {
-                                // Unselected age
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(68.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "$age",
-                                        fontSize = 52.sp,
-                                        color = Color.Gray.copy(alpha = alpha),
-                                        modifier = Modifier.graphicsLayer(alpha = alpha, scaleX = scale, scaleY = scale),
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(84.dp).padding(vertical = 15.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "$age",
+                                    fontSize = 52.sp,
+                                    color = Color.Gray.copy(alpha = alpha),
+                                    modifier = Modifier.graphicsLayer(
+                                        alpha = alpha,
+                                        scaleX = scale,
+                                        scaleY = scale
+                                    ),
+                                    textAlign = TextAlign.Center
+                                )
                             }
                         }
                     }
+
+
+                    Box(
+                        modifier = Modifier
+                            .size(110.dp)
+                            .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(20.dp))
+                            .padding(8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "$selectedAge",
+                            fontSize = 58.sp,
+                            color = Color.White,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(80.dp))
+                Spacer(modifier = Modifier.height(60.dp))
+
 
                 Column(modifier = Modifier.fillMaxWidth()) {
                     PrimaryIconButton(
@@ -152,6 +144,7 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
         }
     )
 }
+
 
 
 @Preview(showBackground = true)
