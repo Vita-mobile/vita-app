@@ -127,6 +127,7 @@ import com.health.vita.ui.components.profile.Ruler
             PrimaryIconButton(
                 arrow = true,
                 onClick = {
+                    signupViewModel.setWeight(selectedValue.toFloat())
                     navController.navigate(HEIGHT_SELECTION)
                 },
                 blackContent = true,

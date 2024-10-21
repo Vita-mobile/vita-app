@@ -107,7 +107,12 @@ fun FitnessLevelSelectionScreen(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PrimaryIconButton(text = "Continuar", onClick = { navController.navigate(SEX_SELECTION) })
+            PrimaryIconButton(text = "Continuar", onClick = {
+
+                navController.navigate(SEX_SELECTION)
+
+
+            })
         }
 
 

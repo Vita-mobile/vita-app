@@ -143,6 +143,7 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
                         onClick = {
                             if (selectedAge in 11..99) {
                                 navController.navigate(Screen.WEIGHT_SELECTION)
+                                signupViewModel.setAge(selectedAge)
                             }
                         },
                         arrow = true
