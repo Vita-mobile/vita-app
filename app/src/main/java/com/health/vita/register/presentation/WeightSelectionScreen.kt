@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.health.vita.R
+import com.health.vita.core.navigation.Screen.HEIGHT_SELECTION
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.components.profile.Ruler
@@ -125,6 +126,9 @@ import com.health.vita.ui.components.profile.Ruler
 
             PrimaryIconButton(
                 arrow = true,
+                onClick = {
+                    navController.navigate(HEIGHT_SELECTION)
+                },
                 blackContent = true,
                 text = "Continuar",
                 color = MaterialTheme.colorScheme.onPrimary

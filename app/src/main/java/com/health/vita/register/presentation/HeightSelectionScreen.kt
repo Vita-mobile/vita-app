@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.health.vita.R
+import com.health.vita.core.navigation.Screen.FITNESS_LEVEL_SELECTION
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.register.presentation.viewmodel.SignupViewModel
 import com.health.vita.ui.components.general.GeneralTopBar
@@ -127,6 +128,9 @@ fun HeightSelectionScreen(modifier: Modifier = Modifier, navController: NavContr
 
             PrimaryIconButton(
                 arrow = true,
+                onClick = {
+                    navController.navigate(FITNESS_LEVEL_SELECTION)
+                },
                 blackContent = true,
                 text = "Continuar",
                 color = MaterialTheme.colorScheme.onPrimary

@@ -1,9 +1,9 @@
 package com.health.vita.register.presentation
 
-import android.widget.Toast
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -42,6 +41,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen.AGE_SELECTION
+import com.health.vita.core.navigation.Screen.LOGIN
 import com.health.vita.register.presentation.viewmodel.SignupViewModel
 import com.health.vita.ui.components.general.CredentialInput
 import com.health.vita.ui.components.general.PrimaryIconButton
@@ -65,7 +65,7 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
         mutableStateOf("")
     }
 
-    Scaffold() { innerPadding ->
+    Scaffold { innerPadding ->
 
 
         Box(
@@ -117,7 +117,7 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
 
             Column(
                 modifier = Modifier
-                    .fillMaxHeight(0.4F)
+                    .fillMaxHeight(0.35f)
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -152,7 +152,7 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
                 Box(modifier = Modifier.size(24.dp))
             }
 
-            Column (){
+            Column{
 
                 //Credential inputs
 
@@ -217,7 +217,7 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.secondary,
                     textDecoration = TextDecoration.Underline,
-                    modifier = Modifier.clickable { /*TODO*/ }
+                    modifier = Modifier.clickable { navController.navigate(LOGIN)}
                     )
                 }
 

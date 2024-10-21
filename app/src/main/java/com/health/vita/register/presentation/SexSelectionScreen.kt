@@ -48,6 +48,7 @@ import com.health.vita.ui.theme.VitaTheme
 fun SexSelectionScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
 
     val gender by signupViewModel.gender.observeAsState("")
+    //val gender by signupViewModel.gender.observeAsState("")
 
     Scaffold(
 

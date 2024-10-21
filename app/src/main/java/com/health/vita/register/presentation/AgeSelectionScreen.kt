@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,46 +18,40 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.health.vita.auth.presentation.viewmodel.SignupViewModel
+import com.health.vita.core.navigation.Screen
+import com.health.vita.register.presentation.viewmodel.SignupViewModel
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.VitaTheme
-import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 @Composable
 fun AgeSelectionScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
-    var selectedAge by remember { mutableStateOf(19) } // Edad predeterminada
-    val ageRange = (17..99).toList()
 
-    // Estado de la lista para controlar el desplazamiento
+    var selectedAge by remember { mutableIntStateOf(18) } // default age
+
+    //minimum age: 11
+    val ageRange = (11..99).toList()
     val listState = rememberLazyListState()
 
-    // Esto asegura que el selector inicie con el número 19 en el centro
+    var firstVisibleItemIndex by remember { mutableIntStateOf(0) }
+
+
     LaunchedEffect(Unit) {
-        listState.scrollToItem(selectedAge - 17) // Desplaza la lista para que el 19 esté centrado
+        listState.scrollToItem(selectedAge - 11)
     }
 
-    // Observador para actualizar selectedAge basado en el elemento del centro
+
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemIndex }
             .collect { index ->
-                // Calcula el índice del elemento en el centro
-                val centerIndex = index + 2 // 2 porque estamos mostrando 5 elementos (2 arriba, 2 abajo)
-
-                // Asegúrate de que solo actualizas selectedAge si ha cambiado el índice
-                if (centerIndex in ageRange.indices) {
-                    val newSelectedAge = ageRange[centerIndex]
-                    if (newSelectedAge != selectedAge) {
-                        selectedAge = newSelectedAge // Actualiza selectedAge al elemento central solo si ha cambiado
-                    }
+                firstVisibleItemIndex = index
+                val newSelectedAge = ageRange.getOrNull(index + 2)
+                if (newSelectedAge != null && newSelectedAge != selectedAge) {
+                    selectedAge = newSelectedAge
                 }
             }
     }
-
-    // Cantidad de elementos visibles en el picker
-    val visibleItemsCount = 5
-    val centerIndex = visibleItemsCount / 2 // El índice central de los elementos visibles
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -68,66 +63,70 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
                     .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                //GeneralTopBar(text = "Valoración", step = 1, total = 6, onClick = { navController.navigateUp() })
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Text(
-                    text = "¿Cuál es tu edad?",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        color = MaterialTheme.colorScheme.primary
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    GeneralTopBar(text = "Valoración", step = 1, total = 6, onClick = { navController.navigateUp() })
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(
+                        text = "¿Cuál es tu edad?",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     )
-                )
+                }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(130.dp))
 
-                // Picker de edad centrado
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
+                Box {
                     LazyColumn(
                         state = listState,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(240.dp), // Altura del picker visible ajustada para 5 elementos
+                            .height(400.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         itemsIndexed(ageRange) { index, age ->
-                            // Distancia desde el centro
-                            val distanceFromCenter = abs(index - (listState.firstVisibleItemIndex + centerIndex))
-                            val alpha = 1f - (distanceFromCenter * 0.2f) // Transparencia basada en la distancia
 
-                            // Estilo para el número seleccionado
+                            // Use the visible index stored in the firstVisibleItemIndex
+                            val distanceFromCenter = abs(index - firstVisibleItemIndex)
+
+                            //design elements
+                            val alpha = 1f - (distanceFromCenter * 0.15f) // Gradual reduction of opacity
+                            val scale = if (age == selectedAge) 1.2f else 0.9f // Scale
+
                             if (age == selectedAge) {
-                                // Box para centrar y darle estilo al número seleccionado
+
+                                // Selected age
                                 Box(
                                     modifier = Modifier
-                                        .size(90.dp) // Tamaño del cuadrado azul
-                                        .background(MaterialTheme.colorScheme.primary, shape = MaterialTheme.shapes.medium) // Fondo azul y esquinas redondeadas
-                                        .padding(12.dp), // Espacio interno
+                                        .graphicsLayer {
+                                            scaleX = scale
+                                            scaleY = scale
+                                        }
+                                        .size(100.dp)
+                                        .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(20.dp))
+                                        .padding(8.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         text = "$age",
-                                        fontSize = 48.sp, // Tamaño de fuente aumentado
-                                        color = Color.White, // Texto blanco
+                                        fontSize = 58.sp,
+                                        color = Color.White,
                                         textAlign = TextAlign.Center
                                     )
                                 }
                             } else {
-                                // Box para centrar los números no seleccionados
+                                // Unselected age
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(48.dp), // Altura de cada elemento
+                                        .height(68.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         text = "$age",
-                                        fontSize = 36.sp, // Tamaño de fuente aumentado
-                                        color = Color.Gray.copy(alpha = alpha), // Color con transparencia
-                                        modifier = Modifier.graphicsLayer(alpha = alpha),
+                                        fontSize = 52.sp,
+                                        color = Color.Gray.copy(alpha = alpha),
+                                        modifier = Modifier.graphicsLayer(alpha = alpha, scaleX = scale, scaleY = scale),
                                         textAlign = TextAlign.Center
                                     )
                                 }
@@ -136,21 +135,24 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
                     }
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(80.dp))
 
-                PrimaryIconButton(
-                    text = "Continuar",
-                    onClick = {
-                        if (selectedAge in 17..99) {
-                            navController.navigate("weightSelection") // Ir a la pantalla de selección de peso
-                        }
-                    },
-                    arrow = true
-                )
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    PrimaryIconButton(
+                        text = "Continuar",
+                        onClick = {
+                            if (selectedAge in 11..99) {
+                                navController.navigate(Screen.WEIGHT_SELECTION)
+                            }
+                        },
+                        arrow = true
+                    )
+                }
             }
         }
     )
 }
+
 
 @Preview(showBackground = true)
 @Composable
