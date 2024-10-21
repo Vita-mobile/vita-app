@@ -44,79 +44,80 @@ fun FitnessLevelSelectionScreen(
         5 to "Muy activo"
     )
 
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        content = { innerPadding ->
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-
-        GeneralTopBar(text = "Valoración", step = 4, total = 6, onClick = { navController.navigateUp() })
-
-        Spacer(modifier = Modifier.height(35.dp))
-
-        Column(Modifier.weight(1f)) {
-
-            Text(
-                text = "¿Cómo calificarías tu nivel de estado físico?",
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleMedium
-            )
-
-            Spacer(modifier = Modifier.height(60.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp)
+            Column(
+                Modifier.padding(innerPadding)
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Thumb(icon = "?", h = 10, v = 5)
+
+                GeneralTopBar(text = "Valoración", step = 4, total = 6, onClick = { navController.navigateUp() })
+
+                Spacer(modifier = Modifier.height(35.dp))
+
+                Column(Modifier.weight(1f)) {
+
+                    Text(
+                        text = "¿Cómo calificarías tu nivel de estado físico?",
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    Spacer(modifier = Modifier.height(60.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp)
+                    ) {
+                        Thumb(icon = "?", h = 10, v = 5)
+
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .padding(horizontal = 10.dp)
+                        ) {
+                            Text(
+                                text = "Arrastre para ajustar",
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+                    }
+
+
+                    CircularFitnessSlider(
+                        currentValue = sliderPosition.toInt(),
+                        onValueChange = { newValue ->
+                            sliderPosition = newValue.toFloat()
+                            signupViewModel.setActivityLevel(newValue)
+                        },
+                        textForValue = textForValue,
+                        primaryColor = MaterialTheme.colorScheme.primary,
+
+                        )
+
+                }
 
                 Column(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(horizontal = 10.dp)
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 34.dp),
+                    verticalArrangement = Arrangement.Bottom,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = "Arrastre para ajustar",
-                        style = MaterialTheme.typography.labelSmall
-                    )
+                    PrimaryIconButton(text = "Continuar", onClick = { navController.navigate(SEX_SELECTION) })
                 }
+
+
             }
 
+        })
 
-            CircularFitnessSlider(
-                currentValue = sliderPosition.toInt(),
-                onValueChange = { newValue ->
-                    sliderPosition = newValue.toFloat()
-                    signupViewModel.setActivityLevel(newValue)
-                },
-                textForValue = textForValue,
-                primaryColor = MaterialTheme.colorScheme.primary,
-
-            )
-
-        }
-
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = 34.dp),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            PrimaryIconButton(text = "Continuar", onClick = {
-
-                navController.navigate(SEX_SELECTION)
-
-
-            })
-        }
-
-
-    }
 }
 
 @Composable
