@@ -33,7 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.health.vita.R
-import com.health.vita.ui.components.general.GeneralTopBar
+import GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.components.profile.Ruler
 

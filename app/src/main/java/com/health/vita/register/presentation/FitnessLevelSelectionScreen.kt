@@ -34,7 +34,7 @@
     import com.health.vita.core.navigation.Screen.HEIGHT_SELECTION
     import com.health.vita.core.navigation.Screen.SEX_SELECTION
     import com.health.vita.register.presentation.viewmodel.SignupViewModel
-    import com.health.vita.ui.components.general.GeneralTopBar
+    import GeneralTopBar
     import com.health.vita.ui.components.general.PrimaryIconButton
 
 

@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import com.health.vita.R
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.register.presentation.viewmodel.SignupViewModel
-import com.health.vita.ui.components.general.GeneralTopBar
+import GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.components.profile.Ruler
 
