@@ -9,7 +9,7 @@ import com.health.vita.register.data.data_source.UserServiceImpl
 interface UserRepository {
 
     suspend fun createUser(user: User)
-
+    suspend fun getCurrentUser():User?
 }
 
 class UserRepositoryImpl(
@@ -22,5 +22,12 @@ class UserRepositoryImpl(
         userService.createUser(user)
     }
 
+    override suspend fun getCurrentUser(): User? {
+        Firebase.auth.currentUser?.let {
+            return userService.getUserById(it.uid)
+        } ?: run {
+            return null
+        }
+    }
 
 }

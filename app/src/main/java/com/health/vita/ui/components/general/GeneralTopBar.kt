@@ -1,5 +1,3 @@
-package com.health.vita.ui.components.general
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -36,7 +34,8 @@ fun GeneralTopBar(
     step: Int = 1,
     total: Int = 1,
     onClick: () -> Unit,
-    lightMode: Boolean = true
+    lightMode: Boolean = true,
+    hasStep: Boolean = true
 ) {
 
     Row(modifier = modifier) {
@@ -52,7 +51,7 @@ fun GeneralTopBar(
                     .wrapContentSize(Alignment.Center)
                     .clip(CircleShape)
                     .padding(end = 8.dp)
-                    .border(1.dp, if(lightMode) MediumGray else Color(0x66FFFFFF), CircleShape)
+                    .border(1.dp, if (lightMode) MediumGray else Color(0x66FFFFFF), CircleShape)
             ) {
                 IconButton(
                     onClick = onClick
@@ -66,26 +65,30 @@ fun GeneralTopBar(
                     )
                 }
             }
-
+            if (!hasStep){
+                Box(modifier = Modifier.weight(0.5f))
+            }
             Text(
                 text = text,
                 style = MaterialTheme.typography.titleMedium,
                 color = if (lightMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onPrimary
             )
             Box(modifier = Modifier.weight(1f))
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(TranslucentBlue)
-                    .wrapContentSize(Alignment.Center)
-                    .padding(8.dp)
-            ) {
-                Text(
-                    text = "$step de $total",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = DarkBlue,
-                    modifier = Modifier.align(Alignment.Center)
-                )
+            if (hasStep){
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(TranslucentBlue)
+                        .wrapContentSize(Alignment.Center)
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = "$step de $total",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = DarkBlue,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
             }
 
         }
