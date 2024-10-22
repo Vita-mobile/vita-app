@@ -22,13 +22,13 @@ private val DarkColorScheme = darkColorScheme(
 
 private val LightColorScheme = lightColorScheme(
 
-    primary = MainBlue , //Main color
-    onPrimary = White, //Color of text or icons overlaying the primary color
-    secondary = LightTurquoise, //Complementary color - Secondary color used in some elements of the app
+    primary = MainBlue, // Primary color of the app - It's the most frequent
+    onPrimary = White, // Text or icons that overlay the primary color - Used for contrast with the primary color
+    secondary = LightTurquoise, // Secondary color used in some elements of the app (Complementary)
     tertiary = Aquamarine,
-    background = White, //Background color
-    onBackground = Black, //Color of the text that will be superimposed on the background of the app
-    surface = LightGray, //Elements that can overlap (e.g. pop-ups)
+    background = White, // Background color of the entire application
+    onBackground = Black, // Color of the text of elements that overlay the background
+    surface = LightGray, // Elements that may overlay (e.g., Pop-ups)
     onSurface = Black,
     surfaceContainer = LightTurquoise2
 )
@@ -37,7 +37,6 @@ private val LightColorScheme = lightColorScheme(
 fun VitaTheme(
 
     content: @Composable () -> Unit
-
 ) {
     val colorScheme = LightColorScheme
 

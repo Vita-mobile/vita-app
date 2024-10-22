@@ -6,6 +6,7 @@ object Screen {
     const val SPLASH_SCREEN = "SplashScreen"
     const val WELCOME_SCREEN = "WelcomeScreen"
     const val ACCOUNT_SETTINGS = "AccountSettings"
+    const val LOAD_SIMULATION = "LoadSimulationScreen"
 
     // Auth
     const val LOGIN = "LogIn"

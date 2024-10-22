@@ -48,6 +48,7 @@ import com.health.vita.ui.theme.VitaTheme
 fun SexSelectionScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
 
     val gender by signupViewModel.gender.observeAsState("")
+    //val gender by signupViewModel.gender.observeAsState("")
 
     Scaffold(
 
@@ -108,9 +109,8 @@ fun SexSelectionScreen(navController: NavController = rememberNavController(), s
                     onClick = {
 
                         if(gender.isNotEmpty()){
-
+                            signupViewModel.setGender(gender)
                             navController.navigate(Screen.FITNESS_GOAL_SELECTION)
-
                         }else{
 
                             Toast.makeText(navController.context, "Realiza la selección de uno de los dos campos", Toast.LENGTH_LONG).show()

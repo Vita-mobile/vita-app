@@ -232,7 +232,7 @@ fun LoginScreen(
 
 
                         navController.navigate(Screen.PROFILE)
-    
+        
                     }
 
                     is UiState.Error -> {

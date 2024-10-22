@@ -1,5 +1,6 @@
 package com.health.vita.register.presentation
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -36,7 +37,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.health.vita.R
 import com.health.vita.core.utils.error_management.AppError
 import com.health.vita.core.utils.states_management.UiState
@@ -47,10 +50,19 @@ import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.VitaTheme
 
 @Composable
-fun FitnessGoalSelectionScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
+fun FitnessGoalSelectionScreen(
+    navController: NavController = rememberNavController(),
+    signupViewModel: SignupViewModel = viewModel()
+) {
 
     val selectedObjective by signupViewModel.goal.observeAsState("")
     val uiState by signupViewModel.uiState.observeAsState(UiState.Idle)
+
+    var infoSingup by remember {
+
+        mutableStateOf("")
+    }
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -64,7 +76,11 @@ fun FitnessGoalSelectionScreen(navController: NavController = rememberNavControl
             ) {
                 Box(modifier = Modifier.width(16.dp))
 
-                GeneralTopBar(text = "Valoración", step = 6, total = 6, onClick = { navController.navigateUp() })
+                GeneralTopBar(
+                    text = "Valoración",
+                    step = 6,
+                    total = 6,
+                    onClick = { navController.navigateUp() })
 
                 Column(
                     modifier = Modifier.padding(top = 16.dp),
@@ -116,10 +132,16 @@ fun FitnessGoalSelectionScreen(navController: NavController = rememberNavControl
                     text = "Comenzar",
                     onClick = {
                         if (selectedObjective.isNotEmpty()) {
+
+                            signupViewModel.setGoal(selectedObjective)
                             signupViewModel.registerOperation()
                         } else {
 
-                            Toast.makeText(navController.context, "Realiza la selección de uno de los dos campos", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                navController.context,
+                                "Realiza la selección de uno de los dos campos",
+                                Toast.LENGTH_LONG
+                            ).show()
 
 
                         }
@@ -131,19 +153,41 @@ fun FitnessGoalSelectionScreen(navController: NavController = rememberNavControl
 
                     is UiState.Idle -> {
 
+                        infoSingup = ""
+
                     }
 
                     is UiState.Loading -> {
+
+
                         CircularProgressIndicator()
                     }
+
                     is UiState.Success -> {
-                        SuccessIndicator()
+
+                        infoSingup = "Registro exitoso"
+
+
                     }
+
                     is UiState.Error -> {
+
+
                         val error = (uiState as UiState.Error).error
-                        ErrorDialog(error = error)
+                        Log.e( "SING-UP", error.message)
+                        infoSingup = "Error al realizar el registro."
+
                     }
+
                 }
+
+                Text(
+                    text = infoSingup,
+                    style = MaterialTheme.typography.labelSmall,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     )
@@ -155,8 +199,10 @@ fun ObjectiveSelectionCard(text: String, iconId: Int, selected: Boolean, onClick
         onClick = onClick,
         shape = RoundedCornerShape(22.dp),
         border = if (selected) BorderStroke(4.dp, Color(0xFFC8E6F7)) else null,
-        colors = CardDefaults.cardColors(containerColor = if (selected) MaterialTheme.colorScheme.primary else
-            Color(0xFFF3F3F4)),
+        colors = CardDefaults.cardColors(
+            containerColor = if (selected) MaterialTheme.colorScheme.primary else
+                Color(0xFFF3F3F4)
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .height(83.dp)
@@ -172,7 +218,7 @@ fun ObjectiveSelectionCard(text: String, iconId: Int, selected: Boolean, onClick
 
             Row(
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 Icon(
                     painter = painterResource(id = iconId),
                     contentDescription = null,
@@ -198,35 +244,6 @@ fun ObjectiveSelectionCard(text: String, iconId: Int, selected: Boolean, onClick
         }
     }
 }
-
-@Composable
-fun SuccessIndicator() {
-    AlertDialog(
-        onDismissRequest = { TODO() },
-        title = { Text(text = "Éxito") },
-        text = { Text(text = "La operación se completó exitosamente.") },
-        confirmButton = {
-            TextButton(onClick = { TODO() }) {
-                Text("OK")
-            }
-        }
-    )
-}
-
-@Composable
-fun ErrorDialog(error: AppError) {
-    AlertDialog(
-        onDismissRequest = { TODO() },
-        title = { Text(text = "Error") },
-        text = { Text(text = error.message) },
-        confirmButton = {
-            TextButton(onClick = { TODO() }) {
-                Text("OK")
-            }
-        }
-    )
-}
-
 
 @Preview(showBackground = true)
 @Composable
