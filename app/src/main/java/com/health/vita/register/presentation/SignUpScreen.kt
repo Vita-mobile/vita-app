@@ -53,7 +53,11 @@ import com.health.vita.ui.theme.VitaTheme
 @Composable
 fun SignUpScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
 
-    var fullName by remember {
+    var name by remember {
+        mutableStateOf("")
+    }
+
+    var lastName by remember {
         mutableStateOf("")
     }
 
@@ -155,10 +159,19 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
 
                 CredentialInput(
                     "Nombre",
-                    fullName,
+                    name,
                     icon = R.drawable.outline_person_24,
                     "Name icon",
-                    onValueChange = { newValue -> fullName = newValue })
+                    onValueChange = { newValue -> name = newValue })
+
+                Box(modifier = Modifier.size(20.dp))
+
+                CredentialInput(
+                    "Apellido",
+                    lastName,
+                    icon = R.drawable.outline_person_24,
+                    "Name icon",
+                    onValueChange = { newValue -> lastName = newValue })
 
                 Box(modifier = Modifier.size(20.dp))
 
@@ -178,16 +191,17 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
                     isPassword = true
                 )
 
-                Spacer(modifier = Modifier.height(50.dp))
+                Spacer(modifier = Modifier.height(40.dp))
 
                 PrimaryIconButton(
-                    text = "Comenzar",
-                    enabled = fullName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty(),
+                    text = "Registrarme",
+                    enabled = name.isNotEmpty() && lastName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty(),
                     onClick = {
                        navController.navigate(AGE_SELECTION)
 
                         signupViewModel.setEmail(email)
-                        signupViewModel.setName(fullName)
+                        signupViewModel.setName(name)
+                        signupViewModel.setLastName(lastName)
                         signupViewModel.setPassword(password)
                     },
                     color = Color.Black,

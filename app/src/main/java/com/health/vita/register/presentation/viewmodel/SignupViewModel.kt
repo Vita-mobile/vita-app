@@ -29,6 +29,9 @@ class SignupViewModel(
     private val _name = MutableLiveData("")
     val name: LiveData<String> get() = _name
 
+    private val _lastName = MutableLiveData("")
+    val lastName: LiveData<String> get() = _lastName
+
     private val _password = MutableLiveData("")
     val password: LiveData<String> get() = _password
 
@@ -67,6 +70,10 @@ class SignupViewModel(
 
     fun setName(name: String) {
         _name.value = name
+    }
+
+    fun setLastName(lastName: String) {
+        _lastName.value = lastName
     }
 
     fun setEmail(email: String) {
@@ -114,6 +121,7 @@ class SignupViewModel(
                 val user = User(
                     id = "",
                     name = _name.value ?: "",
+                    lastName = _lastName.value ?: "",
                     email = _email.value ?: "",
                     //photoUri = _photoUri.value ?: "",
                     weight = (_weight.value ?: 0f),
