@@ -46,7 +46,6 @@ import com.health.vita.ui.theme.VitaTheme
     val maxKgs = 200
     val maxLbs = 400
     var selectedValue by remember { mutableStateOf(50) }
-    var selectedUnit by remember { mutableStateOf("Kg") }
     var quantity by remember { mutableStateOf(maxKgs) }
 
     Scaffold(
@@ -77,46 +76,12 @@ import com.health.vita.ui.theme.VitaTheme
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                    Button(
-                        onClick = { selectedUnit = "Kg"; quantity = maxKgs },
-                        modifier = Modifier
-                            .width(130.dp)
-                            .height(46.dp),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    ) {
-                        Text(
-                            text = "Kg",
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    Button(
-                        onClick = { selectedUnit = "Lbs"; quantity = maxLbs },
-                        modifier = Modifier
-                            .width(130.dp)
-                            .height(46.dp),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    ) {
-                        Text(
-                            text = "Lbs",
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 30.dp, end = 30.dp),
                     textAlign = TextAlign.Center,
-                    text = "$selectedValue $selectedUnit",
+                    text = "$selectedValue Kg",
                     style = TextStyle(
                         fontFamily = FontFamily(
                             Font(R.font.work_sans)

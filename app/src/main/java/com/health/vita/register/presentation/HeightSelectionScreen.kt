@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.health.vita.R
@@ -40,13 +41,13 @@ import com.health.vita.register.presentation.viewmodel.SignupViewModel
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.components.profile.Ruler
+import com.health.vita.ui.theme.VitaTheme
 
 @Composable
 fun HeightSelectionScreen(modifier: Modifier = Modifier, navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
     val maxCm = 240
     val maxIn = 100
     var selectedValue by remember { mutableStateOf(170) }
-    var selectedUnit by remember { mutableStateOf("Cm") }
     var quantity by remember { mutableStateOf(maxCm) }
     val uiState by signupViewModel.uiState.observeAsState(UiState.Idle)
     Scaffold(
@@ -77,46 +78,12 @@ fun HeightSelectionScreen(modifier: Modifier = Modifier, navController: NavContr
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                    Button(
-                        onClick = { selectedUnit = "Cm"; quantity = maxCm },
-                        modifier = Modifier
-                            .width(130.dp)
-                            .height(46.dp),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    ) {
-                        Text(
-                            text = "Cm",
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    Button(
-                        onClick = { selectedUnit = "In"; quantity = maxIn },
-                        modifier = Modifier
-                            .width(130.dp)
-                            .height(46.dp),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    ) {
-                        Text(
-                            text = "In",
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 30.dp, end = 30.dp),
                     textAlign = TextAlign.Center,
-                    text = "$selectedValue $selectedUnit",
+                    text = "$selectedValue Cm",
                     style = TextStyle(
                         fontFamily = FontFamily(
                             Font(R.font.work_sans)
@@ -143,4 +110,12 @@ fun HeightSelectionScreen(modifier: Modifier = Modifier, navController: NavContr
             }
         })
 
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HeightSelectionPreview() {
+    VitaTheme {
+        HeightSelectionScreen(signupViewModel = SignupViewModel())
+    }
 }
