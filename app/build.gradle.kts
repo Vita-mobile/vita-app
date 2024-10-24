@@ -88,6 +88,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.5")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0")
 
-
+    //Transitions dependencies
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.32.0")
 
 }
