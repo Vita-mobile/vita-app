@@ -33,7 +33,7 @@ import com.health.vita.ui.theme.VitaTheme
 @Composable
 fun FitnessLevelSelectionScreen(
     navController: NavController = rememberNavController(),
-    signupViewModel: SignupViewModel
+    signupViewModel: SignupViewModel = viewModel()
 ) {
     var sliderPosition by remember { mutableStateOf(signupViewModel.activityLevel.value?.toFloat() ?: 1f) }
     val textForValue = mapOf(

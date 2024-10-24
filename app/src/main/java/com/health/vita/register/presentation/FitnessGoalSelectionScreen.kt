@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.health.vita.R
+import com.health.vita.core.utils.DatabaseNames
 import com.health.vita.core.utils.error_management.AppError
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.register.presentation.viewmodel.SignupViewModel
@@ -55,7 +56,7 @@ fun FitnessGoalSelectionScreen(
     signupViewModel: SignupViewModel = viewModel()
 ) {
 
-    val selectedObjective by signupViewModel.goal.observeAsState("")
+    val physicalTarget by remember { mutableStateOf("") }
     val uiState by signupViewModel.uiState.observeAsState(UiState.Idle)
 
     var infoSingup by remember {
@@ -100,29 +101,29 @@ fun FitnessGoalSelectionScreen(
                     ObjectiveSelectionCard(
                         text = "Perder peso",
                         iconId = R.drawable.rounded_monitor_weight_24,
-                        selected = selectedObjective == "Perder peso",
-                        onClick = { signupViewModel.setGoal("Perder peso") }
+                        selected = physicalTarget == DatabaseNames.physicalTarget[1],
+                        onClick = { signupViewModel.setGoal( DatabaseNames.physicalTarget[1]?:"") }
                     )
 
                     ObjectiveSelectionCard(
                         text = "Probar el coach de IA",
                         iconId = R.drawable.outline_on_device_training_24,
-                        selected = selectedObjective == "Probar el coach de IA",
-                        onClick = { signupViewModel.setGoal("Probar el coach de IA") }
+                        selected = physicalTarget == DatabaseNames.physicalTarget[2],
+                        onClick = { signupViewModel.setGoal( DatabaseNames.physicalTarget[2]?:"") }
                     )
 
                     ObjectiveSelectionCard(
                         text = "Ganar masa muscular",
                         iconId = R.drawable.round_fitness_center_24,
-                        selected = selectedObjective == "Ganar masa muscular",
-                        onClick = { signupViewModel.setGoal("Ganar masa muscular") }
+                        selected = physicalTarget == DatabaseNames.physicalTarget[3],
+                        onClick = { signupViewModel.setGoal(DatabaseNames.physicalTarget[3]?:"") }
                     )
 
                     ObjectiveSelectionCard(
                         text = "Mejorar mi alimentación",
                         iconId = R.drawable.rounded_monitor_heart_24,
-                        selected = selectedObjective == "Mejorar mi alimentación",
-                        onClick = { signupViewModel.setGoal("Mejorar mi alimentación") }
+                        selected = physicalTarget == DatabaseNames.physicalTarget[4],
+                        onClick = { signupViewModel.setGoal(DatabaseNames.physicalTarget[4]?:"") }
                     )
                 }
 
@@ -131,9 +132,9 @@ fun FitnessGoalSelectionScreen(
                 PrimaryIconButton(
                     text = "Comenzar",
                     onClick = {
-                        if (selectedObjective.isNotEmpty()) {
+                        if (physicalTarget.isNotEmpty()) {
 
-                            signupViewModel.setGoal(selectedObjective)
+                            signupViewModel.setGoal(physicalTarget)
                             signupViewModel.registerOperation()
                         } else {
 

@@ -116,12 +116,13 @@ class SignupViewModel(
                     name = _name.value ?: "",
                     email = _email.value ?: "",
                     //photoUri = _photoUri.value ?: "",
-                    weight = (_weight.value ?: 0f),
                     age = _age.value ?: 0,
+                    weight = (_weight.value ?: 0f),
                     height = (_height.value ?: 0f),
-                    gender = _gender.value ?: "",
-                    goal = _goal.value ?: "",
-                    activityLevel = _activityLevel.value ?: 0
+                    activityLevel = _activityLevel.value ?: 0,
+                    sex = _gender.value ?: "",
+                    physicalTarget = _goal.value ?: "",
+
                 )
 
                 signUpRepository.signup(user, _password.value ?: "")

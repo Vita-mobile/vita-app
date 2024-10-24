@@ -28,13 +28,13 @@ import kotlin.math.abs
 @Composable
 fun AgeSelectionScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
 
-    var selectedAge by remember { mutableIntStateOf(18) }
+    var age by remember { mutableIntStateOf(18) }
     val ageRange = (11..99).toList()
     val listState = rememberLazyListState()
 
 
     LaunchedEffect(Unit) {
-        listState.scrollToItem(selectedAge - 11)
+        listState.scrollToItem(age - 11)
     }
 
 
@@ -42,8 +42,8 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
         snapshotFlow { listState.firstVisibleItemIndex }
             .collect { index ->
                 val newSelectedAge = ageRange.getOrNull(index + 2)
-                if (newSelectedAge != null && newSelectedAge != selectedAge) {
-                    selectedAge = newSelectedAge
+                if (newSelectedAge != null && newSelectedAge != age) {
+                    age = newSelectedAge
                 }
             }
     }
@@ -83,10 +83,10 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
                             .height(500.dp).padding(top = 40.dp, bottom = 40.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        itemsIndexed(ageRange) { index, age ->
+                        itemsIndexed(ageRange) { index, unselectedAge ->
                             val distanceFromCenter = abs(index - listState.firstVisibleItemIndex)
                             val alpha = 1f - (distanceFromCenter * 0.2f)
-                            val scale = if (age == selectedAge) 1.2f else 0.85f
+                            val scale = if (unselectedAge == age ) 1.2f else 0.85f
 
                             Box(
                                 modifier = Modifier
@@ -95,7 +95,7 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "$age",
+                                    text = "$unselectedAge",
                                     fontSize = 52.sp,
                                     color = Color.Gray.copy(alpha = alpha),
                                     modifier = Modifier.graphicsLayer(
@@ -118,7 +118,7 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "$selectedAge",
+                            text = "$age",
                             fontSize = 58.sp,
                             color = Color.White,
                             textAlign = TextAlign.Center
@@ -133,9 +133,9 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
                     PrimaryIconButton(
                         text = "Continuar",
                         onClick = {
-                            if (selectedAge in 11..99) {
+                            if (age in 11..99) {
                                 navController.navigate(Screen.WEIGHT_SELECTION)
-                                signupViewModel.setAge(selectedAge)
+                                signupViewModel.setAge(age)
                             }
                         },
                         arrow = true
