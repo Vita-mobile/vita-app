@@ -45,8 +45,8 @@ import com.health.vita.core.utils.DatabaseNames
 import com.health.vita.core.utils.error_management.AppError
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.register.presentation.viewmodel.SignupViewModel
-
 import com.health.vita.ui.components.general.GeneralTopBar
+
 import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.VitaTheme
 

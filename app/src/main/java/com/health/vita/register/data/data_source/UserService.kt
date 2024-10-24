@@ -1,11 +1,9 @@
 package com.health.vita.register.data.data_source
 
-
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.health.vita.domain.model.User
 import kotlinx.coroutines.tasks.await
-
 
 interface UserService {
 
