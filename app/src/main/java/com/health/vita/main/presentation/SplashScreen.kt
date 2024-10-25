@@ -22,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.tooling.preview.Preview
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen
+import com.health.vita.core.navigation.Screen.HOME
 import com.health.vita.core.navigation.Screen.PROFILE
 import com.health.vita.core.navigation.Screen.WELCOME_SCREEN
 import com.health.vita.ui.theme.VitaTheme
@@ -81,7 +82,7 @@ fun SplashScreen(navController: NavController = rememberNavController()) {
             )
             LaunchedEffect(Unit) {
                 delay(1000) // 5000 milisegundos = 5 segundos
-                navController.navigate(PROFILE)
+                navController.navigate(HOME)
             }
         }
     }
