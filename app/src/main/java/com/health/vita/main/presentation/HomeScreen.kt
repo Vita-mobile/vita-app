@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavController
 import com.health.vita.R
+import com.health.vita.core.navigation.Screen.ACCOUNT_SETTINGS
 import com.health.vita.core.navigation.Screen.LOGIN
 import com.health.vita.core.navigation.Screen.PROFILE
 import com.health.vita.profile.presentation.viewModel.ProfileViewModel
@@ -49,9 +50,8 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize(),
             content = { innerPadding ->
                 Column(modifier = Modifier.padding(innerPadding)) {
-                    ProfileCard(name = "${userState?.name}"){
-                        navController.navigate(PROFILE)
-                    }
+                    ProfileCard(name = "${userState?.name}", onClick = {navController.navigate(PROFILE)}, onClickButton1 = {}, onClickButton2 = {navController.navigate(
+                        ACCOUNT_SETTINGS)})
                     Column(
                         modifier = Modifier
                             .padding(innerPadding)

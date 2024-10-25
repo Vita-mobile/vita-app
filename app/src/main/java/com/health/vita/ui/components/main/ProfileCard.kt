@@ -28,7 +28,10 @@ val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale("es"))
 fun ProfileCard(
     name: String = "John",
     date: Timestamp = Timestamp.now(),
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onClickButton1:  () -> Unit,
+    onClickButton2:  () -> Unit
+
 ) {
     Column(){
         Row(
@@ -69,12 +72,14 @@ fun ProfileCard(
             ) {
                 CircularIconOutlinedIconButton(
                     icon = R.drawable.baseline_notifications_24,
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
+                    onClick = onClickButton1
                 )
                 CircularIconOutlinedIconButton(
                     icon = R.drawable.baseline_settings_24,
-                    color = MaterialTheme.colorScheme.background
-                )
+                    color = MaterialTheme.colorScheme.background,
+                    onClick = onClickButton2
+                    )
             }
 
         }
@@ -94,8 +99,7 @@ fun ProfileCard(
 @Composable
 fun PrevProfCard(){
     VitaTheme {
-        ProfileCard(){
-
+        ProfileCard(onClick = {}, onClickButton1 =  {}){
         }
     }
 }

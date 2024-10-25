@@ -30,11 +30,11 @@ import com.health.vita.R
 @Composable
 fun CircularIconOutlinedIconButton(
     @DrawableRes icon: Int,
-    onClick: () -> Unit = {},
-    color: Color = Color.White
-) {
+    color: Color = Color.White,
+    onClick: () -> Unit
+    ) {
     OutlinedIconButton(
-        onClick = { onClick },
+        onClick =  onClick ,
         modifier = Modifier.size(56.dp),
         colors = IconButtonDefaults.outlinedIconButtonColors(
             containerColor = Color.Transparent,
@@ -49,5 +49,5 @@ fun CircularIconOutlinedIconButton(
 @Preview(showBackground = false)
 @Composable
 fun prev(){
-    CircularIconOutlinedIconButton(icon = R.drawable.baseline_notifications_24)
+    CircularIconOutlinedIconButton(icon = R.drawable.baseline_notifications_24){}
 }
