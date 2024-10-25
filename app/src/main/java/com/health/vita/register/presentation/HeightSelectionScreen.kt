@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen.FITNESS_LEVEL_SELECTION
 import com.health.vita.core.utils.states_management.UiState
@@ -44,9 +45,12 @@ import com.health.vita.ui.components.profile.Ruler
 import com.health.vita.ui.theme.VitaTheme
 
 @Composable
-fun HeightSelectionScreen(modifier: Modifier = Modifier, navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
+fun HeightSelectionScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController = rememberNavController(),
+    signupViewModel: SignupViewModel = viewModel()
+) {
     val maxCm = 240
-    val maxIn = 100
     var selectedValue by remember { mutableStateOf(170) }
     var quantity by remember { mutableStateOf(maxCm) }
     val uiState by signupViewModel.uiState.observeAsState(UiState.Idle)
@@ -55,57 +59,67 @@ fun HeightSelectionScreen(modifier: Modifier = Modifier, navController: NavContr
         content = { innerPadding ->
 
             Column(
-                modifier = modifier.padding(innerPadding)
+                modifier = modifier
+                    .padding(innerPadding)
                     .fillMaxSize()
                     .background(color = MaterialTheme.colorScheme.primary),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                //Modo Claro
-                GeneralTopBar(
-                    text = "Valoración",
-                    step = 2,
-                    total = 6,
-                    onClick = { navController.navigateUp() },
-                    lightMode = false,
-                )
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 30.dp, end = 30.dp),
-                    textAlign = TextAlign.Center,
-                    text = "¿Cuál es tu altura actual?",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 30.dp, end = 30.dp),
-                    textAlign = TextAlign.Center,
-                    text = "$selectedValue Cm",
-                    style = TextStyle(
-                        fontFamily = FontFamily(
-                            Font(R.font.work_sans)
-                        ), fontSize = 47.sp, fontWeight = FontWeight.SemiBold
-                    ),
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-                Ruler(quantity = quantity, onValueChange = { newValue ->
-                    selectedValue = newValue
-                    signupViewModel.setHeight(newValue.toFloat())
-                })
-                Box(modifier = Modifier.padding(bottom = 36.dp)) {
+                Column(modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp)) {
+                    //Modo Claro
+                    GeneralTopBar(
+                        text = "Valoración",
+                        step = 2,
+                        total = 6,
+                        onClick = { navController.navigateUp() },
+                        lightMode = false,
+                    )
+                    Box(modifier = Modifier.weight(1f))
 
-                    PrimaryIconButton(
-                        arrow = true,
-                        onClick = {
-                            navController.navigate(FITNESS_LEVEL_SELECTION)
-                        },
-                        blackContent = true,
-                        text = "Continuar",
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 30.dp, end = 30.dp),
+                        textAlign = TextAlign.Center,
+                        text = "¿Cuál es tu altura actual?",
+                        style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
+                    Box(modifier = Modifier.weight(1f))
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 30.dp, end = 30.dp),
+                        textAlign = TextAlign.Center,
+                        text = "$selectedValue Cm",
+                        style = TextStyle(
+                            fontFamily = FontFamily(
+                                Font(R.font.work_sans)
+                            ), fontSize = 47.sp, fontWeight = FontWeight.SemiBold
+                        ),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Box(modifier = Modifier.weight(1f))
+                    Ruler(quantity = quantity, onValueChange = { newValue ->
+                        selectedValue = newValue
+                        signupViewModel.setHeight(newValue.toFloat())
+                    })
+
+                    Box(modifier = Modifier.weight(1f))
+                    Box(modifier = Modifier.padding(bottom = 36.dp)) {
+                        PrimaryIconButton(
+                            arrow = true,
+                            onClick = {
+                                navController.navigate(FITNESS_LEVEL_SELECTION)
+                            },
+                            blackContent = true,
+                            text = "Continuar",
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
                 }
             }
         })

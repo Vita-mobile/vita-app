@@ -41,11 +41,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.health.vita.R
+import com.health.vita.core.navigation.Screen
+import com.health.vita.core.utils.DatabaseNames
 import com.health.vita.core.utils.error_management.AppError
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.register.presentation.viewmodel.SignupViewModel
-
 import com.health.vita.ui.components.general.GeneralTopBar
+
 import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.VitaTheme
 
@@ -55,7 +57,7 @@ fun FitnessGoalSelectionScreen(
     signupViewModel: SignupViewModel = viewModel()
 ) {
 
-    val selectedObjective by signupViewModel.goal.observeAsState("")
+    var physicalTarget by remember { mutableStateOf("") }
     val uiState by signupViewModel.uiState.observeAsState(UiState.Idle)
 
     var infoSingup by remember {
@@ -97,57 +99,64 @@ fun FitnessGoalSelectionScreen(
                 Spacer(modifier = Modifier.height(130.dp))
 
                 Column {
-                    ObjectiveSelectionCard(
-                        text = "Perder peso",
-                        iconId = R.drawable.rounded_monitor_weight_24,
-                        selected = selectedObjective == "Perder peso",
-                        onClick = { signupViewModel.setGoal("Perder peso") }
+
+                    val physicalTargets = listOf(
+                        Pair("Perder peso", R.drawable.rounded_monitor_weight_24),
+                        Pair("Probar el coach de IA", R.drawable.outline_on_device_training_24),
+                        Pair("Ganar masa muscular", R.drawable.round_fitness_center_24),
+                        Pair("Mejorar mi alimentación", R.drawable.rounded_monitor_heart_24)
                     )
 
-                    ObjectiveSelectionCard(
-                        text = "Probar el coach de IA",
-                        iconId = R.drawable.outline_on_device_training_24,
-                        selected = selectedObjective == "Probar el coach de IA",
-                        onClick = { signupViewModel.setGoal("Probar el coach de IA") }
-                    )
+                    physicalTargets.mapIndexed { index, target ->
 
-                    ObjectiveSelectionCard(
-                        text = "Ganar masa muscular",
-                        iconId = R.drawable.round_fitness_center_24,
-                        selected = selectedObjective == "Ganar masa muscular",
-                        onClick = { signupViewModel.setGoal("Ganar masa muscular") }
-                    )
-
-                    ObjectiveSelectionCard(
-                        text = "Mejorar mi alimentación",
-                        iconId = R.drawable.rounded_monitor_heart_24,
-                        selected = selectedObjective == "Mejorar mi alimentación",
-                        onClick = { signupViewModel.setGoal("Mejorar mi alimentación") }
-                    )
+                        ObjectiveSelectionCard(
+                            text = target.first,
+                            iconId = target.second,
+                            selected = physicalTarget == DatabaseNames.physicalTarget[index + 1],
+                            onClick = {
+                                physicalTarget = DatabaseNames.physicalTarget[index + 1] ?: ""
+                                signupViewModel.setGoal(
+                                    DatabaseNames.physicalTarget[index + 1] ?: ""
+                                )
+                            }
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(130.dp))
-
-                PrimaryIconButton(
-                    text = "Comenzar",
-                    onClick = {
-                        if (selectedObjective.isNotEmpty()) {
-
-                            signupViewModel.setGoal(selectedObjective)
-                            signupViewModel.registerOperation()
-                        } else {
-
-                            Toast.makeText(
-                                navController.context,
-                                "Realiza la selección de uno de los dos campos",
-                                Toast.LENGTH_LONG
-                            ).show()
-
-
-                        }
-                    },
-                    arrow = true
+                Text(
+                    text = infoSingup,
+                    style = MaterialTheme.typography.labelSmall,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth()
                 )
+
+                Box(modifier = Modifier.weight(1f))
+                Box(modifier = Modifier.padding(bottom = 36.dp)) {
+
+                    PrimaryIconButton(
+                        text = "Comenzar",
+                        onClick = {
+                            if (physicalTarget.isNotEmpty()) {
+
+                                signupViewModel.setGoal(physicalTarget)
+                                signupViewModel.registerOperation()
+                            } else {
+
+                                Toast.makeText(
+                                    navController.context,
+                                    "Realiza la selección de uno de los dos campos",
+                                    Toast.LENGTH_LONG
+                                ).show()
+
+
+                            }
+                        },
+                        arrow = true
+                    )
+
+                }
+
 
                 when (uiState) {
 
@@ -166,6 +175,7 @@ fun FitnessGoalSelectionScreen(
                     is UiState.Success -> {
 
                         infoSingup = "Registro exitoso"
+                        navController.navigate(Screen.PROFILE)
 
 
                     }
@@ -181,13 +191,7 @@ fun FitnessGoalSelectionScreen(
 
                 }
 
-                Text(
-                    text = infoSingup,
-                    style = MaterialTheme.typography.labelSmall,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.fillMaxWidth()
-                )
+
             }
         }
     )
