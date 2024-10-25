@@ -40,7 +40,7 @@ class SignupViewModel(
     private val _photoUri = MutableLiveData("")
     val photoUri: LiveData<String> get() = _photoUri
 
-    private val _age = MutableLiveData(0)
+    private val _age = MutableLiveData(18)
     val age: LiveData<Int> get() = _age
 
     private val _weight = MutableLiveData(0f)

@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,14 +28,20 @@ import com.health.vita.ui.theme.VitaTheme
 import kotlin.math.abs
 
 @Composable
-fun AgeSelectionScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel = viewModel()) {
+fun AgeSelectionScreen(
+    navController: NavController = rememberNavController(),
+    signupViewModel: SignupViewModel = viewModel()
+) {
 
-    var age by remember { mutableIntStateOf(18) }
+    val ageObserver by signupViewModel.age.observeAsState(18)
+
+    var age by remember { mutableStateOf(0) }
     val ageRange = (11..99).toList()
     val listState = rememberLazyListState()
 
 
     LaunchedEffect(Unit) {
+        age = ageObserver
         listState.scrollToItem(age - 11)
     }
 
@@ -59,8 +66,12 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
                     .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Barra superior
-                GeneralTopBar(text = "Valoración", step = 1, total = 6, onClick = { navController.navigateUp() })
+
+                GeneralTopBar(
+                    text = "Valoración",
+                    step = 1,
+                    total = 6,
+                    onClick = { navController.navigateUp() })
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
                     text = "¿Cuál es tu edad?",
@@ -69,11 +80,12 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
                     )
                 )
 
-                Spacer(modifier = Modifier.height(60.dp))
+                Box(modifier = Modifier.weight(1f))
 
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                    ,
                     contentAlignment = Alignment.Center
                 ) {
 
@@ -81,18 +93,21 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
                         state = listState,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(500.dp).padding(top = 40.dp, bottom = 40.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .fillMaxHeight(0.6f)
+                            .padding(top = 40.dp, bottom = 40.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
                         itemsIndexed(ageRange) { index, unselectedAge ->
                             val distanceFromCenter = abs(index - listState.firstVisibleItemIndex)
-                            val alpha = 1f - (distanceFromCenter * 0.2f)
-                            val scale = if (unselectedAge == age ) 1.2f else 0.85f
+                            val alpha = 1f - (distanceFromCenter * 0.5f)
+                            val scale = if (unselectedAge == age) 1.2f else 0.85f
 
                             Box(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(84.dp).padding(vertical = 15.dp),
+                                    .fillMaxWidth(0.35f)
+                                    .fillMaxHeight(0.15f)
+                                    .padding(vertical = 15.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
@@ -108,13 +123,18 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
                                 )
                             }
                         }
-                    }
 
+
+                    }
 
                     Box(
                         modifier = Modifier
-                            .size(110.dp)
-                            .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(20.dp))
+                            .fillMaxHeight(0.15f)
+                            .fillMaxWidth(0.35f)
+                            .background(
+                                MaterialTheme.colorScheme.primary,
+                                shape = RoundedCornerShape(20.dp)
+                            )
                             .padding(8.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -125,9 +145,13 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
                             textAlign = TextAlign.Center
                         )
                     }
+
                 }
 
-                Column(modifier = Modifier.fillMaxWidth()) {
+                Box(modifier = Modifier.weight(1f))
+
+                Box(modifier = Modifier.padding(bottom = 36.dp)) {
+
                     PrimaryIconButton(
                         text = "Continuar",
                         onClick = {
@@ -138,13 +162,14 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
                         },
                         arrow = true
                     )
+
                 }
-                Box(modifier = Modifier.weight(1f))
+
+
             }
         }
     )
 }
-
 
 
 @Preview(showBackground = true)
