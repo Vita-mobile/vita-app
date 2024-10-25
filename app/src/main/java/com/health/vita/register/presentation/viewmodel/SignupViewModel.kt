@@ -62,6 +62,10 @@ class SignupViewModel(
 
     val uiState: LiveData<UiState> get() = uiHandler.uiState
 
+    private val _isEmailRepeated = MutableLiveData<Boolean>()
+
+    val isEmailRepeated: LiveData<Boolean> get() = _isEmailRepeated
+
 
     fun setPassword(password: String) {
         _password.value = password
@@ -106,6 +110,24 @@ class SignupViewModel(
     fun setGender(gender: String) {
         _gender.value = gender
     }
+
+    fun isRepeatedEmail(email: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val isRepeated = signUpRepository.isRepeatedEmail(email ?: "")
+                withContext(Dispatchers.Main) {
+                    _isEmailRepeated.value = isRepeated
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    uiHandler.setErrorState(UnknownError("Error desconocido", e))
+                    Log.e("SIGN-UP VIEW MODEL", e.message ?: "Error desconocido")
+                    ErrorManager.postError(NetworkError(cause = e))
+                }
+            }
+        }
+    }
+
 
     fun registerOperation() {
 
