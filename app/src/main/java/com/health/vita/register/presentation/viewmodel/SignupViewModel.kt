@@ -1,10 +1,12 @@
 package com.health.vita.register.presentation.viewmodel
 
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.health.vita.core.utils.error_management.AuthCredentialsError
 import com.health.vita.core.utils.error_management.DatabaseError
 import com.health.vita.core.utils.error_management.ErrorManager
 import com.health.vita.core.utils.error_management.NetworkError
@@ -16,6 +18,7 @@ import com.health.vita.register.data.repository.SignUpRepository
 import com.health.vita.register.data.repository.SignUpRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.sql.SQLException
 
@@ -25,6 +28,9 @@ class SignupViewModel(
 
     private val _name = MutableLiveData("")
     val name: LiveData<String> get() = _name
+
+    private val _lastName = MutableLiveData("")
+    val lastName: LiveData<String> get() = _lastName
 
     private val _password = MutableLiveData("")
     val password: LiveData<String> get() = _password
@@ -57,8 +63,17 @@ class SignupViewModel(
 
     val uiState: LiveData<UiState> get() = uiHandler.uiState
 
+
+    fun setPassword(password: String) {
+        _password.value = password
+    }
+
     fun setName(name: String) {
         _name.value = name
+    }
+
+    fun setLastName(lastName: String) {
+        _lastName.value = lastName
     }
 
     fun setEmail(email: String) {
@@ -97,13 +112,16 @@ class SignupViewModel(
 
         viewModelScope.launch(Dispatchers.IO) {
 
-            uiHandler.setLoadingState()
+            withContext(Dispatchers.Main) {
+                uiHandler.setLoadingState()
+            }
 
             try {
 
                 val user = User(
                     id = "",
                     name = _name.value ?: "",
+                    lastName = _lastName.value ?: "",
                     email = _email.value ?: "",
                     //photoUri = _photoUri.value ?: "",
                     weight = (_weight.value ?: 0f),
@@ -116,26 +134,34 @@ class SignupViewModel(
 
                 signUpRepository.signup(user, _password.value ?: "")
 
-                uiHandler.setSuccess()
+                withContext(Dispatchers.Main) {
+                    uiHandler.setSuccess()
+                }
 
             } catch (e: IOException) {
 
-                uiHandler.setErrorState(NetworkError("Fallo de conexión", e))
-                ErrorManager.postError(NetworkError(cause = e))
-
+                withContext(Dispatchers.Main) {
+                    Log.e("SIGN-UP VIEW  MODEL", e.message ?: "Error desconocido")
+                    uiHandler.setErrorState(NetworkError("Fallo de conexión", e))
+                    ErrorManager.postError(NetworkError(cause = e))
+                }
 
 
             } catch (e: SQLException) {
 
-                uiHandler.setErrorState(DatabaseError("Error en la base de datos", e))
-                ErrorManager.postError(NetworkError(cause = e))
-
+                withContext(Dispatchers.Main) {
+                    Log.e("SIGN-UP VIEW  MODEL", e.message ?: "Error desconocido")
+                    uiHandler.setErrorState(DatabaseError("Error en la base de datos", e))
+                    ErrorManager.postError(NetworkError(cause = e))
+                }
 
             } catch (e: Exception) {
 
-                uiHandler.setErrorState(UnknownError("Error desconocido", e))
-                ErrorManager.postError(NetworkError(cause = e))
-
+                withContext(Dispatchers.Main) {
+                    uiHandler.setErrorState(UnknownError("Error desconocido", e))
+                    Log.e("SIGN-UP VIEW  MODEL", e.message ?: "Error desconocido")
+                    ErrorManager.postError(NetworkError(cause = e))
+                }
 
             }
         }
