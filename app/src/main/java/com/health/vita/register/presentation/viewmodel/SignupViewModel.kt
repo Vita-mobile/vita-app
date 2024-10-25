@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.health.vita.core.utils.error_management.AuthCredentialsError
 import com.health.vita.core.utils.error_management.DatabaseError
 import com.health.vita.core.utils.error_management.ErrorManager
 import com.health.vita.core.utils.error_management.NetworkError
@@ -28,6 +27,9 @@ class SignupViewModel(
 
     private val _name = MutableLiveData("")
     val name: LiveData<String> get() = _name
+
+    private val _lastName = MutableLiveData("")
+    val lastName: LiveData<String> get() = _lastName
 
     private val _password = MutableLiveData("")
     val password: LiveData<String> get() = _password
@@ -67,6 +69,10 @@ class SignupViewModel(
 
     fun setName(name: String) {
         _name.value = name
+    }
+
+    fun setLastName(lastName: String) {
+        _lastName.value = lastName
     }
 
     fun setEmail(email: String) {
@@ -114,14 +120,15 @@ class SignupViewModel(
                 val user = User(
                     id = "",
                     name = _name.value ?: "",
+                    lastName = _lastName.value ?: "",
                     email = _email.value ?: "",
                     //photoUri = _photoUri.value ?: "",
-                    weight = (_weight.value ?: 0f),
                     age = _age.value ?: 0,
+                    weight = (_weight.value ?: 0f),
                     height = (_height.value ?: 0f),
-                    gender = _gender.value ?: "",
-                    goal = _goal.value ?: "",
-                    activityLevel = _activityLevel.value ?: 0
+                    physicalLevel = _activityLevel.value ?: 0,
+                    sex = _gender.value ?: "",
+                    physicalTarget = _goal.value ?: "",
                 )
 
                 signUpRepository.signup(user, _password.value ?: "")

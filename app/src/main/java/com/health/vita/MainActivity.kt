@@ -14,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.auth.presentation.login.LoginScreen
 import com.health.vita.core.navigation.NavGraph
-import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.Cyan
 import com.health.vita.ui.theme.VitaTheme

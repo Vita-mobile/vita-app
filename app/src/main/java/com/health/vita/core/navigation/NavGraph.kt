@@ -57,7 +57,7 @@ fun NavGraph(navController: NavHostController){
     val signupViewModel: SignupViewModel = viewModel()
     NavHost(
         navController = navController,
-        startDestination = Screen.LOAD_SIMULATION
+        startDestination = Screen.SPLASH_SCREEN
     ) {
         // Main
 

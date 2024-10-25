@@ -39,8 +39,8 @@ fun Ruler(
     quantity: Int = 200,
     onValueChange: (Int) -> Unit
 ) {
-    var selectedValue by remember { mutableStateOf(50) }
-    val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = selectedValue - 50)
+    var selectedValue by remember { mutableStateOf(quantity/2) }
+    val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = selectedValue)
 
     LaunchedEffect(lazyListState) {
         snapshotFlow { lazyListState.firstVisibleItemIndex }.distinctUntilChanged()

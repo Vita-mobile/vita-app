@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -40,7 +41,9 @@ fun CredentialInput(
     icon: Int,
     contentDescription: String,
     onValueChange: (String) -> Unit,
-    isPassword: Boolean = false
+    isPassword: Boolean = false,
+    modifier: Modifier = Modifier,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 
 ) {
 
@@ -59,7 +62,7 @@ fun CredentialInput(
         mutableStateOf(false)
     }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth()) {
 
         Text(text = topLabel, style = MaterialTheme.typography.labelMedium)
 
@@ -88,6 +91,7 @@ fun CredentialInput(
             TextField(
                 value = value,
                 onValueChange = { onValueChange(it) },
+                keyboardOptions = keyboardOptions,
                 modifier = Modifier
                     .onFocusChanged { focusState ->
                         isFocus = focusState.isFocused

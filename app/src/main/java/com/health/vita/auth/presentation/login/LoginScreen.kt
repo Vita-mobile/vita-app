@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -73,7 +75,9 @@ fun LoginScreen(
         mutableStateOf("")
     }
 
-    val uiState by loginViewModel.uiStaate.observeAsState(UiState.Idle)
+    val scrollState = rememberScrollState()
+
+    val uiState by loginViewModel.uiState.observeAsState(UiState.Idle)
 
     Scaffold() { innerPadding ->
 
@@ -123,6 +127,7 @@ fun LoginScreen(
                 .padding(innerPadding)
                 .padding(horizontal = paddingScreen)
                 .padding(top = paddingScreen)
+                .verticalScroll(scrollState)
         ) {
 
             Column(
@@ -232,7 +237,7 @@ fun LoginScreen(
 
 
                         navController.navigate(Screen.PROFILE)
-        
+
                     }
 
                     is UiState.Error -> {
@@ -470,6 +475,3 @@ fun CredentialInput(
 
     }
 }
-
-
-
