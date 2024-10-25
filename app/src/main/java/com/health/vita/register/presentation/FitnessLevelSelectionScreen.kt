@@ -35,7 +35,11 @@ fun FitnessLevelSelectionScreen(
     navController: NavController = rememberNavController(),
     signupViewModel: SignupViewModel = viewModel()
 ) {
-    var sliderPosition by remember { mutableFloatStateOf(signupViewModel.activityLevel.value?.toFloat() ?: 1f) }
+    var sliderPosition by remember {
+        mutableFloatStateOf(
+            signupViewModel.activityLevel.value?.toFloat() ?: 1f
+        )
+    }
 
 
     Scaffold(
@@ -43,17 +47,22 @@ fun FitnessLevelSelectionScreen(
         content = { innerPadding ->
 
             Column(
-                Modifier.padding(innerPadding)
+                Modifier
+                    .padding(innerPadding)
                     .fillMaxSize()
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
 
-                GeneralTopBar(text = "Valoración", step = 4, total = 6, onClick = { navController.navigateUp() })
+                GeneralTopBar(
+                    text = "Valoración",
+                    step = 4,
+                    total = 6,
+                    onClick = { navController.navigateUp() })
 
                 Spacer(modifier = Modifier.height(35.dp))
 
-                Column(Modifier.weight(1f)) {
+                Column() {
 
                     Text(
                         text = "¿Cómo calificarías tu nivel de estado físico?",
@@ -69,7 +78,7 @@ fun FitnessLevelSelectionScreen(
                             .fillMaxWidth()
                             .padding(horizontal = 10.dp)
                     ) {
-                        Thumb(icon = "?", h = 10, v = 5)
+                        Thumb(icon = "*", h = 10, v = 5)
 
                         Column(
                             modifier = Modifier
@@ -83,6 +92,19 @@ fun FitnessLevelSelectionScreen(
                         }
                     }
 
+                }
+
+                Box(modifier = Modifier.weight(0.1f))
+
+
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth().fillMaxHeight().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+
 
                     CircularFitnessSlider(
                         currentValue = sliderPosition.toInt(),
@@ -93,9 +115,14 @@ fun FitnessLevelSelectionScreen(
                         physicalLevel = DatabaseNames.physicalLevel,
                         primaryColor = MaterialTheme.colorScheme.primary
 
-                        )
+                    )
+
+
 
                 }
+
+                Box(modifier = Modifier.weight(0.1f))
+
 
                 Column(
                     Modifier
@@ -104,7 +131,9 @@ fun FitnessLevelSelectionScreen(
                     verticalArrangement = Arrangement.Bottom,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    PrimaryIconButton(text = "Continuar", onClick = { navController.navigate(SEX_SELECTION) })
+                    PrimaryIconButton(
+                        text = "Continuar",
+                        onClick = { navController.navigate(SEX_SELECTION) })
                 }
 
 
@@ -135,7 +164,7 @@ fun CircularFitnessSlider(
     physicalLevel: Map<Int, String>,
     primaryColor: Color,
 
-) {
+    ) {
 
     var sliderValue by remember { mutableIntStateOf(currentValue) }
     var totalDrag by remember { mutableFloatStateOf(0f) } //Total drag accumulator
@@ -184,7 +213,7 @@ fun CircularFitnessSlider(
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp)
+                .fillMaxHeight()
         ) {
 
             val path = Path().apply {
@@ -220,8 +249,10 @@ fun CircularFitnessSlider(
                 //Calculate the tangent
 
                 //derivative of the Bézier curve at a point determined by the parameter t
-                val dx = 2 * (1 - t) * (controlX - 0f) + 2 * t * (size.width - controlX) //rate of change of the horizontal position (x-axis) along the curve
-                val dy = 2 * (1 - t) * (controlY - size.height) + 2 * t * (0f - controlY) //rate of change of the vertical position (y-axis) along the curve
+                val dx =
+                    2 * (1 - t) * (controlX - 0f) + 2 * t * (size.width - controlX) //rate of change of the horizontal position (x-axis) along the curve
+                val dy =
+                    2 * (1 - t) * (controlY - size.height) + 2 * t * (0f - controlY) //rate of change of the vertical position (y-axis) along the curve
 
                 //Standardization
 

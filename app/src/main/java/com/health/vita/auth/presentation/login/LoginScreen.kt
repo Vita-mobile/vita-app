@@ -62,6 +62,9 @@ fun LoginScreen(
     loginViewModel: LoginViewModel = viewModel()
 ) {
 
+
+
+
     var email by remember {
         mutableStateOf("")
     }
@@ -127,7 +130,6 @@ fun LoginScreen(
                 .padding(innerPadding)
                 .padding(horizontal = paddingScreen)
                 .padding(top = paddingScreen)
-                .verticalScroll(scrollState)
         ) {
 
             Column(
@@ -167,7 +169,7 @@ fun LoginScreen(
                 Box(modifier = Modifier.size(24.dp))
             }
 
-            Column(modifier = Modifier.weight(1F)) {
+            Column(modifier = Modifier.weight(1F).verticalScroll(scrollState)) {
 
                 //Credential inputs
                 CredentialInput(
@@ -177,7 +179,7 @@ fun LoginScreen(
                     "Email icon",
                     onValueChange = { newValue -> email = newValue })
 
-                Box(modifier = Modifier.size(20.dp))
+                Box(modifier = Modifier.size(10.dp))
 
                 CredentialInput(
                     "Contraseña",
@@ -186,7 +188,7 @@ fun LoginScreen(
                     isPassword = true
                 )
 
-                Box(modifier = Modifier.size(20.dp))
+                Box(modifier = Modifier.size(10.dp))
 
                 //Log-in button
 
