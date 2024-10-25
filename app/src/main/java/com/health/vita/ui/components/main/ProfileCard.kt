@@ -30,21 +30,22 @@ fun ProfileCard(
     date: Timestamp = Timestamp.now(),
     onClick: () -> Unit
 ) {
-    Column {
+    Column(){
         Row(
             Modifier
+
                 .background(MaterialTheme.colorScheme.primary)
                 .fillMaxWidth()
                 .padding(top = 48.dp, bottom = 18.dp)
                 .clickable(onClick = onClick),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceAround
 
         ) {
             Row(
                 Modifier
                     .weight(2f)
-                    .padding(horizontal = 12.dp),
+                    .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 CircularPhoto(photo = R.drawable.male_image, "profile picture", 78)
@@ -63,8 +64,8 @@ fun ProfileCard(
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.weight(1f)
+                horizontalArrangement = Arrangement.SpaceAround,
+                modifier = Modifier.weight(1.2f).padding(horizontal = 16.dp)
             ) {
                 CircularIconOutlinedIconButton(
                     icon = R.drawable.baseline_notifications_24,

@@ -169,11 +169,8 @@ fun FitnessGoalSelectionScreen(
                     }
 
                     is UiState.Success -> {
-
                         infoSingup = "Registro exitoso"
                         navController.navigate(Screen.HOME)
-
-
                     }
 
                     is UiState.Error -> {
