@@ -52,8 +52,10 @@ import com.health.vita.ui.theme.VitaTheme
 @Composable
 fun SexSelectionScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel = viewModel()) {
 
+    val sexObserver by signupViewModel.gender.observeAsState()
+
     var sex by remember {
-        mutableStateOf("")
+        mutableStateOf(sexObserver)
     }
 
     Scaffold(
@@ -84,7 +86,7 @@ fun SexSelectionScreen(navController: NavController = rememberNavController(), s
 
                 }
 
-                Spacer(modifier = Modifier.height(130.dp))
+                Box(modifier = Modifier.weight(1f))
 
                 Column {
 
@@ -123,8 +125,8 @@ fun SexSelectionScreen(navController: NavController = rememberNavController(), s
 
                         onClick = {
 
-                            if(sex.isNotEmpty()){
-                                signupViewModel.setGender(sex)
+                            if(sex?.isNotEmpty() == true){
+                                signupViewModel.setGender(sex?:"")
                                 navController.navigate(Screen.FITNESS_GOAL_SELECTION)
                             }else{
 

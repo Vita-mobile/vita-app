@@ -51,7 +51,9 @@ fun HeightSelectionScreen(
     signupViewModel: SignupViewModel = viewModel()
 ) {
     val maxCm = 240
-    var selectedValue by remember { mutableStateOf(170) }
+
+    val height by signupViewModel.height.observeAsState(170)
+    var selectedValue by remember { mutableStateOf(height) }
     var quantity by remember { mutableStateOf(maxCm) }
     val uiState by signupViewModel.uiState.observeAsState(UiState.Idle)
     Scaffold(

@@ -98,7 +98,7 @@ fun CredentialInput(
                     }
                     .padding(0.dp)
                     .weight(1F)
-                    .height(50.dp)
+                    .height(60.dp)
 
                 ,
 

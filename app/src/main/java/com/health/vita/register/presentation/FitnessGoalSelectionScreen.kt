@@ -57,7 +57,11 @@ fun FitnessGoalSelectionScreen(
     signupViewModel: SignupViewModel = viewModel()
 ) {
 
-    var physicalTarget by remember { mutableStateOf("") }
+    val physicalTargetObserver by signupViewModel.gender.observeAsState()
+
+    var physicalTarget by remember { mutableStateOf(physicalTargetObserver) }
+
+
     val uiState by signupViewModel.uiState.observeAsState(UiState.Idle)
 
     var infoSingup by remember {
@@ -96,7 +100,7 @@ fun FitnessGoalSelectionScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(130.dp))
+                Box(modifier = Modifier.weight(1f))
 
                 Column {
 
@@ -132,28 +136,7 @@ fun FitnessGoalSelectionScreen(
                 )
 
                 Box(modifier = Modifier.weight(1f))
-                Box(modifier = Modifier.padding(bottom = 36.dp)) {
-
-                    PrimaryIconButton(
-                        text = "Comenzar",
-                        onClick = {
-                            if (physicalTarget.isNotEmpty()) {
-                                signupViewModel.setGoal(physicalTarget)
-                                signupViewModel.registerOperation()
-                            } else {
-                                Toast.makeText(
-                                    navController.context,
-                                    "Realiza la selección de uno de los dos campos",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }
-                        },
-                        arrow = true
-                    )
-
-                }
-
-
+                
                 when (uiState) {
 
                     is UiState.Idle -> {
@@ -181,6 +164,33 @@ fun FitnessGoalSelectionScreen(
                         infoSingup = "Error al realizar el registro."
 
                     }
+
+                }
+
+                Box(modifier = Modifier.weight(0.1f))
+
+                Box(modifier = Modifier.padding(bottom = 36.dp)) {
+
+                    PrimaryIconButton(
+                        text = "Comenzar",
+                        onClick = {
+                            if (physicalTarget?.isNotEmpty() == true) {
+
+                                signupViewModel.setGoal(physicalTarget?:"")
+                                signupViewModel.registerOperation()
+                            } else {
+
+                                Toast.makeText(
+                                    navController.context,
+                                    "Realiza la selección de uno de los dos campos",
+                                    Toast.LENGTH_LONG
+                                ).show()
+
+
+                            }
+                        },
+                        arrow = true
+                    )
 
                 }
 

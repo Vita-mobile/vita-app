@@ -54,6 +54,7 @@ import com.health.vita.ui.theme.VitaTheme
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.ImeAction
@@ -65,20 +66,31 @@ fun SignUpScreen(
     signupViewModel: SignupViewModel = viewModel()
 ) {
 
+
+    val nameObserver by signupViewModel.name.observeAsState()
+
+    val lastnameObserver by signupViewModel.lastName.observeAsState()
+
+    val emailObserver by signupViewModel.email.observeAsState()
+
+    val passwordObserver by signupViewModel.password.observeAsState()
+
+
     var name by remember {
-        mutableStateOf("")
+        mutableStateOf(nameObserver)
     }
 
+
     var lastName by remember {
-        mutableStateOf("")
+        mutableStateOf(lastnameObserver)
     }
 
     var email by remember {
-        mutableStateOf("")
+        mutableStateOf(emailObserver)
     }
 
     var password by remember {
-        mutableStateOf("")
+        mutableStateOf(passwordObserver)
     }
 
     var isEmailValid by remember { mutableStateOf(true) }
@@ -196,7 +208,7 @@ fun SignUpScreen(
 
                 CredentialInput(
                     "Nombre",
-                    name,
+                    name?:"",
                     icon = R.drawable.outline_person_24,
                     "Name icon",
                     onValueChange = { newValue -> name = newValue })
@@ -205,7 +217,7 @@ fun SignUpScreen(
 
                 CredentialInput(
                     "Apellido",
-                    lastName,
+                    lastName?:"",
                     icon = R.drawable.outline_person_24,
                     "Name icon",
                     onValueChange = { newValue -> lastName = newValue })
@@ -214,7 +226,7 @@ fun SignUpScreen(
 
                 CredentialInput(
                     "Correo electrónico",
-                    email,
+                    email?:"",
                     icon = R.drawable.outline_email_24,
                     "Email icon",
                     onValueChange = { newValue ->
@@ -229,7 +241,7 @@ fun SignUpScreen(
                                 }
                             } else {
                                 emailTouched = true
-                                isEmailValid = isValidEmail(email)
+                                isEmailValid = isValidEmail(email?:"")
                             }
                         },
                     keyboardOptions = KeyboardOptions.Default.copy(
@@ -240,7 +252,7 @@ fun SignUpScreen(
 
                 Box(modifier = Modifier.size(10.dp))
 
-                if (isEmailTouched && emailTouched && !isValidEmail(email)) {
+                if (isEmailTouched && emailTouched && !isValidEmail(email?:"")) {
                     Text(
                         "Correo electrónico no válido",
                         color = Color.Red,
@@ -253,7 +265,7 @@ fun SignUpScreen(
 
                 CredentialInput(
                     "Contraseña",
-                    password, icon = R.drawable.outline_password_24, "Password icon",
+                    password?:"", icon = R.drawable.outline_password_24, "Password icon",
                     onValueChange = { newValue ->
                         password = newValue
                         isPasswordTouched = true
@@ -267,14 +279,14 @@ fun SignUpScreen(
                                 }
                             } else {
                                 passwordTouched = true
-                                isPasswordValid = isValidPassword(password)
+                                isPasswordValid = isValidPassword(password?:"")
                             }
                         },
                 )
 
                 Box(modifier = Modifier.size(10.dp))
 
-                if (isPasswordTouched && passwordTouched && !isValidPassword(password)) {
+                if (isPasswordTouched && passwordTouched && !isValidPassword(password?:"")) {
                     Text(
                         "Contraseña no válida. Debe contener minimo 6 caracteres",
                         color = Color.Red,
@@ -289,14 +301,14 @@ fun SignUpScreen(
 
                 PrimaryIconButton(
                     text = "Registrarme",
-                    enabled = name.isNotEmpty() && lastName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && isEmailValid,
+                    enabled = name?.isNotEmpty() ?:false  && lastName?.isNotEmpty() ?:false  && email?.isNotEmpty() ?: false && password?.isNotEmpty() ?: false && isEmailValid,
                     onClick = {
                         navController.navigate(AGE_SELECTION)
 
-                        signupViewModel.setEmail(email)
-                        signupViewModel.setName(name)
-                        signupViewModel.setLastName(lastName)
-                        signupViewModel.setPassword(password)
+                        signupViewModel.setEmail(email?:"")
+                        signupViewModel.setName(name?:"")
+                        signupViewModel.setLastName(lastName?:"")
+                        signupViewModel.setPassword(password?:"")
                     },
                     color = Color.Black,
                     blackContent = false,
