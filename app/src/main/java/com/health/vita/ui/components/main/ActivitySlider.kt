@@ -38,9 +38,9 @@ fun activitySlider(
     minValue: Int = 1,
     maxValue: Int = 5,
     circleRadius: Float,
-    onPositionChage:(Int)->Unit
-){
-    var circleCenter by remember{
+    onPositionChage: (Int) -> Unit
+) {
+    var circleCenter by remember {
         mutableStateOf(Offset.Zero)
     }
 
@@ -50,11 +50,11 @@ fun activitySlider(
 
     Box(
         modifier = Modifier
-    ){
+    ) {
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-        ){
+        ) {
 
         }
     }
@@ -63,7 +63,15 @@ fun activitySlider(
 
 @Preview(showBackground = true)
 @Composable
-fun preview(){
-    activitySlider(modifier = Modifier.size(250.dp).background(LightGray) ,initialValue = 1, primaryColor = MainBlue, secondaryColor = MainBlue, circleRadius = 230f) {
+fun preview() {
+    activitySlider(
+        modifier = Modifier
+            .size(250.dp)
+            .background(LightGray),
+        initialValue = 1,
+        primaryColor = MainBlue,
+        secondaryColor = MainBlue,
+        circleRadius = 230f
+    ) {
     }
 }
