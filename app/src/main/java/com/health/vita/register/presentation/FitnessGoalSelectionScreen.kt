@@ -98,69 +98,64 @@ fun FitnessGoalSelectionScreen(
                 Spacer(modifier = Modifier.height(130.dp))
 
                 Column {
-                    ObjectiveSelectionCard(
-                        text = "Perder peso",
-                        iconId = R.drawable.rounded_monitor_weight_24,
-                        selected = physicalTarget == DatabaseNames.physicalTarget[1],
-                        onClick = {
-                            physicalTarget = DatabaseNames.physicalTarget[1] ?: ""
-                            signupViewModel.setGoal( DatabaseNames.physicalTarget[1]?:"")
-                        }
+
+                    val physicalTargets = listOf(
+                        Pair("Perder peso", R.drawable.rounded_monitor_weight_24),
+                        Pair("Probar el coach de IA", R.drawable.outline_on_device_training_24),
+                        Pair("Ganar masa muscular", R.drawable.round_fitness_center_24),
+                        Pair("Mejorar mi alimentación", R.drawable.rounded_monitor_heart_24)
                     )
 
-                    ObjectiveSelectionCard(
-                        text = "Probar el coach de IA",
-                        iconId = R.drawable.outline_on_device_training_24,
-                        selected = physicalTarget == DatabaseNames.physicalTarget[2],
-                        onClick = {
-                            physicalTarget = DatabaseNames.physicalTarget[2] ?: ""
-                            signupViewModel.setGoal( DatabaseNames.physicalTarget[2]?:"")
-                        }
-                    )
+                    physicalTargets.mapIndexed { index, target ->
 
-                    ObjectiveSelectionCard(
-                        text = "Ganar masa muscular",
-                        iconId = R.drawable.round_fitness_center_24,
-                        selected = physicalTarget == DatabaseNames.physicalTarget[3],
-                        onClick = {
-                            physicalTarget = DatabaseNames.physicalTarget[3] ?: ""
-                            signupViewModel.setGoal(DatabaseNames.physicalTarget[3]?:"")
-                        }
-                    )
-
-                    ObjectiveSelectionCard(
-                        text = "Mejorar mi alimentación",
-                        iconId = R.drawable.rounded_monitor_heart_24,
-                        selected = physicalTarget == DatabaseNames.physicalTarget[4],
-                        onClick = {
-                            physicalTarget = DatabaseNames.physicalTarget[4] ?: ""
-                            signupViewModel.setGoal(DatabaseNames.physicalTarget[4]?:"")
-                        }
-                    )
+                        ObjectiveSelectionCard(
+                            text = target.first,
+                            iconId = target.second,
+                            selected = physicalTarget == DatabaseNames.physicalTarget[index + 1],
+                            onClick = {
+                                physicalTarget = DatabaseNames.physicalTarget[index + 1] ?: ""
+                                signupViewModel.setGoal(
+                                    DatabaseNames.physicalTarget[index + 1] ?: ""
+                                )
+                            }
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(130.dp))
-
-                PrimaryIconButton(
-                    text = "Comenzar",
-                    onClick = {
-                        if (physicalTarget.isNotEmpty()) {
-
-                            signupViewModel.setGoal(physicalTarget)
-                            signupViewModel.registerOperation()
-                        } else {
-
-                            Toast.makeText(
-                                navController.context,
-                                "Realiza la selección de uno de los dos campos",
-                                Toast.LENGTH_LONG
-                            ).show()
-
-
-                        }
-                    },
-                    arrow = true
+                Text(
+                    text = infoSingup,
+                    style = MaterialTheme.typography.labelSmall,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth()
                 )
+
+                Box(modifier = Modifier.weight(1f))
+                Box(modifier = Modifier.padding(bottom = 36.dp)) {
+
+                    PrimaryIconButton(
+                        text = "Comenzar",
+                        onClick = {
+                            if (physicalTarget.isNotEmpty()) {
+
+                                signupViewModel.setGoal(physicalTarget)
+                                signupViewModel.registerOperation()
+                            } else {
+
+                                Toast.makeText(
+                                    navController.context,
+                                    "Realiza la selección de uno de los dos campos",
+                                    Toast.LENGTH_LONG
+                                ).show()
+
+
+                            }
+                        },
+                        arrow = true
+                    )
+
+                }
+
 
                 when (uiState) {
 
@@ -194,13 +189,7 @@ fun FitnessGoalSelectionScreen(
 
                 }
 
-                Text(
-                    text = infoSingup,
-                    style = MaterialTheme.typography.labelSmall,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.fillMaxWidth()
-                )
+
             }
         }
     )

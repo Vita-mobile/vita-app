@@ -7,7 +7,7 @@ data class User (
     var age: Int = 0,
     var weight: Float = 0.0f,
     var height: Float = 0.0f,
-    var activityLevel: Int = 0,
+    var physicalLevel: Int = 0,
     var sex: String = "",
     var physicalTarget: String = ""
 

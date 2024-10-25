@@ -129,6 +129,8 @@ fun HeightSelectionScreen(modifier: Modifier = Modifier, navController: NavContr
                     selectedValue = newValue
                     signupViewModel.setHeight(newValue.toFloat())
                 })
+
+                Box(modifier = Modifier.weight(1f))
                 Box(modifier = Modifier.padding(bottom = 36.dp)) {
 
                     PrimaryIconButton(

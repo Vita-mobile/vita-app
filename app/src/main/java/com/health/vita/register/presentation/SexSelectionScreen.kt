@@ -114,26 +114,32 @@ fun SexSelectionScreen(navController: NavController = rememberNavController(), s
                 }
 
 
-                Spacer(modifier = Modifier.height(150.dp))
+                Box(modifier = Modifier.weight(1f))
+                Box(modifier = Modifier.padding(bottom = 36.dp)) {
 
-                PrimaryIconButton(
-                    text = "Continuar",
 
-                    onClick = {
+                    PrimaryIconButton(
+                        text = "Continuar",
 
-                        if(sex.isNotEmpty()){
-                            signupViewModel.setGender(sex)
-                            navController.navigate(Screen.FITNESS_GOAL_SELECTION)
-                        }else{
+                        onClick = {
 
-                            Toast.makeText(navController.context, "Realiza la selección de uno de los dos campos", Toast.LENGTH_LONG).show()
+                            if(sex.isNotEmpty()){
+                                signupViewModel.setGender(sex)
+                                navController.navigate(Screen.FITNESS_GOAL_SELECTION)
+                            }else{
+
+                                Toast.makeText(navController.context, "Realiza la selección de uno de los dos campos", Toast.LENGTH_LONG).show()
+
+                            }
 
                         }
+                        ,
+                        arrow = true
+                    )
 
-                    }
-                    ,
-                    arrow = true
-                )
+                }
+
+
             }
         }
     )

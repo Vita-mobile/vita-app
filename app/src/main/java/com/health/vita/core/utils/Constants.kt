@@ -2,6 +2,8 @@ package com.health.vita.core.utils
 
 object DatabaseNames{
 
+    //This constants are used to store the name of the collections in the database in a uniform way
+
     val  physicalLevel : Map <Int, String> = mapOf(
 
         1 to "Sedentario",
@@ -27,8 +29,6 @@ object DatabaseNames{
         2 to "Femenino"
 
     )
-
-
 
 
 }

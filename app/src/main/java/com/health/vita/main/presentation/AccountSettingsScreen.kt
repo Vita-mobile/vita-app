@@ -1,7 +1,7 @@
 package com.health.vita.main.presentation
 
 
-
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,15 +37,28 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavController
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.health.vita.R
-import com.health.vita.register.presentation.viewmodel.SignupViewModel
+import com.health.vita.core.navigation.Screen
+import com.health.vita.core.utils.states_management.UiState
+import com.health.vita.main.presentation.viewmodels.LogOutViewModel
+import com.health.vita.ui.components.general.CustomPopup
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.theme.VitaTheme
 
 @Composable
-fun AccountSettingsScreen(navController : NavController = rememberNavController(), signupViewModel: SignupViewModel = viewModel()) {
+fun AccountSettingsScreen(
+    navController: NavController = rememberNavController(),
+    logOutViewModel: LogOutViewModel = viewModel()
+) {
 
     var option by remember { mutableStateOf("") }
+
+    var openLogOutPopup by remember { mutableStateOf(false) }
+
+    var infoConfig by remember { mutableStateOf("") }
+    val uiState by logOutViewModel.uiState.observeAsState(UiState.Idle)
 
 
     Scaffold(
@@ -54,20 +68,24 @@ fun AccountSettingsScreen(navController : NavController = rememberNavController(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
+                    .padding(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
 
-                Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.primary).
-                fillMaxWidth().height(140.dp),
-                    verticalArrangement = Arrangement.Center) {
+                Column(
+                    modifier = Modifier
+                        .background(color = MaterialTheme.colorScheme.primary)
+                        .fillMaxWidth()
+                        .height(140.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
                     GeneralTopBar(
-                    text = "Configuración",
-                    hasStep = false,
-                    lightMode = false,
-                    hasIcon = true,
-                    onClick = { navController.navigateUp() }
+                        text = "Configuración",
+                        hasStep = false,
+                        lightMode = false,
+                        hasIcon = false,
+                        onClick = { navController.navigateUp() }
                     )
                 }
 
@@ -99,7 +117,7 @@ fun AccountSettingsScreen(navController : NavController = rememberNavController(
                         text = "Información personal",
                         onClick = {
                             option = "Información personal"
-                            navController.navigate("")
+                            //Todo navController.navigate("")
                         }
                     )
 
@@ -107,16 +125,70 @@ fun AccountSettingsScreen(navController : NavController = rememberNavController(
                         iconId = R.drawable.baseline_logout_24,
                         text = "Cerrar sesión",
                         onClick = {
-                            option = "Cerrar sesión"
-                            navController.navigate("")
+                            openLogOutPopup = !openLogOutPopup
                         }
                     )
+
+
+                    when (uiState){
+
+                        is UiState.Idle -> {
+
+                            infoConfig = "Idle"
+                        }
+
+                        is UiState.Loading -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+                        is UiState.Error -> {
+                            infoConfig = "Error " + (uiState as UiState.Error).error.message
+                        }
+                        is UiState.Success -> {
+                            infoConfig = "Success"
+                        }
+                    }
+
 
 
                 }
 
 
             }
+
+            CustomPopup(
+                showDialog = openLogOutPopup,
+                onDismiss = { option = "" },
+                title = option,
+                height = 0.3f,
+                onCancel = { openLogOutPopup = false },
+                onConfirm = {
+                    logOutViewModel.Logout()
+                    openLogOutPopup = false
+                    navController.navigate(Screen.LOGIN)
+
+                },
+                content = {
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "¿Estás seguro de que deseas cerrar sesión?",
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                color = MaterialTheme.colorScheme.onSurface
+                            ),
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+
+                }
+            )
         }
     )
 }
@@ -128,7 +200,10 @@ fun SettingsOption(iconId: Int, text: String, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))
+            .background(
+                color = MaterialTheme.colorScheme.surface,
+                shape = RoundedCornerShape(16.dp)
+            )
             .padding(16.dp)
             .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
@@ -164,7 +239,7 @@ fun SettingsOption(iconId: Int, text: String, onClick: () -> Unit) {
 @Composable
 fun ConfigurationPreview() {
     VitaTheme {
-        AccountSettingsScreen(signupViewModel = viewModel())
+        AccountSettingsScreen(logOutViewModel = viewModel())
     }
 }
 

@@ -129,8 +129,9 @@ fun AgeSelectionScreen(navController: NavController = rememberNavController(), s
 
                 Spacer(modifier = Modifier.height(60.dp))
 
+                Box(modifier = Modifier.weight(1f))
 
-                Column(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.fillMaxWidth().padding(bottom = 36.dp)) {
                     PrimaryIconButton(
                         text = "Continuar",
                         onClick = {

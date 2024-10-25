@@ -100,7 +100,7 @@ fun FitnessLevelSelectionScreen(
                 Column(
                     Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 34.dp),
+                        .padding(vertical = 36.dp),
                     verticalArrangement = Arrangement.Bottom,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
