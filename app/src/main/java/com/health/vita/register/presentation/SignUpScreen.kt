@@ -75,6 +75,7 @@ fun SignUpScreen(
 
     val passwordObserver by signupViewModel.password.observeAsState()
 
+    val isEmailRepeated by signupViewModel.isEmailRepeated.observeAsState()
 
     var name by remember {
         mutableStateOf(nameObserver)
@@ -93,7 +94,7 @@ fun SignUpScreen(
         mutableStateOf(passwordObserver)
     }
 
-    var isEmailValid by remember { mutableStateOf(true) }
+    var isEmailFormatValid  by remember { mutableStateOf(true) }
 
     var isPasswordValid by remember { mutableStateOf(true) }
 
@@ -106,12 +107,14 @@ fun SignUpScreen(
 
     var isPasswordTouched by remember { mutableStateOf(false) }
 
+
     val scrollState = rememberScrollState()
 
-    fun isValidEmail(email: String): Boolean {
+    fun isEmailFormatValid(email: String): Boolean {
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
         return email.matches(emailRegex.toRegex())
     }
+
 
     fun isValidPassword(password: String): Boolean {
         return password.length >= 6
@@ -236,12 +239,13 @@ fun SignUpScreen(
                     modifier = Modifier
                         .onFocusChanged { focusState ->
                             if (focusState.isFocused) {
-                                if (!isEmailValid) {
-                                    isEmailValid = true
+                                if (!isEmailFormatValid) {
+                                    isEmailFormatValid = true
                                 }
                             } else {
                                 emailTouched = true
-                                isEmailValid = isValidEmail(email?:"")
+                                isEmailFormatValid = isEmailFormatValid(email?:"")
+                                email?.let { signupViewModel.isRepeatedEmail(it) }
                             }
                         },
                     keyboardOptions = KeyboardOptions.Default.copy(
@@ -252,13 +256,23 @@ fun SignUpScreen(
 
                 Box(modifier = Modifier.size(10.dp))
 
-                if (isEmailTouched && emailTouched && !isValidEmail(email?:"")) {
-                    Text(
-                        "Correo electrónico no válido",
-                        color = Color.Red,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
+
+                if (isEmailTouched && emailTouched) {
+                    if (!isEmailFormatValid) {
+                        Text(
+                            "Formato de correo no válido",
+                            color = Color.Red,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    } else if (isEmailRepeated == true) {
+                        Text(
+                            "Este correo ya existe",
+                            color = Color.Red,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
                 }
 
                 Box(modifier = Modifier.size(20.dp))
@@ -301,7 +315,7 @@ fun SignUpScreen(
 
                 PrimaryIconButton(
                     text = "Registrarme",
-                    enabled = name?.isNotEmpty() ?:false  && lastName?.isNotEmpty() ?:false  && email?.isNotEmpty() ?: false && password?.isNotEmpty() ?: false && isEmailValid,
+                    enabled = name?.isNotEmpty() ?:false  && lastName?.isNotEmpty() ?:false  && email?.isNotEmpty() ?: false && password?.isNotEmpty() ?: false && isEmailFormatValid && isEmailRepeated != true,
                     onClick = {
                         navController.navigate(AGE_SELECTION)
 
