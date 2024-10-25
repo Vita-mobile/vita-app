@@ -16,6 +16,7 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -52,7 +53,7 @@ fun GeneralTopBar(
                     .wrapContentSize(Alignment.Center)
                     .clip(CircleShape)
                     .padding(end = 8.dp)
-                    .border(1.dp, if(lightMode) MediumGray else Color(0x66FFFFFF), CircleShape)
+                    .border(1.dp, if (lightMode) MediumGray else Color(0x66FFFFFF), CircleShape)
             ) {
                 IconButton(
                     onClick = onClick
@@ -66,28 +67,28 @@ fun GeneralTopBar(
                     )
                 }
             }
-
-            Text(
-                text = text,
-                style = MaterialTheme.typography.titleMedium,
-                color = if (lightMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onPrimary
-            )
-            Box(modifier = Modifier.weight(1f))
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(TranslucentBlue)
-                    .wrapContentSize(Alignment.Center)
-                    .padding(8.dp)
-            ) {
-                Text(
-                    text = "$step de $total",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = DarkBlue,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
-
         }
+
+        Text(
+            text = text,
+            style = MaterialTheme.typography.titleMedium,
+            color = if (lightMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onPrimary
+        )
+        Box(modifier = Modifier.weight(1f))
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .background(TranslucentBlue)
+                .wrapContentSize(Alignment.Center)
+                .padding(8.dp)
+        ) {
+            Text(
+                text = "$step de $total",
+                style = MaterialTheme.typography.labelMedium,
+                color = DarkBlue,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+
     }
 }
