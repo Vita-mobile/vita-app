@@ -32,6 +32,7 @@ import com.health.vita.core.navigation.Screen.ACCOUNT_SETTINGS
 import com.health.vita.core.navigation.Screen.WELCOME_SCREEN
 import com.health.vita.profile.presentation.viewModel.ProfileViewModel
 import com.health.vita.ui.components.general.GeneralTopBar
+import com.health.vita.ui.components.main.CircularPhoto
 import com.health.vita.ui.components.profile.UserInfoCard
 import com.health.vita.ui.components.profile.WeeklyBarChart
 import com.health.vita.ui.theme.DarkBlue
@@ -89,14 +90,7 @@ fun ProfileScreen(navController: NavController = rememberNavController(), profil
                     onClickIcon = {navController.navigate(ACCOUNT_SETTINGS)}
                 )
 
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = "Profile Photo",
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                        .background(MainBlue)
-                )
+                CircularPhoto(photo = R.drawable.male_image, "Profile Picture", 100)
 
                 Spacer(modifier = Modifier.height(16.dp))
 

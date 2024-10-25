@@ -136,7 +136,7 @@ fun FitnessGoalSelectionScreen(
                 )
 
                 Box(modifier = Modifier.weight(1f))
-
+                
                 when (uiState) {
 
                     is UiState.Idle -> {
@@ -152,11 +152,8 @@ fun FitnessGoalSelectionScreen(
                     }
 
                     is UiState.Success -> {
-
                         infoSingup = "Registro exitoso"
-                        navController.navigate(Screen.PROFILE)
-
-
+                        navController.navigate(Screen.HOME)
                     }
 
                     is UiState.Error -> {

@@ -18,8 +18,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Card
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import com.health.vita.ui.theme.LightGray
 import com.health.vita.ui.theme.MainBlue
+
 
 @Composable
 fun UserInfoCard(label: String, value: String, modifier: Modifier = Modifier) {
