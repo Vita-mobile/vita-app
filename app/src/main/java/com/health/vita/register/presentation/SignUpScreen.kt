@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -37,7 +38,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen.AGE_SELECTION
@@ -48,6 +48,12 @@ import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.Dimens.borderRadius
 import com.health.vita.ui.theme.Dimens.paddingScreen
 import com.health.vita.ui.theme.VitaTheme
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.runtime.*
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.ImeAction
+import androidx.navigation.NavController
 
 
 @Composable
@@ -67,6 +73,17 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
 
     var password by remember {
         mutableStateOf("")
+    }
+
+    var isEmailValid by remember { mutableStateOf(true) }
+
+    var emailTouched by remember { mutableStateOf(false) }
+
+    var isEmailTouched by remember { mutableStateOf(false) } // Only for first moment of screen
+
+    fun isValidEmail(email: String): Boolean {
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+        return email.matches(emailRegex.toRegex())
     }
 
     Scaffold { innerPadding ->
@@ -180,7 +197,37 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
                     email,
                     icon = R.drawable.outline_email_24,
                     "Email icon",
-                    onValueChange = { newValue -> email = newValue })
+                    onValueChange = { newValue ->
+                        email = newValue
+                        isEmailTouched = true
+                    },
+                    modifier = Modifier
+                        .onFocusChanged { focusState ->
+                            if (focusState.isFocused) {
+                                if (!isEmailValid) {
+                                    isEmailValid = true
+                                }
+                            } else {
+                                emailTouched = true
+                                isEmailValid = isValidEmail(email)
+                            }
+                        },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Done
+                    )
+                )
+
+                Box(modifier = Modifier.size(10.dp))
+
+                if (isEmailTouched && emailTouched && !isEmailValid) {
+                    Text(
+                        "Correo electrónico no válido",
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
 
                 Box(modifier = Modifier.size(20.dp))
 
@@ -195,7 +242,7 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
 
                 PrimaryIconButton(
                     text = "Registrarme",
-                    enabled = name.isNotEmpty() && lastName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty(),
+                    enabled = name.isNotEmpty() && lastName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && isEmailValid,
                     onClick = {
                        navController.navigate(AGE_SELECTION)
 
