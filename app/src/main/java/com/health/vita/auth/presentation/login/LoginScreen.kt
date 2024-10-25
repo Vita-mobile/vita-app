@@ -238,7 +238,7 @@ fun LoginScreen(
                     is UiState.Success -> {
 
 
-                        navController.navigate(Screen.PROFILE)
+                        navController.navigate(Screen.HOME)
 
                     }
 

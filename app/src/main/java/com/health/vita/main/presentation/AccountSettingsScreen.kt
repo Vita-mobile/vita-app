@@ -85,7 +85,7 @@ fun AccountSettingsScreen(
                         text = "Configuración",
                         hasStep = false,
                         lightMode = false,
-                        hasIcon = true,
+                        hasIcon = false,
                         onClick = { navController.navigateUp() },
                         onClickIcon = {}
                     )
