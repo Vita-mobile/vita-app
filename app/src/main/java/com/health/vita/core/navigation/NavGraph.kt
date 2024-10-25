@@ -32,6 +32,7 @@ import com.health.vita.register.presentation.HeightSelectionScreen
 import com.health.vita.profile.presentation.NotificationsScreen
 import com.health.vita.profile.presentation.ProfileEditionScreen
 import com.health.vita.profile.presentation.ProfileScreen
+import com.health.vita.profile.presentation.viewModel.ProfileViewModel
 import com.health.vita.register.presentation.SexSelectionScreen
 import com.health.vita.register.presentation.WeightSelectionScreen
 import com.health.vita.sports.presentation.DayWorkoutScreen

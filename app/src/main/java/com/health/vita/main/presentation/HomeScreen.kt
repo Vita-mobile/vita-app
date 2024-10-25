@@ -26,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavController
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen.LOGIN
+import com.health.vita.core.navigation.Screen.PROFILE
 import com.health.vita.profile.presentation.viewModel.ProfileViewModel
 import com.health.vita.ui.components.main.CardWithTitle
 import com.health.vita.ui.components.main.ProfileCard
@@ -48,7 +49,9 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize(),
             content = { innerPadding ->
                 Column(modifier = Modifier.padding(innerPadding)) {
-                    ProfileCard(name = "${userState?.name}")
+                    ProfileCard(name = "${userState?.name}"){
+                        navController.navigate(PROFILE)
+                    }
                     Column(
                         modifier = Modifier
                             .padding(innerPadding)
@@ -66,7 +69,6 @@ fun HomeScreen(
                                 modifier = Modifier
                                     .padding(16.dp)
                             )                        }
-
                         CardWithTitle("Entrenamientos", R.drawable.main_sportcard) {
                             content(MaterialTheme.colorScheme.background)
                         }

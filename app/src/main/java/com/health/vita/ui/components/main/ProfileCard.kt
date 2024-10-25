@@ -1,6 +1,7 @@
 package com.health.vita.ui.components.main
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,16 +27,19 @@ val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale("es"))
 @Composable
 fun ProfileCard(
     name: String = "John",
-    date: Timestamp = Timestamp.now()
+    date: Timestamp = Timestamp.now(),
+    onClick: () -> Unit
 ) {
     Column {
         Row(
             Modifier
                 .background(MaterialTheme.colorScheme.primary)
                 .fillMaxWidth()
-                .padding(top = 48.dp, bottom = 18.dp),
+                .padding(top = 48.dp, bottom = 18.dp)
+                .clickable(onClick = onClick),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
+
         ) {
             Row(
                 Modifier
@@ -89,6 +93,8 @@ fun ProfileCard(
 @Composable
 fun PrevProfCard(){
     VitaTheme {
-        ProfileCard()
+        ProfileCard(){
+
+        }
     }
 }

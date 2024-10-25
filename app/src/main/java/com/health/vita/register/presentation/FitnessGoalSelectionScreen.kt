@@ -138,18 +138,14 @@ fun FitnessGoalSelectionScreen(
                         text = "Comenzar",
                         onClick = {
                             if (physicalTarget.isNotEmpty()) {
-
                                 signupViewModel.setGoal(physicalTarget)
                                 signupViewModel.registerOperation()
                             } else {
-
                                 Toast.makeText(
                                     navController.context,
                                     "Realiza la selección de uno de los dos campos",
                                     Toast.LENGTH_LONG
                                 ).show()
-
-
                             }
                         },
                         arrow = true
@@ -175,7 +171,7 @@ fun FitnessGoalSelectionScreen(
                     is UiState.Success -> {
 
                         infoSingup = "Registro exitoso"
-                        navController.navigate(Screen.PROFILE)
+                        navController.navigate(Screen.HOME)
 
 
                     }
