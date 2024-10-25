@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -51,15 +52,18 @@ import com.health.vita.ui.theme.Dimens.borderRadius
 import com.health.vita.ui.theme.Dimens.paddingScreen
 import com.health.vita.ui.theme.VitaTheme
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.ImeAction
 
 
-
 @Composable
-fun SignUpScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel = viewModel()) {
+fun SignUpScreen(
+    navController: NavController = rememberNavController(),
+    signupViewModel: SignupViewModel = viewModel()
+) {
 
     var name by remember {
         mutableStateOf("")
@@ -79,13 +83,26 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
 
     var isEmailValid by remember { mutableStateOf(true) }
 
+    var isPasswordValid by remember { mutableStateOf(true) }
+
     var emailTouched by remember { mutableStateOf(false) }
 
+    var passwordTouched by remember { mutableStateOf(false) }
+
+
     var isEmailTouched by remember { mutableStateOf(false) } // Only for first moment of screen
+
+    var isPasswordTouched by remember { mutableStateOf(false) }
+
+    val scrollState = rememberScrollState()
 
     fun isValidEmail(email: String): Boolean {
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
         return email.matches(emailRegex.toRegex())
+    }
+
+    fun isValidPassword(password: String): Boolean {
+        return password.length >= 6
     }
 
     Scaffold { innerPadding ->
@@ -133,6 +150,7 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
                 .padding(innerPadding)
                 .padding(horizontal = paddingScreen)
                 .padding(top = paddingScreen)
+
         ) {
 
             Column(
@@ -172,7 +190,7 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
                 Box(modifier = Modifier.size(24.dp))
             }
 
-            Column{
+            Column(modifier = Modifier.verticalScroll(scrollState)) {
 
                 //Credential inputs
 
@@ -222,7 +240,7 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
 
                 Box(modifier = Modifier.size(10.dp))
 
-                if (isEmailTouched && emailTouched && !isEmailValid) {
+                if (isEmailTouched && emailTouched && !isValidEmail(email)) {
                     Text(
                         "Correo electrónico no válido",
                         color = Color.Red,
@@ -236,17 +254,44 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
                 CredentialInput(
                     "Contraseña",
                     password, icon = R.drawable.outline_password_24, "Password icon",
-                    onValueChange = { newValue -> password = newValue },
-                    isPassword = true
+                    onValueChange = { newValue ->
+                        password = newValue
+                        isPasswordTouched = true
+                    },
+                    isPassword = true,
+                    modifier = Modifier
+                        .onFocusChanged { focusState ->
+                            if (focusState.isFocused) {
+                                if (!isPasswordValid) {
+                                    isPasswordValid = true
+                                }
+                            } else {
+                                passwordTouched = true
+                                isPasswordValid = isValidPassword(password)
+                            }
+                        },
                 )
 
-                Spacer(modifier = Modifier.height(40.dp))
+                Box(modifier = Modifier.size(10.dp))
+
+                if (isPasswordTouched && passwordTouched && !isValidPassword(password)) {
+                    Text(
+                        "Contraseña no válida. Debe contener minimo 6 caracteres",
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+
+                }
+
+                Box(modifier = Modifier.size(20.dp))
+
 
                 PrimaryIconButton(
                     text = "Registrarme",
                     enabled = name.isNotEmpty() && lastName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && isEmailValid,
                     onClick = {
-                       navController.navigate(AGE_SELECTION)
+                        navController.navigate(AGE_SELECTION)
 
                         signupViewModel.setEmail(email)
                         signupViewModel.setName(name)
@@ -258,15 +303,13 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
                     arrow = true
                 )
 
-            }
-
-            Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(30.dp))
 
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
 
                     Text(
@@ -277,13 +320,17 @@ fun SignUpScreen(navController: NavController = rememberNavController(), signupV
                     Box(modifier = Modifier.size(12.dp))
 
                     Text(
-                    "Inicia sesión",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.secondary,
-                    textDecoration = TextDecoration.Underline,
-                    modifier = Modifier.clickable { navController.navigate(LOGIN)}
+                        "Inicia sesión",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.secondary,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.clickable { navController.navigate(LOGIN) }
                     )
                 }
+
+            }
+
+
 
         }
     }

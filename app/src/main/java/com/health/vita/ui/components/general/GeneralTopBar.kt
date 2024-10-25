@@ -1,5 +1,6 @@
 package com.health.vita.ui.components.general
 
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -44,6 +45,7 @@ fun GeneralTopBar(
     step: Int = 1,
     total: Int = 1,
     onClick: () -> Unit,
+    onClickIcon: () -> Unit = {},
     lightMode: Boolean = true,
     hasStep: Boolean = true,
     hasIcon: Boolean = false
@@ -61,7 +63,6 @@ fun GeneralTopBar(
                 modifier = Modifier
                     .wrapContentSize(Alignment.Center)
                     .clip(CircleShape)
-                    .padding(end = 8.dp)
                     .border(1.dp, if (lightMode) MediumGray else Color(0x66FFFFFF), CircleShape)
             ) {
                 IconButton(
@@ -76,7 +77,9 @@ fun GeneralTopBar(
                     )
                 }
             }
-            if (!hasStep){
+            if (hasIcon || hasStep) {
+                Box(modifier = Modifier.weight(1f))
+            } else {
                 Box(modifier = Modifier.weight(0.5f))
             }
             Text(
@@ -87,7 +90,8 @@ fun GeneralTopBar(
                 color = if (lightMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.background
             )
             Box(modifier = Modifier.weight(1f))
-            if (hasStep){
+
+            if (hasStep) {
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
@@ -104,19 +108,20 @@ fun GeneralTopBar(
                 }
             }
 
-            if (hasIcon){
+            if (hasIcon) {
 
-                Box( modifier = Modifier.wrapContentSize(Alignment.Center)
-                    .clip(CircleShape)
-                    .padding(end = 8.dp)
-                    .border(1.dp, if (lightMode) MaterialTheme.colorScheme.background else Color(0x66FFFFFF), CircleShape)
+                Box(
+                    modifier = Modifier
+                        .wrapContentSize(Alignment.Center)
+                        .clip(CircleShape)
+                        .border(1.dp, if (lightMode) MediumGray else Color(0x66FFFFFF), CircleShape)
 
-                ){
+                ) {
                     IconButton(
-                        onClick = onClick
+                        onClick = onClickIcon
                     ) {
                         Icon(
-                            painter =  painterResource(id = R.drawable.round_more_horiz_24),
+                            painter = painterResource(id = R.drawable.round_more_horiz_24),
                             contentDescription = null,
                             modifier = Modifier.size(80.dp),
                             tint = if (lightMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.background

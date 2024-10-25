@@ -7,6 +7,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,7 +21,13 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.tooling.preview.Preview
 import com.health.vita.R
+import com.health.vita.core.navigation.Screen
+import com.health.vita.core.navigation.Screen.PROFILE
+import com.health.vita.core.navigation.Screen.WELCOME_SCREEN
 import com.health.vita.ui.theme.VitaTheme
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun SplashScreen(navController: NavController = rememberNavController()) {
@@ -49,7 +56,7 @@ fun SplashScreen(navController: NavController = rememberNavController()) {
 
             Text(
                 text = "Vita",
-                style =  MaterialTheme.typography.titleLarge.copy(
+                style = MaterialTheme.typography.titleLarge.copy(
                     color = MaterialTheme.colorScheme.background,
                     fontWeight = FontWeight.W800
                 )
@@ -60,16 +67,22 @@ fun SplashScreen(navController: NavController = rememberNavController()) {
 
             Text(
                 text = "Tu asistente personal de IA en fitness",
-                style =  MaterialTheme.typography.bodyLarge.copy(
+                style = MaterialTheme.typography.bodyLarge.copy(
                     color = MaterialTheme.colorScheme.background
                 )
             )
 
             Spacer(modifier = Modifier.height(100.dp))
 
-            CircularProgressIndicator(modifier = Modifier.size(80.dp),
+            CircularProgressIndicator(
+                modifier = Modifier.size(40.dp),
                 color = MaterialTheme.colorScheme.background,
-                strokeWidth = 10.dp )
+                strokeWidth = 10.dp
+            )
+            LaunchedEffect(Unit) {
+                delay(1000) // 5000 milisegundos = 5 segundos
+                navController.navigate(PROFILE)
+            }
         }
     }
 }

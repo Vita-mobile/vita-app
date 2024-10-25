@@ -14,7 +14,7 @@ class UserServiceImpl:UserService{
 
     override suspend fun getUserById(id: String): User? {
         val user = Firebase.firestore
-            .collection("users")
+            .collection("User")
             .document(id)
             .get()
             .await()

@@ -45,8 +45,8 @@ fun WeeklyBarChart(
         ) {
             Text(
                 text = "Progreso de la semana",
-                style = MaterialTheme.typography.headlineSmall,
-                color = DarkBlue
+                style = MaterialTheme.typography.labelLarge.copy(fontSize = 20.sp),
+                color = MaterialTheme.colorScheme.primary
             )
         }
 
