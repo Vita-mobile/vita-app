@@ -136,7 +136,7 @@ fun ProfileScreen(navController: NavController = rememberNavController(), profil
 
                 UserInfoCard(
                     label = "Ingesta diaria de kcal",
-                    value = "${calculateCalc()}",
+                    value = "${calculateCalc().toInt()}",
                     modifier = Modifier.fillMaxWidth()
                 )
             }
