@@ -56,7 +56,7 @@ fun FitnessGoalSelectionScreen(
     signupViewModel: SignupViewModel = viewModel()
 ) {
 
-    val physicalTarget by remember { mutableStateOf("") }
+    var physicalTarget by remember { mutableStateOf("") }
     val uiState by signupViewModel.uiState.observeAsState(UiState.Idle)
 
     var infoSingup by remember {
@@ -102,28 +102,40 @@ fun FitnessGoalSelectionScreen(
                         text = "Perder peso",
                         iconId = R.drawable.rounded_monitor_weight_24,
                         selected = physicalTarget == DatabaseNames.physicalTarget[1],
-                        onClick = { signupViewModel.setGoal( DatabaseNames.physicalTarget[1]?:"") }
+                        onClick = {
+                            physicalTarget = DatabaseNames.physicalTarget[1] ?: ""
+                            signupViewModel.setGoal( DatabaseNames.physicalTarget[1]?:"")
+                        }
                     )
 
                     ObjectiveSelectionCard(
                         text = "Probar el coach de IA",
                         iconId = R.drawable.outline_on_device_training_24,
                         selected = physicalTarget == DatabaseNames.physicalTarget[2],
-                        onClick = { signupViewModel.setGoal( DatabaseNames.physicalTarget[2]?:"") }
+                        onClick = {
+                            physicalTarget = DatabaseNames.physicalTarget[2] ?: ""
+                            signupViewModel.setGoal( DatabaseNames.physicalTarget[2]?:"")
+                        }
                     )
 
                     ObjectiveSelectionCard(
                         text = "Ganar masa muscular",
                         iconId = R.drawable.round_fitness_center_24,
                         selected = physicalTarget == DatabaseNames.physicalTarget[3],
-                        onClick = { signupViewModel.setGoal(DatabaseNames.physicalTarget[3]?:"") }
+                        onClick = {
+                            physicalTarget = DatabaseNames.physicalTarget[3] ?: ""
+                            signupViewModel.setGoal(DatabaseNames.physicalTarget[3]?:"")
+                        }
                     )
 
                     ObjectiveSelectionCard(
                         text = "Mejorar mi alimentación",
                         iconId = R.drawable.rounded_monitor_heart_24,
                         selected = physicalTarget == DatabaseNames.physicalTarget[4],
-                        onClick = { signupViewModel.setGoal(DatabaseNames.physicalTarget[4]?:"") }
+                        onClick = {
+                            physicalTarget = DatabaseNames.physicalTarget[4] ?: ""
+                            signupViewModel.setGoal(DatabaseNames.physicalTarget[4]?:"")
+                        }
                     )
                 }
 

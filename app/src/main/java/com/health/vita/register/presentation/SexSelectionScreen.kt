@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,7 +52,7 @@ import com.health.vita.ui.theme.VitaTheme
 @Composable
 fun SexSelectionScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel = viewModel()) {
 
-    val sex by remember {
+    var sex by remember {
         mutableStateOf("")
     }
 
@@ -91,7 +92,10 @@ fun SexSelectionScreen(navController: NavController = rememberNavController(), s
                         text = "Masculino",
                         imageId = R.drawable.male_image,
                         selected = sex == DatabaseNames.sex[1],
-                        onClick = {signupViewModel.setGender(DatabaseNames.sex[1]?:"")
+                        onClick = {
+
+                            sex = DatabaseNames.sex[1] ?: ""
+                            signupViewModel.setGender(DatabaseNames.sex[1]?:"")
                         
                         }
                     )
@@ -100,7 +104,11 @@ fun SexSelectionScreen(navController: NavController = rememberNavController(), s
                         text = "Femenino",
                         imageId = R.drawable.female_image,
                         selected = sex == DatabaseNames.sex[2] ,
-                        onClick = { signupViewModel.setGender(DatabaseNames.sex[2]?:"") }
+                        onClick = {
+
+                            sex = DatabaseNames.sex[2] ?: ""
+                            signupViewModel.setGender(DatabaseNames.sex[2]?:"")
+                        }
                     )
 
                 }

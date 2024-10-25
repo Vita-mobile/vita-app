@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.core.navigation.Screen
@@ -26,7 +27,7 @@ import com.health.vita.ui.theme.VitaTheme
 import kotlin.math.abs
 
 @Composable
-fun AgeSelectionScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
+fun AgeSelectionScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel = viewModel()) {
 
     var age by remember { mutableIntStateOf(18) }
     val ageRange = (11..99).toList()
