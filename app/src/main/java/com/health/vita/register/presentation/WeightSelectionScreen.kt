@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen.HEIGHT_SELECTION
 import com.health.vita.ui.components.general.GeneralTopBar
@@ -42,7 +43,7 @@ import com.health.vita.ui.components.profile.Ruler
 import com.health.vita.ui.theme.VitaTheme
 
 @Composable
-    fun WeightSelectionScreen(modifier: Modifier = Modifier, navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
+    fun WeightSelectionScreen(modifier: Modifier = Modifier, navController: NavController = rememberNavController(), signupViewModel: SignupViewModel = viewModel()) {
     val maxKgs = 200
     val maxLbs = 400
     var selectedValue by remember { mutableStateOf(50) }

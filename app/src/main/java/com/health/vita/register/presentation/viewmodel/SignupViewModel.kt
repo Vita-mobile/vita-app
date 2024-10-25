@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.health.vita.core.utils.error_management.AuthCredentialsError
 import com.health.vita.core.utils.error_management.DatabaseError
 import com.health.vita.core.utils.error_management.ErrorManager
 import com.health.vita.core.utils.error_management.NetworkError
@@ -124,12 +123,12 @@ class SignupViewModel(
                     lastName = _lastName.value ?: "",
                     email = _email.value ?: "",
                     //photoUri = _photoUri.value ?: "",
-                    weight = (_weight.value ?: 0f),
                     age = _age.value ?: 0,
+                    weight = (_weight.value ?: 0f),
                     height = (_height.value ?: 0f),
-                    gender = _gender.value ?: "",
-                    goal = _goal.value ?: "",
-                    activityLevel = _activityLevel.value ?: 0
+                    physicalLevel = _activityLevel.value ?: 0,
+                    sex = _gender.value ?: "",
+                    physicalTarget = _goal.value ?: "",
                 )
 
                 signUpRepository.signup(user, _password.value ?: "")

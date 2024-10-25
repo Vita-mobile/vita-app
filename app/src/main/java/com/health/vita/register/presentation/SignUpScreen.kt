@@ -38,6 +38,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen.AGE_SELECTION
@@ -53,11 +55,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.ImeAction
-import androidx.navigation.NavController
+
 
 
 @Composable
-fun SignUpScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
+fun SignUpScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel = viewModel()) {
 
     var name by remember {
         mutableStateOf("")

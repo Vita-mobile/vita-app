@@ -4,8 +4,10 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.auth
 import com.health.vita.auth.data.repository.AuthRepositoryImpl
 import com.health.vita.core.utils.error_management.AuthCredentialsError
 import com.health.vita.core.utils.error_management.FirebaseError
@@ -29,7 +31,7 @@ class LoginViewModel(
 
     private val uiHandler = UiHandler()
 
-    val uiStaate: LiveData<UiState> get() = uiHandler.uiState
+    val uiState: LiveData<UiState> get() = uiHandler.uiState
 
     fun login(email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {

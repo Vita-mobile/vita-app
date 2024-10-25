@@ -73,7 +73,7 @@ fun LoginScreen(
         mutableStateOf("")
     }
 
-    val uiState by loginViewModel.uiStaate.observeAsState(UiState.Idle)
+    val uiState by loginViewModel.uiState.observeAsState(UiState.Idle)
 
     Scaffold() { innerPadding ->
 
@@ -231,8 +231,8 @@ fun LoginScreen(
                     is UiState.Success -> {
 
 
-                        navController.navigate(Screen.PROFILE)
-        
+                        navController.navigate(Screen.ACCOUNT_SETTINGS)
+
                     }
 
                     is UiState.Error -> {

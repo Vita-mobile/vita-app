@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen.FITNESS_LEVEL_SELECTION
 import com.health.vita.core.utils.states_management.UiState
@@ -44,7 +45,7 @@ import com.health.vita.ui.components.profile.Ruler
 import com.health.vita.ui.theme.VitaTheme
 
 @Composable
-fun HeightSelectionScreen(modifier: Modifier = Modifier, navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
+fun HeightSelectionScreen(modifier: Modifier = Modifier, navController: NavController = rememberNavController(), signupViewModel: SignupViewModel = viewModel()) {
     val maxCm = 240
     val maxIn = 100
     var selectedValue by remember { mutableStateOf(170) }
@@ -95,6 +96,8 @@ fun HeightSelectionScreen(modifier: Modifier = Modifier, navController: NavContr
                     selectedValue = newValue
                     signupViewModel.setHeight(newValue.toFloat())
                 })
+
+                Box(modifier = Modifier.weight(1f))
                 Box(modifier = Modifier.padding(bottom = 36.dp)) {
 
                     PrimaryIconButton(
