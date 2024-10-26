@@ -1,5 +1,9 @@
 package com.health.vita.core.navigation
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -57,11 +61,23 @@ fun NavGraph(navController: NavHostController){
     val signupViewModel: SignupViewModel = viewModel()
     NavHost(
         navController = navController,
-        startDestination = Screen.LOAD_SIMULATION
+        startDestination = Screen.SPLASH_SCREEN,
+        enterTransition = {
+            slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn()
+        },
+        exitTransition = {
+            slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut()
+        },
+        popEnterTransition = {
+            slideInHorizontally(initialOffsetX = { -1000 }) + fadeIn()
+        },
+        popExitTransition = {
+            slideOutHorizontally(targetOffsetX = { 1000 }) + fadeOut()
+        }
     ) {
         // Main
 
-        composable(Screen.LOAD_SIMULATION) {
+        composable(Screen.SPLASH_SCREEN) {
             LoadSimulationScreen(navController)
         }
 
