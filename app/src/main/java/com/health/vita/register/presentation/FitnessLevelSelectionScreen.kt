@@ -2,7 +2,6 @@ package com.health.vita.register.presentation
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +24,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 import com.health.vita.core.navigation.Screen.SEX_SELECTION
+import com.health.vita.core.utils.DatabaseNames
 import com.health.vita.register.presentation.viewmodel.SignupViewModel
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
@@ -33,33 +33,36 @@ import com.health.vita.ui.theme.VitaTheme
 @Composable
 fun FitnessLevelSelectionScreen(
     navController: NavController = rememberNavController(),
-    signupViewModel: SignupViewModel
+    signupViewModel: SignupViewModel = viewModel()
 ) {
-    var sliderPosition by remember { mutableStateOf(signupViewModel.activityLevel.value?.toFloat() ?: 1f) }
-    val textForValue = mapOf(
-        1 to "Sedentario",
-        2 to "Ligero",
-        3 to "Moderado",
-        4 to "Atlético",
-        5 to "Muy activo"
-    )
+    var sliderPosition by remember {
+        mutableFloatStateOf(
+            signupViewModel.activityLevel.value?.toFloat() ?: 1f
+        )
+    }
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         content = { innerPadding ->
 
             Column(
-                Modifier.padding(innerPadding)
+                Modifier
+                    .padding(innerPadding)
                     .fillMaxSize()
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
 
-                GeneralTopBar(text = "Valoración", step = 4, total = 6, onClick = { navController.navigateUp() })
+                GeneralTopBar(
+                    text = "Valoración",
+                    step = 4,
+                    total = 6,
+                    onClick = { navController.navigateUp() })
 
                 Spacer(modifier = Modifier.height(35.dp))
 
-                Column(Modifier.weight(1f)) {
+                Column() {
 
                     Text(
                         text = "¿Cómo calificarías tu nivel de estado físico?",
@@ -75,7 +78,7 @@ fun FitnessLevelSelectionScreen(
                             .fillMaxWidth()
                             .padding(horizontal = 10.dp)
                     ) {
-                        Thumb(icon = "?", h = 10, v = 5)
+                        Thumb(icon = "*", h = 10, v = 5)
 
                         Column(
                             modifier = Modifier
@@ -89,6 +92,19 @@ fun FitnessLevelSelectionScreen(
                         }
                     }
 
+                }
+
+                Box(modifier = Modifier.weight(0.1f))
+
+
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth().fillMaxHeight().padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+
 
                     CircularFitnessSlider(
                         currentValue = sliderPosition.toInt(),
@@ -96,21 +112,28 @@ fun FitnessLevelSelectionScreen(
                             sliderPosition = newValue.toFloat()
                             signupViewModel.setActivityLevel(newValue)
                         },
-                        textForValue = textForValue,
-                        primaryColor = MaterialTheme.colorScheme.primary,
+                        physicalLevel = DatabaseNames.physicalLevel,
+                        primaryColor = MaterialTheme.colorScheme.primary
 
-                        )
+                    )
+
+
 
                 }
+
+                Box(modifier = Modifier.weight(0.1f))
+
 
                 Column(
                     Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 34.dp),
+                        .padding(vertical = 36.dp),
                     verticalArrangement = Arrangement.Bottom,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    PrimaryIconButton(text = "Continuar", onClick = { navController.navigate(SEX_SELECTION) })
+                    PrimaryIconButton(
+                        text = "Continuar",
+                        onClick = { navController.navigate(SEX_SELECTION) })
                 }
 
 
@@ -138,13 +161,13 @@ fun Thumb(icon: String, h: Int, v: Int) {
 fun CircularFitnessSlider(
     currentValue: Int,
     onValueChange: (Int) -> Unit,
-    textForValue: Map<Int, String>,
+    physicalLevel: Map<Int, String>,
     primaryColor: Color,
 
-) {
+    ) {
 
-    var sliderValue by remember { mutableStateOf(currentValue) }
-    var totalDrag by remember { mutableStateOf(0f) } //Total drag accumulator
+    var sliderValue by remember { mutableIntStateOf(currentValue) }
+    var totalDrag by remember { mutableFloatStateOf(0f) } //Total drag accumulator
 
     /*
             Modifier to handle drag gestures
@@ -190,7 +213,7 @@ fun CircularFitnessSlider(
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp)
+                .fillMaxHeight()
         ) {
 
             val path = Path().apply {
@@ -226,8 +249,10 @@ fun CircularFitnessSlider(
                 //Calculate the tangent
 
                 //derivative of the Bézier curve at a point determined by the parameter t
-                val dx = 2 * (1 - t) * (controlX - 0f) + 2 * t * (size.width - controlX) //rate of change of the horizontal position (x-axis) along the curve
-                val dy = 2 * (1 - t) * (controlY - size.height) + 2 * t * (0f - controlY) //rate of change of the vertical position (y-axis) along the curve
+                val dx =
+                    2 * (1 - t) * (controlX - 0f) + 2 * t * (size.width - controlX) //rate of change of the horizontal position (x-axis) along the curve
+                val dy =
+                    2 * (1 - t) * (controlY - size.height) + 2 * t * (0f - controlY) //rate of change of the vertical position (y-axis) along the curve
 
                 //Standardization
 
@@ -290,7 +315,7 @@ fun CircularFitnessSlider(
                     )
                 )
                 Text(
-                    text = textForValue[sliderValue] ?: "Desconocido",
+                    text = physicalLevel[sliderValue] ?: "Desconocido",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )

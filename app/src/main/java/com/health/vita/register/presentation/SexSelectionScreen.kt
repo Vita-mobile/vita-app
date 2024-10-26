@@ -28,6 +28,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,19 +39,24 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen
+import com.health.vita.core.utils.DatabaseNames
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.VitaTheme
 
 @Composable
-fun SexSelectionScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel) {
+fun SexSelectionScreen(navController: NavController = rememberNavController(), signupViewModel: SignupViewModel = viewModel()) {
 
-    val gender by signupViewModel.gender.observeAsState("")
-    //val gender by signupViewModel.gender.observeAsState("")
+    val sexObserver by signupViewModel.gender.observeAsState()
+
+    var sex by remember {
+        mutableStateOf(sexObserver)
+    }
 
     Scaffold(
 
@@ -78,15 +86,18 @@ fun SexSelectionScreen(navController: NavController = rememberNavController(), s
 
                 }
 
-                Spacer(modifier = Modifier.height(130.dp))
+                Box(modifier = Modifier.weight(1f))
 
                 Column {
 
                     GenderSelectionCard(
                         text = "Masculino",
                         imageId = R.drawable.male_image,
-                        selected = gender == "Masculino",
-                        onClick = {signupViewModel.setGender("Masculino")
+                        selected = sex == DatabaseNames.sex[1],
+                        onClick = {
+
+                            sex = DatabaseNames.sex[1] ?: ""
+                            signupViewModel.setGender(DatabaseNames.sex[1]?:"")
                         
                         }
                     )
@@ -94,33 +105,43 @@ fun SexSelectionScreen(navController: NavController = rememberNavController(), s
                     GenderSelectionCard(
                         text = "Femenino",
                         imageId = R.drawable.female_image,
-                        selected = gender == "Femenino",
-                        onClick = { signupViewModel.setGender("Femenino") }
+                        selected = sex == DatabaseNames.sex[2] ,
+                        onClick = {
+
+                            sex = DatabaseNames.sex[2] ?: ""
+                            signupViewModel.setGender(DatabaseNames.sex[2]?:"")
+                        }
                     )
 
                 }
 
 
-                Spacer(modifier = Modifier.height(150.dp))
+                Box(modifier = Modifier.weight(1f))
+                Box(modifier = Modifier.padding(bottom = 36.dp)) {
 
-                PrimaryIconButton(
-                    text = "Continuar",
 
-                    onClick = {
+                    PrimaryIconButton(
+                        text = "Continuar",
 
-                        if(gender.isNotEmpty()){
-                            signupViewModel.setGender(gender)
-                            navController.navigate(Screen.FITNESS_GOAL_SELECTION)
-                        }else{
+                        onClick = {
 
-                            Toast.makeText(navController.context, "Realiza la selección de uno de los dos campos", Toast.LENGTH_LONG).show()
+                            if(sex?.isNotEmpty() == true){
+                                signupViewModel.setGender(sex?:"")
+                                navController.navigate(Screen.FITNESS_GOAL_SELECTION)
+                            }else{
+
+                                Toast.makeText(navController.context, "Realiza la selección de uno de los dos campos", Toast.LENGTH_LONG).show()
+
+                            }
 
                         }
+                        ,
+                        arrow = true
+                    )
 
-                    }
-                    ,
-                    arrow = true
-                )
+                }
+
+
             }
         }
     )

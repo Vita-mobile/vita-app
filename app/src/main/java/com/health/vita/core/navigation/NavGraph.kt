@@ -1,18 +1,16 @@
 package com.health.vita.core.navigation
 
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import com.health.vita.auth.presentation.login.LoginScreen
 import com.health.vita.auth.presentation.ResetPasswordConfirmationScreen
 import com.health.vita.auth.presentation.ResetPasswordScreen
-import com.health.vita.auth.presentation.login.LoginScreen
+import com.health.vita.register.presentation.SelectAvatarScreen
+import com.health.vita.register.presentation.SignUpScreen
+import com.health.vita.register.presentation.viewmodel.SignupViewModel
 import com.health.vita.main.presentation.AccountSettingsScreen
 import com.health.vita.main.presentation.HomeScreen
 import com.health.vita.main.presentation.LoadSimulationScreen
@@ -27,18 +25,15 @@ import com.health.vita.meals.presentation.MealHomeScreen
 import com.health.vita.meals.presentation.MealTrackingScreen
 import com.health.vita.meals.presentation.NutritionWelcomeScreen
 import com.health.vita.profile.presentation.EditWeightScreen
-import com.health.vita.profile.presentation.NotificationsScreen
-import com.health.vita.profile.presentation.ProfileEditionScreen
-import com.health.vita.profile.presentation.ProfileScreen
 import com.health.vita.register.presentation.AgeSelectionScreen
 import com.health.vita.register.presentation.FitnessGoalSelectionScreen
 import com.health.vita.register.presentation.FitnessLevelSelectionScreen
 import com.health.vita.register.presentation.HeightSelectionScreen
-import com.health.vita.register.presentation.SelectAvatarScreen
+import com.health.vita.profile.presentation.NotificationsScreen
+import com.health.vita.profile.presentation.ProfileEditionScreen
+import com.health.vita.profile.presentation.ProfileScreen
 import com.health.vita.register.presentation.SexSelectionScreen
-import com.health.vita.register.presentation.SignUpScreen
 import com.health.vita.register.presentation.WeightSelectionScreen
-import com.health.vita.register.presentation.viewmodel.SignupViewModel
 import com.health.vita.sports.presentation.DayWorkoutScreen
 import com.health.vita.sports.presentation.ExpressPreferenceScreen
 import com.health.vita.sports.presentation.ExpressTimeSettingScreen
@@ -56,40 +51,20 @@ import com.health.vita.sports.presentation.WorkoutEndingScreen
 import com.health.vita.sports.presentation.WorkoutHomeScreen
 import com.health.vita.sports.presentation.WorkoutPreviewScreen
 
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-fun NavGraph(navController: NavHostController) {
-    val signupViewModel: SignupViewModel = viewModel()
 
-    AnimatedNavHost(
+@Composable
+fun NavGraph(navController: NavHostController){
+    val signupViewModel: SignupViewModel = viewModel()
+    NavHost(
         navController = navController,
-        startDestination = Screen.LOAD_SIMULATION,
-        // Transición de entrada cuando se navega a una nueva pantalla
-        // Aquí se define un deslizamiento horizontal desde la derecha y un desvanecimiento.
-        enterTransition = {
-            slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn()
-        },
-        // Transición de salida cuando se navega desde una pantalla actual a otra
-        // Aquí se define un deslizamiento horizontal hacia la izquierda y un desvanecimiento.
-        exitTransition = {
-            slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut()
-        },
-        // Transición de entrada cuando se navega hacia atrás (pop) a una pantalla anterior
-        // Se define un deslizamiento horizontal desde la izquierda y un desvanecimiento.
-        popEnterTransition = {
-            slideInHorizontally(initialOffsetX = { -1000 }) + fadeIn()
-        },
-        // Transición de salida cuando se retrocede (pop) a la pantalla anterior
-        // Aquí se define un deslizamiento horizontal hacia la derecha y un desvanecimiento.
-        popExitTransition = {
-            slideOutHorizontally(targetOffsetX = { 1000 }) + fadeOut()
-        }
+        startDestination = Screen.LOAD_SIMULATION
     ) {
-        // Aquí continúan las definiciones de las pantallas y su navegación
         // Main
+
         composable(Screen.LOAD_SIMULATION) {
             LoadSimulationScreen(navController)
         }
+
         composable(Screen.HOME) {
             HomeScreen(navController)
         }
@@ -114,7 +89,7 @@ fun NavGraph(navController: NavHostController) {
             ResetPasswordConfirmationScreen(navController)
         }
 
-        // Signup
+        //Signup
         composable(Screen.SIGN_UP) {
             SignUpScreen(navController, signupViewModel)
         }
@@ -125,16 +100,10 @@ fun NavGraph(navController: NavHostController) {
             AgeSelectionScreen(navController, signupViewModel)
         }
         composable(Screen.WEIGHT_SELECTION) {
-            WeightSelectionScreen(
-                navController = navController,
-                signupViewModel = signupViewModel
-            )
+            WeightSelectionScreen(navController=navController,signupViewModel= signupViewModel)
         }
         composable(Screen.HEIGHT_SELECTION) {
-            HeightSelectionScreen(
-                navController = navController,
-                signupViewModel = signupViewModel
-            )
+            HeightSelectionScreen(navController=navController,signupViewModel= signupViewModel)
         }
         composable(Screen.FITNESS_LEVEL_SELECTION) {
             FitnessLevelSelectionScreen(navController, signupViewModel)
@@ -162,7 +131,6 @@ fun NavGraph(navController: NavHostController) {
         composable(Screen.EDIT_HEIGHT_SELECTION) {
             EditWeightScreen(navController)
         }
-
         // Meals
         composable(Screen.MEAL_HOME) {
             MealHomeScreen(navController)
@@ -239,4 +207,7 @@ fun NavGraph(navController: NavHostController) {
             RegisteredActivityScreen(navController)
         }
     }
+
 }
+
+

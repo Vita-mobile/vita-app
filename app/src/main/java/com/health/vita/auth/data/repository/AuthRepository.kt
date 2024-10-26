@@ -6,6 +6,7 @@ import com.health.vita.domain.model.User
 
 interface AuthRepository {
     suspend fun signin(email:String, password:String)
+    fun singout()
 }
 
 class AuthRepositoryImpl (
@@ -15,5 +16,10 @@ class AuthRepositoryImpl (
     override suspend fun signin(email: String, password: String) {
         authService.loginWithEmailAndPassword(email, password)
     }
+
+    override fun singout() {
+        authService.logout()
+    }
+
 
 }

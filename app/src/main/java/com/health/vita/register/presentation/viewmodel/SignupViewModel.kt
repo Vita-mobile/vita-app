@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.health.vita.core.utils.error_management.AuthCredentialsError
 import com.health.vita.core.utils.error_management.DatabaseError
 import com.health.vita.core.utils.error_management.ErrorManager
 import com.health.vita.core.utils.error_management.NetworkError
@@ -29,6 +28,9 @@ class SignupViewModel(
     private val _name = MutableLiveData("")
     val name: LiveData<String> get() = _name
 
+    private val _lastName = MutableLiveData("")
+    val lastName: LiveData<String> get() = _lastName
+
     private val _password = MutableLiveData("")
     val password: LiveData<String> get() = _password
 
@@ -38,7 +40,7 @@ class SignupViewModel(
     private val _photoUri = MutableLiveData("")
     val photoUri: LiveData<String> get() = _photoUri
 
-    private val _age = MutableLiveData(0)
+    private val _age = MutableLiveData(18)
     val age: LiveData<Int> get() = _age
 
     private val _weight = MutableLiveData(0f)
@@ -60,6 +62,10 @@ class SignupViewModel(
 
     val uiState: LiveData<UiState> get() = uiHandler.uiState
 
+    private val _isEmailRepeated = MutableLiveData<Boolean>()
+
+    val isEmailRepeated: LiveData<Boolean> get() = _isEmailRepeated
+
 
     fun setPassword(password: String) {
         _password.value = password
@@ -67,6 +73,10 @@ class SignupViewModel(
 
     fun setName(name: String) {
         _name.value = name
+    }
+
+    fun setLastName(lastName: String) {
+        _lastName.value = lastName
     }
 
     fun setEmail(email: String) {
@@ -101,6 +111,24 @@ class SignupViewModel(
         _gender.value = gender
     }
 
+    fun isRepeatedEmail(email: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val isRepeated = signUpRepository.isRepeatedEmail(email ?: "")
+                withContext(Dispatchers.Main) {
+                    _isEmailRepeated.value = isRepeated
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    uiHandler.setErrorState(UnknownError("Error desconocido", e))
+                    Log.e("SIGN-UP VIEW MODEL", e.message ?: "Error desconocido")
+                    ErrorManager.postError(NetworkError(cause = e))
+                }
+            }
+        }
+    }
+
+
     fun registerOperation() {
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -114,14 +142,15 @@ class SignupViewModel(
                 val user = User(
                     id = "",
                     name = _name.value ?: "",
+                    lastName = _lastName.value ?: "",
                     email = _email.value ?: "",
                     //photoUri = _photoUri.value ?: "",
-                    weight = (_weight.value ?: 0f),
                     age = _age.value ?: 0,
+                    weight = (_weight.value ?: 0f),
                     height = (_height.value ?: 0f),
-                    gender = _gender.value ?: "",
-                    goal = _goal.value ?: "",
-                    activityLevel = _activityLevel.value ?: 0
+                    physicalLevel = _activityLevel.value ?: 0,
+                    sex = _gender.value ?: "",
+                    physicalTarget = _goal.value ?: "",
                 )
 
                 signUpRepository.signup(user, _password.value ?: "")

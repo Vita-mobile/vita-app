@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -60,6 +62,9 @@ fun LoginScreen(
     loginViewModel: LoginViewModel = viewModel()
 ) {
 
+
+
+
     var email by remember {
         mutableStateOf("")
     }
@@ -73,7 +78,9 @@ fun LoginScreen(
         mutableStateOf("")
     }
 
-    val uiState by loginViewModel.uiStaate.observeAsState(UiState.Idle)
+    val scrollState = rememberScrollState()
+
+    val uiState by loginViewModel.uiState.observeAsState(UiState.Idle)
 
     Scaffold() { innerPadding ->
 
@@ -162,7 +169,7 @@ fun LoginScreen(
                 Box(modifier = Modifier.size(24.dp))
             }
 
-            Column(modifier = Modifier.weight(1F)) {
+            Column(modifier = Modifier.weight(1F).verticalScroll(scrollState)) {
 
                 //Credential inputs
                 CredentialInput(
@@ -172,7 +179,7 @@ fun LoginScreen(
                     "Email icon",
                     onValueChange = { newValue -> email = newValue })
 
-                Box(modifier = Modifier.size(20.dp))
+                Box(modifier = Modifier.size(10.dp))
 
                 CredentialInput(
                     "Contraseña",
@@ -181,7 +188,7 @@ fun LoginScreen(
                     isPassword = true
                 )
 
-                Box(modifier = Modifier.size(20.dp))
+                Box(modifier = Modifier.size(10.dp))
 
                 //Log-in button
 
@@ -231,8 +238,8 @@ fun LoginScreen(
                     is UiState.Success -> {
 
 
-                        navController.navigate(Screen.PROFILE)
-        
+                        navController.navigate(Screen.HOME)
+
                     }
 
                     is UiState.Error -> {
@@ -470,6 +477,3 @@ fun CredentialInput(
 
     }
 }
-
-
-
