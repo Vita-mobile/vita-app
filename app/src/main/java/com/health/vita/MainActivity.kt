@@ -4,13 +4,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.health.vita.auth.presentation.login.LoginScreen
+import com.health.vita.core.navigation.NavGraph
+import com.health.vita.ui.components.general.PrimaryIconButton
+import com.health.vita.ui.theme.Cyan
 import com.health.vita.ui.theme.VitaTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,10 +25,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             VitaTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    App(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
@@ -31,17 +33,20 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun App(modifier: Modifier = Modifier) {
+    val navController = rememberNavController()
+    NavGraph(navController = navController)
+
+
 }
+
+
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun MyPreview() {
     VitaTheme {
-        Greeting("Android")
+        App()
     }
 }
+
