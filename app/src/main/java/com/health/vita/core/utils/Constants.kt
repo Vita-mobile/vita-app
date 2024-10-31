@@ -30,5 +30,26 @@ object DatabaseNames{
 
     )
 
+}
+
+
+object DatesFormat {
+
+    val monthAbbreviations = mapOf(
+        1 to "JAN",  // January
+        2 to "FEB",  // February
+        3 to "MAR",  // March
+        4 to "APR",  // April
+        5 to "MAY",  // May
+        6 to "JUN",  // June
+        7 to "JUL",  // July
+        8 to "AUG",  // August
+        9 to "SEP",  // September
+        10 to "OCT", // October
+        11 to "NOV", // November
+        12 to "DEC"  // December
+    )
+
+
 
 }
