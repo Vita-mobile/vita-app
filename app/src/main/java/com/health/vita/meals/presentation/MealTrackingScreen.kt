@@ -1,5 +1,6 @@
 package com.health.vita.meals.presentation
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,10 +11,12 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,9 +24,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.health.vita.core.utils.DatesFormat
+import com.health.vita.meals.presentation.viewModels.MealTrackingViewModel
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.theme.Dimens
 import java.time.LocalDate
@@ -40,13 +47,31 @@ data class MealSummaryData(
 )
 
 @Composable
-fun MealTrackingScreen(navController: NavController = rememberNavController()) {
+fun MealTrackingScreen(
+    navController: NavController = rememberNavController(),
+    mealTrackingViewModel: MealTrackingViewModel = viewModel()
+) {
+
+    // Observe the days since the user registered the nutritional plan
+    val daysSinceRegisterNutritionalPlan by mealTrackingViewModel.daysSinceRegisterNutritionalPlan.observeAsState(0)
+
+    // Use to keep track of the selected date
     var selectedDateIndex by remember { mutableStateOf(0) }
+
+    // Use to give the list of dates a scrollable behavior
     val listState = rememberLazyListState()
 
-    val dates = remember {
-        List(30) { index -> LocalDate.now().plusDays(index.toLong()) }
-    }
+    //Create the list of dates to track based on the days since the user registered the nutritional plan until now
+    var listDates by remember { mutableStateOf<List<LocalDate>>(emptyList()) }
+
+    // Use to keep track of the loading state
+    var isMealTrackingLoading by remember { mutableStateOf(true) }
+
+    // Use to keep track of the rendering of the dates lazy row, when is finished we can scroll to the selected date
+
+    var isRenderedDatesLazyRow by remember { mutableStateOf(false) }
+
+
 
     // Lista de comidas
     val meals = listOf(
@@ -76,8 +101,46 @@ fun MealTrackingScreen(navController: NavController = rememberNavController()) {
         )
     )
 
-    LaunchedEffect(selectedDateIndex) {
+
+    LaunchedEffect(true) {
+
+        Log.d("Current user", "Current user: ${Firebase.auth.currentUser?.uid}")
+
+        mealTrackingViewModel.getRegisterPlanDate()
+
+    }
+
+    LaunchedEffect(daysSinceRegisterNutritionalPlan) {
+
+        if (daysSinceRegisterNutritionalPlan == 0) {
+            return@LaunchedEffect
+        }
+
+        Log.d("MealTrackingScreen", "Days since register nutritional plan: $daysSinceRegisterNutritionalPlan")
+        // If the user has registered the nutritional plan less than 30 days ago, show the dates since the registration
+        listDates = if (daysSinceRegisterNutritionalPlan < 30){
+
+            List(daysSinceRegisterNutritionalPlan ) { index -> LocalDate.now().minusDays(index.toLong()) }
+        }else{
+            List(30) { index -> LocalDate.now().minusDays(index.toLong()) }
+        }
+
+        selectedDateIndex = listDates.size -1
+
+        isMealTrackingLoading = false
+
+    }
+
+
+    LaunchedEffect(selectedDateIndex, isRenderedDatesLazyRow) {
+
         listState.animateScrollToItem(selectedDateIndex)
+    }
+
+    LaunchedEffect(listDates) {
+
+        Log.d("MealTrackingScreen", "List of dates: $listDates")
+
     }
 
     Scaffold(
@@ -96,23 +159,41 @@ fun MealTrackingScreen(navController: NavController = rememberNavController()) {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 /*----------------Date selector---------------------*/
-                LazyRow(
-                    state = listState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.13f),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    itemsIndexed(dates) { index, date ->
-                        DateCard(
-                            isSelected = index == selectedDateIndex,
-                            date = date,
-                            onClick = {
-                                selectedDateIndex = index
-                            }
-                        )
+
+                if (isMealTrackingLoading){
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.13f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
+                }else{
+
+                    LazyRow(
+                        state = listState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.13f),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        itemsIndexed(listDates.asReversed()) { index, date ->
+                            DateCard(
+                                isSelected = index == selectedDateIndex,
+                                date = date,
+                                onClick = {
+                                    selectedDateIndex = index
+                                }
+                            )
+                            isRenderedDatesLazyRow = true
+                        }
+                    }
+
                 }
+
+
+
 
                 Spacer(modifier = Modifier.height(32.dp))
 
@@ -137,23 +218,29 @@ fun MealTrackingScreen(navController: NavController = rememberNavController()) {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 /*----------------Meals tracking list---------------------*/
+
+
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    itemsIndexed(meals) { index, meal ->
-                        MealSummary(
-                            mealName = meal.mealName,
-                            calories = meal.calories,
-                            carbs = meal.carbs,
-                            protein = meal.protein,
-                            fats = meal.fats,
-                            totalGrams = meal.totalGrams
-                        )
+                        itemsIndexed(meals) { index, meal ->
+                            MealSummary(
+                                mealName = meal.mealName,
+                                calories = meal.calories,
+                                carbs = meal.carbs,
+                                protein = meal.protein,
+                                fats = meal.fats,
+                                totalGrams = meal.totalGrams
+                            )
+                        }
+
                     }
-                }
+
+
+
             }
         }
     )
@@ -175,9 +262,9 @@ fun DateCard(isSelected: Boolean = false, date: LocalDate, onClick: () -> Unit) 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val monthColor =
-            if (isSelected) androidx.compose.ui.graphics.Color.White else androidx.compose.ui.graphics.Color.Black
+            if (isSelected) Color.White else Color.Black
         val dayColor =
-            if (isSelected) androidx.compose.ui.graphics.Color.White else MaterialTheme.colorScheme.scrim
+            if (isSelected) Color.White else MaterialTheme.colorScheme.scrim
         val monthAbbreviation =
             DatesFormat.monthAbbreviations[date.monthValue]?.uppercase(Locale.ROOT) ?: ""
 
@@ -218,11 +305,8 @@ fun MacronutrientDetail(
     Row(
         modifier = Modifier
             .wrapContentWidth()
-            .height(60.dp)
-        , // Definir una altura fija para asegurar visibilidad
-        verticalAlignment = Alignment.Bottom
-
-        ,
+            .height(60.dp), // Definir una altura fija para asegurar visibilidad
+        verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Column(
@@ -232,8 +316,7 @@ fun MacronutrientDetail(
                 .fillMaxHeight()
                 .clip(RoundedCornerShape(8.dp))
 
-                .background(MaterialTheme.colorScheme.surface)
-            ,
+                .background(MaterialTheme.colorScheme.surface),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
