@@ -1,16 +1,19 @@
 package com.health.vita.meals.data.repository
 
 import android.util.Log
-import com.google.firebase.auth.auth
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.health.vita.meals.data.data_source.MealTrackingService
 import com.health.vita.meals.data.data_source.MealTrackingServiceImpl
+import com.health.vita.meals.domain.model.Meal
 import java.time.LocalDate
 
 interface MealTrackingRepository {
 
     suspend fun getTrackingDateRange(): Int;
+
+    suspend fun getMealsOfADate(date: LocalDate): List<Meal>
 
 }
 
@@ -50,6 +53,24 @@ class MealTrackingRepositoryImpl(
             return -1
 
         }
+    }
+
+    override suspend fun getMealsOfADate(date: LocalDate): List<Meal> {
+
+        Firebase.auth.currentUser?.let {
+
+            val meals = mealTrackingService.getMealsOfADate(it.uid, date)
+
+            return meals
+
+
+        } ?: run {
+
+            Log.d("Meal tracking repository", "No currentUser provided for getMealsOfDate.")
+            return emptyList()
+        }
+
+
     }
 
 

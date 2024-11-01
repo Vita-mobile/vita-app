@@ -30,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.health.vita.core.utils.DatesFormat
+import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.meals.presentation.viewModels.MealTrackingViewModel
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.theme.Dimens
@@ -52,8 +53,15 @@ fun MealTrackingScreen(
     mealTrackingViewModel: MealTrackingViewModel = viewModel()
 ) {
 
+
+    val uiState by mealTrackingViewModel.uiState.observeAsState(UiState.Idle)
+
+    val mealsFetch by mealTrackingViewModel.mealsOfADate.observeAsState(emptyList())
+
     // Observe the days since the user registered the nutritional plan
-    val daysSinceRegisterNutritionalPlan by mealTrackingViewModel.daysSinceRegisterNutritionalPlan.observeAsState(0)
+    val daysSinceRegisterNutritionalPlan by mealTrackingViewModel.daysSinceRegisterNutritionalPlan.observeAsState(
+        0
+    )
 
     // Use to keep track of the selected date
     var selectedDateIndex by remember { mutableStateOf(0) }
@@ -70,7 +78,6 @@ fun MealTrackingScreen(
     // Use to keep track of the rendering of the dates lazy row, when is finished we can scroll to the selected date
 
     var isRenderedDatesLazyRow by remember { mutableStateOf(false) }
-
 
 
     // Lista de comidas
@@ -106,6 +113,8 @@ fun MealTrackingScreen(
 
         Log.d("Current user", "Current user: ${Firebase.auth.currentUser?.uid}")
 
+
+
         mealTrackingViewModel.getRegisterPlanDate()
 
     }
@@ -116,16 +125,23 @@ fun MealTrackingScreen(
             return@LaunchedEffect
         }
 
-        Log.d("MealTrackingScreen", "Days since register nutritional plan: $daysSinceRegisterNutritionalPlan")
+        Log.d(
+            "MealTrackingScreen",
+            "Days since register nutritional plan: $daysSinceRegisterNutritionalPlan"
+        )
         // If the user has registered the nutritional plan less than 30 days ago, show the dates since the registration
-        listDates = if (daysSinceRegisterNutritionalPlan < 30){
+        listDates = if (daysSinceRegisterNutritionalPlan < 30) {
 
-            List(daysSinceRegisterNutritionalPlan ) { index -> LocalDate.now().minusDays(index.toLong()) }
-        }else{
-            List(30) { index -> LocalDate.now().minusDays(index.toLong()) }
+            List(daysSinceRegisterNutritionalPlan) { index ->
+                LocalDate.now().minusDays(index.toLong())
+            }.reversed()
+
+
+        } else {
+            List(30) { index -> LocalDate.now().minusDays(index.toLong()) }.reversed()
         }
 
-        selectedDateIndex = listDates.size -1
+        selectedDateIndex = listDates.size - 1
 
         isMealTrackingLoading = false
 
@@ -135,6 +151,16 @@ fun MealTrackingScreen(
     LaunchedEffect(selectedDateIndex, isRenderedDatesLazyRow) {
 
         listState.animateScrollToItem(selectedDateIndex)
+    }
+
+    LaunchedEffect(selectedDateIndex) {
+
+        if (listDates.isEmpty()) {
+            return@LaunchedEffect
+        }
+
+        mealTrackingViewModel.getMealsOfADate(listDates[selectedDateIndex])
+
     }
 
     LaunchedEffect(listDates) {
@@ -147,8 +173,9 @@ fun MealTrackingScreen(
         content = { innerPadding ->
             Column(
                 modifier = Modifier
-                    .padding(innerPadding)
+                    .padding(innerPadding )
                     .padding(horizontal = 16.dp)
+
             ) {
                 /*----------------Meals tracking header---------------------*/
                 GeneralTopBar(
@@ -160,7 +187,7 @@ fun MealTrackingScreen(
 
                 /*----------------Date selector---------------------*/
 
-                if (isMealTrackingLoading){
+                if (isMealTrackingLoading) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -169,7 +196,7 @@ fun MealTrackingScreen(
                     ) {
                         CircularProgressIndicator()
                     }
-                }else{
+                } else {
 
                     LazyRow(
                         state = listState,
@@ -178,7 +205,7 @@ fun MealTrackingScreen(
                             .fillMaxHeight(0.13f),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        itemsIndexed(listDates.asReversed()) { index, date ->
+                        itemsIndexed(listDates) { index, date ->
                             DateCard(
                                 isSelected = index == selectedDateIndex,
                                 date = date,
@@ -219,26 +246,96 @@ fun MealTrackingScreen(
 
                 /*----------------Meals tracking list---------------------*/
 
+                when (uiState) {
+                    is UiState.Error -> {
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                        itemsIndexed(meals) { index, meal ->
-                            MealSummary(
-                                mealName = meal.mealName,
-                                calories = meal.calories,
-                                carbs = meal.carbs,
-                                protein = meal.protein,
-                                fats = meal.fats,
-                                totalGrams = meal.totalGrams
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+                            Text(
+                                text = "Error : ${(uiState as UiState.Error).error.message}",
+                                style = MaterialTheme.typography.titleSmall
                             )
                         }
 
+
                     }
 
+                    is UiState.Idle -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    is UiState.Loading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(),
+                            contentAlignment = Alignment.TopCenter
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    is UiState.Success -> {
+
+                        if(mealsFetch.isEmpty()){
+
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+
+                                Text(
+                                    text = "No tienes alimentos registrados para este día.",
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+
+
+                        }else{
+
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+
+                                itemsIndexed(mealsFetch) { index, meal ->
+                                    MealSummary(
+                                        mealName = meal.name,
+                                        calories = meal.calories,
+                                        carbs = meal.carbs,
+                                        protein = meal.proteins,
+                                        fats = meal.fats,
+                                        totalGrams = meal.carbs + meal.proteins + meal.fats
+                                    )
+                                }
+
+                            }
+
+
+                        }
+
+
+
+                    }
+                }
 
 
             }
