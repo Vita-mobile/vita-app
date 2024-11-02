@@ -12,12 +12,11 @@ interface MealsService {
 class MealsServiceImpl : MealsService {
     override suspend fun getMealsQuantity(userID: String): Int {
 
-        val userDocRef = Firebase.firestore.collection("User").document(userID)
-        val nutritionalPlanSnapshot = userDocRef.collection("NutritionalPlan").get().await()
+        val nutritionalPlanSnapshot = Firebase.firestore.collection("User").document(userID).collection("NutritionalPlan").get().await()
 
         if (!nutritionalPlanSnapshot.isEmpty) {
             val doc = nutritionalPlanSnapshot.documents.first()
-            val meals = doc.get("meals") as? Int
+            val meals = doc.get("meals").toString().toInt()
             return meals?:0
         }
         return 0

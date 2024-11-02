@@ -53,7 +53,7 @@ fun MealHomeScreen(navController: NavController) {
                             Text(text = "Comidas", style = MaterialTheme.typography.titleMedium)
                             Text(text = "Detalles", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary, modifier = Modifier.alpha(0.8f))
                         }
-                        MealsCarousel(4, navController, lastRecordedMeal)
+                        MealsCarousel(mealCount?:0, navController, lastRecordedMeal)
                     }
                 }
             }
