@@ -2,6 +2,7 @@ package com.health.vita.ui.components.meals
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -65,7 +66,9 @@ val colors = listOf(
     Color(0xFFca4313)
 )
 @Composable
-fun MealsCarousel(meals: Int = 0) {
+fun MealsCarousel(meals: Int = 0,
+                  navController: NavController = rememberNavController(),
+                  currentMeal: Int = 0){
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     var dynamicPadding = 0.dp
     if(screenWidth<=427.dp){
@@ -77,7 +80,7 @@ fun MealsCarousel(meals: Int = 0) {
     val pagerState = rememberPagerState(initialPage =  0,pageCount = {
         meals
     })
-    Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.End){
+    Row{
     }
     HorizontalPager(state = pagerState, contentPadding  = PaddingValues(horizontal = dynamicPadding)) { page ->
         Card(shape = RoundedCornerShape(10.dp), modifier = Modifier.graphicsLayer {
@@ -90,7 +93,7 @@ fun MealsCarousel(meals: Int = 0) {
                 start = 0.5f, stop = 1f, fraction = 1f-pageOffset.coerceIn(0f,1f)
             )
         }) {
-            DietCard(page)
+            DietCard(page, navController, currentMeal)
 
         }
     }
@@ -101,7 +104,7 @@ fun calculateCurrentOffsetForPage(page: Int, currentPage: Int): Float {
 }
 
 @Composable
-fun DietCard(page: Int, navController: NavController = rememberNavController()){
+fun DietCard(page: Int, navController: NavController = rememberNavController(), currentMeal: Int){
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
     Column(modifier = Modifier
@@ -109,7 +112,13 @@ fun DietCard(page: Int, navController: NavController = rememberNavController()){
             obtenerElementoCircular(colors, (page + screenWidth.value).toInt()) ?: Color.Transparent
         )
         .padding(8.dp)
-        .clickable { navController.navigate(DIETS_PREVIEW) }) {
+        .clickable {
+            if (page == currentMeal) {
+                navController.navigate(DIETS_PREVIEW)
+            } else {
+                Toast.makeText(navController.context, "Debes completar la comida ${currentMeal + 1} primero", Toast.LENGTH_LONG).show()
+            }
+        }) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
             Text(text = "Dieta balanceada", color = MaterialTheme.colorScheme.onPrimary)
             CircularIconOutlinedIconButton(R.drawable.baseline_arrow_forward_ios_24, onClick = {}, color = MaterialTheme.colorScheme.onBackground, containerColor = MaterialTheme.colorScheme.onPrimary, border = null, size = 18)
