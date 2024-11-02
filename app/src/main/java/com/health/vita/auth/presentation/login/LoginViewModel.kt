@@ -28,7 +28,6 @@ class LoginViewModel(
 
 ) : ViewModel() {
 
-
     private val uiHandler = UiHandler()
 
     val uiState: LiveData<UiState> get() = uiHandler.uiState
