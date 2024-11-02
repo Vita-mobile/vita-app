@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.health.vita.meals.data.data_source.MealsService
@@ -18,12 +19,17 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "st
 interface MealsRepository {
     fun getLastMealIndex(): Flow<Int>
     suspend fun incrementMealIndex()
-    suspend fun getMealsCount(userId: String): Int
+    suspend fun getMealsCount(): Int
+    suspend fun resetMealIndex()
+    suspend fun getLastEatenMealDate(): Timestamp
 }
 
 class MealsRepositoryImpl(
     private val context: Context,
-    val mealsService: MealsService = MealsServiceImpl()
+    val mealsService: MealsService = MealsServiceImpl(),
+    val mealsRepository: MealTrackingRepositoryImpl = MealTrackingRepositoryImpl(),
+
+
 ) : MealsRepository {
 
     companion object {
@@ -42,7 +48,15 @@ class MealsRepositoryImpl(
         }
     }
 
-    override suspend fun getMealsCount(userId: String): Int {
-        return mealsService.getMealsQuantity(userId)
+    override suspend fun getMealsCount(): Int {
+        return mealsService.getMealsQuantity(Firebase.auth.currentUser?.uid ?: "")
+    }
+
+    override suspend fun resetMealIndex() {
+        context.dataStore.edit { preferences -> preferences[LAST_MEAL_INDEX] = 0 }
+    }
+
+    override suspend fun getLastEatenMealDate(): Timestamp {
+        return mealsRepository.getLastEatenMealDate()
     }
 }

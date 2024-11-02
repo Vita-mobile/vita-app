@@ -1,6 +1,5 @@
 package com.health.vita.ui.components.meals
 
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,25 +26,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen.DIETS_PREVIEW
-import com.health.vita.ui.components.main.CircularIconOutlinedIconButton
-import kotlin.math.absoluteValue
-import androidx.datastore.preferences.core.Preferences import androidx.datastore.preferences.core.stringPreferencesKey import androidx.datastore.preferences.preferencesDataStore
 import com.health.vita.core.navigation.Screen.DIET_SELECTION
-import com.health.vita.ui.components.main.CardWithTitle
+import com.health.vita.ui.components.main.CircularIconOutlinedIconButton
 import com.health.vita.ui.theme.VitaTheme
+import kotlin.math.absoluteValue
 
 @Preview(showBackground = true, widthDp = 420)
 @Composable
@@ -83,7 +75,7 @@ fun MealsCarousel(meals: Int = 0,
         dynamicPadding = (screenWidth*0.37f).coerceAtLeast(40.dp)
     }
 
-    val pagerState = rememberPagerState(initialPage =  0,pageCount = {
+    val pagerState = rememberPagerState(initialPage =  currentMeal,pageCount = {
         meals
     })
     Row{
@@ -107,7 +99,7 @@ fun MealsCarousel(meals: Int = 0,
                     start = 0.5f, stop = 1f, fraction = 1f - pageOffset.coerceIn(0f, 1f)
                 )
             }) {
-                DietCard(page, navController, currentMeal)
+                DietCard(page, navController, currentMeal, meals)
 
             }
         }
@@ -123,7 +115,7 @@ fun calculateCurrentOffsetForPage(page: Int, currentPage: Int): Float {
 }
 
 @Composable
-fun DietCard(page: Int, navController: NavController = rememberNavController(), currentMeal: Int){
+fun DietCard(page: Int, navController: NavController = rememberNavController(), currentMeal: Int, totalMeals: Int){
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
     Column(modifier = Modifier
@@ -132,13 +124,32 @@ fun DietCard(page: Int, navController: NavController = rememberNavController(), 
         )
         .padding(8.dp)
         .clickable {
-            if (page == currentMeal) {
-                navController.navigate(DIETS_PREVIEW)
-            } else {
+            Log.e(">>>", "C: "+currentMeal+"T: "+totalMeals)
+            if (currentMeal < totalMeals) {
+                if (page == currentMeal) {
+                    navController.navigate(DIETS_PREVIEW)
+                } else if(page > currentMeal){
+                    Toast
+                        .makeText(
+                            navController.context,
+                            "Debes completar la comida ${currentMeal + 1} primero",
+                            Toast.LENGTH_LONG
+                        )
+                        .show()
+                }else{
+                    Toast
+                        .makeText(
+                            navController.context,
+                            "Ya haz completado esta comida, ve a la comida ${currentMeal + 1} para continuar",
+                            Toast.LENGTH_LONG
+                        )
+                        .show()
+                }
+            }else{
                 Toast
                     .makeText(
                         navController.context,
-                        "Debes completar la comida ${currentMeal + 1} primero",
+                        "Ya haz completado todas tus comidas de hoy, vuelve mañana",
                         Toast.LENGTH_LONG
                     )
                     .show()

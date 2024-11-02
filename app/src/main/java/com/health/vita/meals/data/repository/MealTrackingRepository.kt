@@ -14,6 +14,7 @@ interface MealTrackingRepository {
     suspend fun getTrackingDateRange(): Int;
 
     suspend fun getMealsOfADate(date: LocalDate): List<Meal>
+    suspend fun getLastEatenMealDate(): Timestamp
 
 }
 
@@ -71,6 +72,10 @@ class MealTrackingRepositoryImpl(
         }
 
 
+    }
+
+    override suspend fun getLastEatenMealDate(): Timestamp {
+        return mealTrackingService.geatLastEatenMealDate(Firebase.auth.currentUser?.uid?:"")?:Timestamp.now()
     }
 
 

@@ -34,8 +34,13 @@ fun MealHomeScreen(navController: NavController) {
     val mealsViewModel = MealsViewModel(context)
     val lastRecordedMeal by mealsViewModel.lastRecordedMeal.observeAsState(0)
     val mealCount by mealsViewModel.mealCounts.observeAsState()
+    val isToday by mealsViewModel.lastEatenMeal.observeAsState()
     LaunchedEffect(true) {
         mealsViewModel.getCurrentMeal()
+        mealsViewModel.getLastEatenMeal()
+    }
+    if(isToday == false){
+        mealsViewModel.resetMealIndex()
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),

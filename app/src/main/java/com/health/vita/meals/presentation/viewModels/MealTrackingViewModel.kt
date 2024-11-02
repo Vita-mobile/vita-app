@@ -38,11 +38,6 @@ class MealTrackingViewModel(
 
 
     fun getMealsOfADate( date: LocalDate){
-
-
-
-
-
         viewModelScope.launch(Dispatchers.IO) {
 
             withContext(Dispatchers.Main) {
@@ -71,12 +66,9 @@ class MealTrackingViewModel(
             }
 
         }
-
-
     }
 
     fun getRegisterPlanDate() {
-
         viewModelScope.launch(Dispatchers.IO) {
 
             withContext(Dispatchers.Main) {
@@ -118,6 +110,11 @@ class MealTrackingViewModel(
             }
 
         }
+    }
 
+    fun getLastEatenMeal(){
+        viewModelScope.launch(Dispatchers.IO){
+            mealTrackingRepository.getLastEatenMealDate()
+        }
     }
 }
