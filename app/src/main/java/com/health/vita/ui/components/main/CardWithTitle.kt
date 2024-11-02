@@ -3,6 +3,7 @@ package com.health.vita.ui.components.main
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,6 +31,7 @@ import com.health.vita.ui.theme.VitaTheme
 fun CardWithTitle(
     title: String,
     @DrawableRes background: Int,
+    onClick: () -> Unit = {},
     content: @Composable () -> Unit
 ) {
     Column(Modifier.background(MaterialTheme.colorScheme.background).padding(vertical = 10.dp)) {
@@ -41,7 +43,7 @@ fun CardWithTitle(
                 .height(200.dp)
                 .padding(top = 20.dp)
         ) {
-            Box(contentAlignment = Alignment.BottomStart){
+            Box(contentAlignment = Alignment.BottomStart, modifier = Modifier.clickable { onClick() }){
                 Image(
                     painter = painterResource(id = background),
                     contentDescription = null,

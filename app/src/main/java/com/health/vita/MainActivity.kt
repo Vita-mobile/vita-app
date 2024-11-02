@@ -37,7 +37,6 @@ fun App(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     NavGraph(navController = navController)
 
-
 }
 
 
