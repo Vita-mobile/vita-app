@@ -1,12 +1,16 @@
 package com.health.vita.meals.presentation
 
 import MealsViewModel
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,6 +29,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.R
+import com.health.vita.core.navigation.Screen.DIET_SELECTION
+import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.ui.components.meals.MealsCarousel
 import com.health.vita.ui.theme.VitaTheme
 
@@ -35,11 +41,13 @@ fun MealHomeScreen(navController: NavController) {
     val lastRecordedMeal by mealsViewModel.lastRecordedMeal.observeAsState(0)
     val mealCount by mealsViewModel.mealCounts.observeAsState()
     val isToday by mealsViewModel.lastEatenMeal.observeAsState()
+    val uiState by mealsViewModel.uiState.observeAsState(UiState.Idle)
+
     LaunchedEffect(true) {
         mealsViewModel.getCurrentMeal()
         mealsViewModel.getLastEatenMeal()
     }
-    if(isToday == false){
+    if (isToday == false) {
         mealsViewModel.resetMealIndex()
     }
     Scaffold(
@@ -56,16 +64,49 @@ fun MealHomeScreen(navController: NavController) {
                                 .padding(vertical = 18.dp)
                         ) {
                             Text(text = "Comidas", style = MaterialTheme.typography.titleMedium)
-                            Text(text = "Detalles", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary, modifier = Modifier.alpha(0.8f))
+                            Text(text = "Detalles",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .alpha(0.8f)
+                                    .clickable { navController.navigate(DIET_SELECTION) })
                         }
-                        MealsCarousel(mealCount?:0, navController, lastRecordedMeal)
+                        when (uiState) {
+                            is UiState.Error -> MealsCarousel(
+                                mealCount ?: 0,
+                                navController,
+                                lastRecordedMeal
+                            )
+
+                            UiState.Idle -> MealsCarousel(
+                                mealCount ?: 0,
+                                navController,
+                                lastRecordedMeal
+                            )
+
+                            UiState.Loading -> Box(
+                                modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(150.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+
+                            UiState.Success -> MealsCarousel(
+                                mealCount ?: 0,
+                                navController,
+                                lastRecordedMeal
+                            )
+                        }
+
                     }
                 }
             }
         }
     )
 }
-
 
 
 @Composable

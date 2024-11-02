@@ -124,7 +124,6 @@ fun DietCard(page: Int, navController: NavController = rememberNavController(), 
         )
         .padding(8.dp)
         .clickable {
-            Log.e(">>>", "C: "+currentMeal+"T: "+totalMeals)
             if (currentMeal < totalMeals) {
                 if (page == currentMeal) {
                     navController.navigate(DIETS_PREVIEW)

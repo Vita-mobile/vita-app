@@ -4,6 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
+import com.health.vita.core.utils.states_management.UiHandler
+import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.meals.data.repository.MealTrackingRepositoryImpl
 import com.health.vita.meals.data.repository.MealsRepository
 import com.health.vita.meals.data.repository.MealsRepositoryImpl
@@ -13,6 +15,8 @@ import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 class MealsViewModel(context: Context, private val repository: MealsRepository = MealsRepositoryImpl(context)) : ViewModel() {
+    private val _uiHandler = UiHandler()
+    val uiState: LiveData<UiState> get() = _uiHandler.uiState
 
     private val _lastRecordedMeal = MutableLiveData<Int>()
     val lastRecordedMeal: LiveData<Int> get() = _lastRecordedMeal
@@ -23,7 +27,9 @@ class MealsViewModel(context: Context, private val repository: MealsRepository =
     init {
         viewModelScope.launch(Dispatchers.IO){
             withContext(Dispatchers.Main) {
+                _uiHandler.setLoadingState()
                 _mealCount.value = repository.getMealsCount()
+                _uiHandler.setSuccess()
             }
         }
     }
