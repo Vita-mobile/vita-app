@@ -90,5 +90,6 @@ dependencies {
 
     //Transitions dependencies
     implementation("com.google.accompanist:accompanist-navigation-animation:0.32.0")
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
 
 }

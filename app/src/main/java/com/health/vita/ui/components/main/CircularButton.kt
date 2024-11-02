@@ -31,18 +31,21 @@ import com.health.vita.R
 fun CircularIconOutlinedIconButton(
     @DrawableRes icon: Int,
     color: Color = Color.White,
-    onClick: () -> Unit
+    size: Int = 56,
+    containerColor: Color = Color.Transparent,
+    border: BorderStroke? = BorderStroke(2.dp, color),
+    onClick: () -> Unit,
     ) {
     OutlinedIconButton(
         onClick =  onClick ,
-        modifier = Modifier.size(56.dp),
+        modifier = Modifier.size(size.dp),
         colors = IconButtonDefaults.outlinedIconButtonColors(
-            containerColor = Color.Transparent,
+            containerColor = containerColor,
             contentColor = color
         ),
-        border = BorderStroke(2.dp, color), // Cambia el color del borde
+        border = border, // Cambia el color del borde
     ) {
-        Icon(painter = painterResource(id = icon), contentDescription = "Home")
+        Icon(painter = painterResource(id = icon), contentDescription = "Home", modifier = Modifier.size((size*0.43f).dp))
     }
 }
 
