@@ -7,17 +7,20 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,13 +44,15 @@ import com.health.vita.core.navigation.Screen.DIETS_PREVIEW
 import com.health.vita.ui.components.main.CircularIconOutlinedIconButton
 import kotlin.math.absoluteValue
 import androidx.datastore.preferences.core.Preferences import androidx.datastore.preferences.core.stringPreferencesKey import androidx.datastore.preferences.preferencesDataStore
+import com.health.vita.core.navigation.Screen.DIET_SELECTION
+import com.health.vita.ui.components.main.CardWithTitle
 import com.health.vita.ui.theme.VitaTheme
 
 @Preview(showBackground = true, widthDp = 420)
 @Composable
 fun PrevCarr(){
     VitaTheme {
-        MealsCarousel(5)
+        MealsCarousel(0)
     }
 }
 
@@ -82,19 +88,32 @@ fun MealsCarousel(meals: Int = 0,
     })
     Row{
     }
-    HorizontalPager(state = pagerState, contentPadding  = PaddingValues(horizontal = dynamicPadding)) { page ->
-        Card(shape = RoundedCornerShape(10.dp), modifier = Modifier.graphicsLayer {
-            val pageOffset = calculateCurrentOffsetForPage(page, pagerState.currentPage)
-            lerp(start = 0.85f, stop = 1f, fraction = 1f-pageOffset.coerceIn(0f,1f)).also { scale ->
-                scaleX = scale
-                scaleY = scale
-            }
-            alpha = lerp(
-                start = 0.5f, stop = 1f, fraction = 1f-pageOffset.coerceIn(0f,1f)
-            )
-        }) {
-            DietCard(page, navController, currentMeal)
+    if(meals!=0) {
+        HorizontalPager(
+            state = pagerState,
+            contentPadding = PaddingValues(horizontal = dynamicPadding)
+        ) { page ->
+            Card(shape = RoundedCornerShape(10.dp), modifier = Modifier.graphicsLayer {
+                val pageOffset = calculateCurrentOffsetForPage(page, pagerState.currentPage)
+                lerp(
+                    start = 0.85f,
+                    stop = 1f,
+                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                ).also { scale ->
+                    scaleX = scale
+                    scaleY = scale
+                }
+                alpha = lerp(
+                    start = 0.5f, stop = 1f, fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                )
+            }) {
+                DietCard(page, navController, currentMeal)
 
+            }
+        }
+    }else{
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable { navController.navigate(DIET_SELECTION) }.fillMaxWidth().height(150.dp).background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))){
+            Icon(painterResource(id = R.drawable.baseline_add_24), contentDescription = "")
         }
     }
 }
@@ -116,7 +135,13 @@ fun DietCard(page: Int, navController: NavController = rememberNavController(), 
             if (page == currentMeal) {
                 navController.navigate(DIETS_PREVIEW)
             } else {
-                Toast.makeText(navController.context, "Debes completar la comida ${currentMeal + 1} primero", Toast.LENGTH_LONG).show()
+                Toast
+                    .makeText(
+                        navController.context,
+                        "Debes completar la comida ${currentMeal + 1} primero",
+                        Toast.LENGTH_LONG
+                    )
+                    .show()
             }
         }) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){

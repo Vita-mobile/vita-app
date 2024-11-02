@@ -13,7 +13,7 @@ val LightBlue = Color(0xFFA3E4ED)
 
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF000000)
-val LightGray = Color(0xFFEFEFEF)
+val LightGray = Color(0xFFEEEEEE)
 val MediumGray = Color(0x66000000)
 val Gray = Color(0x66464646)
 val LightTurquoise2  =Color(0xFFc8f1f7)
