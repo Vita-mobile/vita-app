@@ -92,15 +92,11 @@ fun HydrationScreen(
         mutableStateOf(500)
     }
 
-    // Observa el valor almacenado y el timestamp
     val dataFlow = getValueAndTimestamp(context).collectAsState(initial = Pair(0, 0L))
     val (storedValue, lastUpdated) = dataFlow.value
-    Log.e("initial values", "Stored value: $storedValue last Updated: $lastUpdated")
-    // Comprobación de tiempo al iniciar el Composable
+
     LaunchedEffect(storedValue, lastUpdated) {
         val currentTime = System.currentTimeMillis()
-
-
         val midnightToday = Calendar.getInstance().apply {
             timeInMillis = currentTime
             set(Calendar.HOUR_OF_DAY, 0)
@@ -109,22 +105,14 @@ fun HydrationScreen(
             set(Calendar.MILLISECOND, 0)
         }.timeInMillis
 
-        Log.e(">>>", "Entré al LaunchedEffect")
-
-        Log.e(">>> Last Updated", "$lastUpdated")
-        Log.e(">>> midnightToday", "$midnightToday")
-
         if (lastUpdated != 0L){
-            // Comprueba si la última actualización fue antes de la medianoche de hoy
             if (lastUpdated < midnightToday) {
-                Log.e(">>>", "Entré al LaunchedEffect a reiniciar el valor")
 
                 waterIntake = 0
                 scope.launch(Dispatchers.IO) {
                     saveValueAndTimestamp(context, 0, currentTime)
                 }
             } else {
-                Log.e(">>>", "Entré al LaunchedEffect a cargar el valor persistido")
                 waterIntake = storedValue
             }
         }
