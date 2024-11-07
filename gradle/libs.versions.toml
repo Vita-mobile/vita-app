@@ -1,5 +1,6 @@
 [versions]
 agp = "8.5.1"
+datastorePreferences = "1.1.1"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -8,15 +9,19 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.6"
 activityCompose = "1.9.2"
 composeBom = "2024.04.01"
+materialIconsExtended = "2.1.0"
 navigationCompose = "2.8.2"
 composeMaterial = "1.4.0"
 googleGmsGoogleServices = "4.4.2"
 firebaseFirestore = "25.1.0"
 firebaseAuthKtx = "23.0.0"
 firebaseCommonKtx = "21.0.0"
+datastorePreferencesCoreJvm = "1.1.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -35,6 +40,7 @@ androidx-compose-material = { group = "androidx.wear.compose", name = "compose-m
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx", version.ref = "firebaseCommonKtx" }
+androidx-datastore-preferences-core-jvm = { group = "androidx.datastore", name = "datastore-preferences-core-jvm", version.ref = "datastorePreferencesCoreJvm" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
