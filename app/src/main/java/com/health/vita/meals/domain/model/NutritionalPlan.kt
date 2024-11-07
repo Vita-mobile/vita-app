@@ -11,6 +11,8 @@ data class NutritionalPlan (
     var hydrationLevel: Float = 0f,
     var kcalGoal: Float = 0f,
     var meals: Float = 0f,
-    var registerPlanDate: LocalDate = LocalDate.now()
+    var registerPlanDate: LocalDate = LocalDate.now(),
+    var preferences: List<Ingredient> = emptyList(),
+    var restrictions: List<Ingredient> = emptyList(),
 
 )
