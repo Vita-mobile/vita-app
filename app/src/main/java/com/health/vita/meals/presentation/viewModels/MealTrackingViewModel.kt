@@ -39,10 +39,6 @@ class MealTrackingViewModel(
 
     fun getMealsOfADate( date: LocalDate){
 
-
-
-
-
         viewModelScope.launch(Dispatchers.IO) {
 
             withContext(Dispatchers.Main) {

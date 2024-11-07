@@ -75,6 +75,7 @@ class MealTrackingServiceImpl() : MealTrackingService {
         .get()
         .await()
 
+
     val meals = mealsByDateQuery.documents.mapNotNull { mealDocument ->
         mealDocument.toObject(Meal::class.java)
     }
