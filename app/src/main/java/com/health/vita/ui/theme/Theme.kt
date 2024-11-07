@@ -30,7 +30,12 @@ private val LightColorScheme = lightColorScheme(
     onBackground = Black, // Color of the text of elements that overlay the background
     surface = LightGray, // Elements that may overlay (e.g., Pop-ups)
     onSurface = Black,
-    surfaceContainer = LightTurquoise2
+    surfaceContainer = LightTurquoise2,
+    surfaceContainerHighest = MintGreen,
+    scrim = Gray
+
+
+
 )
 
 @Composable

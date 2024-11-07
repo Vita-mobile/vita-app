@@ -27,6 +27,7 @@ import androidx.navigation.NavController
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen.ACCOUNT_SETTINGS
 import com.health.vita.core.navigation.Screen.LOGIN
+import com.health.vita.core.navigation.Screen.MEAL_HOME
 import com.health.vita.core.navigation.Screen.PROFILE
 import com.health.vita.profile.presentation.viewModel.ProfileViewModel
 import com.health.vita.ui.components.main.CardWithTitle
@@ -72,7 +73,7 @@ fun HomeScreen(
                         CardWithTitle("Entrenamientos", R.drawable.main_sportcard) {
                             content(MaterialTheme.colorScheme.background)
                         }
-                        CardWithTitle("Alimentacion", R.drawable.main_mealcard) {
+                        CardWithTitle("Alimentacion", R.drawable.main_mealcard, {navController.navigate(MEAL_HOME)}) {
                             content(MaterialTheme.colorScheme.onSurface)
                         }
                         CardWithTitle("Entrenador IA", R.drawable.main_iacard) {

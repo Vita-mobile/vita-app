@@ -21,7 +21,6 @@ class UnknownError(
     cause: Throwable? = null
 ) : AppError(message, cause)
 
-
 class AuthCredentialsError(
     message: String = "Error al definir las credenciales.",
     cause: Throwable? = null
@@ -29,5 +28,10 @@ class AuthCredentialsError(
 
 class FirebaseError(
     message: String = "Error al usar firebase.",
+    cause: Throwable? = null
+) : AppError(message, cause)
+
+class CalculatingTrackingMealsDateRangeError(
+    message: String = "Error al calcular el intervalo de fechas del seguimiento de las meals.",
     cause: Throwable? = null
 ) : AppError(message, cause)
