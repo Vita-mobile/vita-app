@@ -125,7 +125,7 @@ fun HydrationScreen(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            GeneralTopBar(text = "Hidratación", hasStep = false, onClick = { /*TODO*/ })
+            GeneralTopBar(text = "Hidratación", hasStep = false, onClick = { navController.navigateUp() })
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
