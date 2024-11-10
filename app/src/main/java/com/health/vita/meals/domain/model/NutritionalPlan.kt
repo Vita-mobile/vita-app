@@ -1,6 +1,6 @@
 package com.health.vita.meals.domain.model
 
-import java.time.LocalDate
+import com.google.firebase.Timestamp
 
 data class NutritionalPlan (
 
@@ -10,7 +10,9 @@ data class NutritionalPlan (
     var proteins: Float = 0f,
     var hydrationLevel: Float = 0f,
     var kcalGoal: Float = 0f,
-    var meals: Float = 0f,
-    var registerPlanDate: LocalDate = LocalDate.now()
+    var meals: Int = 0,
+    var registerPlanDate: Timestamp = Timestamp.now(),
+    var preferences: List<Ingredient> = emptyList(),
+    var restrictions: List<Ingredient> = emptyList(),
 
 )
