@@ -26,11 +26,13 @@ private val LightColorScheme = lightColorScheme(
     onPrimary = White, // Text or icons that overlay the primary color - Used for contrast with the primary color
     secondary = LightTurquoise, // Secondary color used in some elements of the app (Complementary)
     tertiary = Aquamarine,
+    onTertiary = MintGreen,
     background = White, // Background color of the entire application
     onBackground = Black, // Color of the text of elements that overlay the background
     surface = LightGray, // Elements that may overlay (e.g., Pop-ups)
     onSurface = Black,
-    surfaceContainer = LightTurquoise2
+    surfaceContainer = LightTurquoise2,
+
 )
 
 @Composable

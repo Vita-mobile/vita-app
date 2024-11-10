@@ -1,6 +1,6 @@
 package com.health.vita.register.presentation.viewmodel
 
-
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,6 +13,8 @@ import com.health.vita.core.utils.error_management.UnknownError
 import com.health.vita.core.utils.states_management.UiHandler
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.domain.model.User
+import com.health.vita.register.data.repository.ProfileImageRepository
+import com.health.vita.register.data.repository.ProfileImageRepositoryImpl
 import com.health.vita.register.data.repository.SignUpRepository
 import com.health.vita.register.data.repository.SignUpRepositoryImpl
 import kotlinx.coroutines.Dispatchers
@@ -20,9 +22,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.sql.SQLException
+import java.util.UUID
 
 class SignupViewModel(
-    private val signUpRepository: SignUpRepository = SignUpRepositoryImpl()
+    private val signUpRepository: SignUpRepository = SignUpRepositoryImpl(),
+    private val profileImageRepository: ProfileImageRepository = ProfileImageRepositoryImpl()
 ) : ViewModel() {
 
     private val _name = MutableLiveData("")
@@ -37,8 +41,8 @@ class SignupViewModel(
     private val _email = MutableLiveData("")
     val email: LiveData<String> get() = _email
 
-    private val _photoUri = MutableLiveData("")
-    val photoUri: LiveData<String> get() = _photoUri
+    private val _profileImage = MutableLiveData("")
+    val profileImage: LiveData<String?> get() = _profileImage
 
     private val _age = MutableLiveData(18)
     val age: LiveData<Int> get() = _age
@@ -57,6 +61,10 @@ class SignupViewModel(
 
     private val _goal = MutableLiveData("")
     val goal: LiveData<String> get() = _goal
+
+
+    private val _defaultImages = MutableLiveData<List<String>>()
+    val defaultImages: LiveData<List<String>> get() = _defaultImages
 
     private val uiHandler = UiHandler()
 
@@ -83,8 +91,8 @@ class SignupViewModel(
         _email.value = email
     }
 
-    fun setPhotoUri(uri: String) {
-        _photoUri.value = uri
+    fun setProfileImage(uri: String?) {
+        _profileImage.value = uri
     }
 
     fun setActivityLevel(activityLevel: Int) {
@@ -111,6 +119,28 @@ class SignupViewModel(
         _gender.value = gender
     }
 
+    init {
+
+        loadDefaultImages()
+
+    }
+
+    fun loadDefaultImages() {
+
+        viewModelScope.launch {
+            try {
+                val images = profileImageRepository.getDefaultProfileImages()
+                _defaultImages.postValue(images)
+
+                Log.d("SignupViewModel", "Imágenes predeterminadas cargadas: $images")
+            } catch (e: Exception) {
+
+                e.printStackTrace()
+            }
+        }
+
+    }
+
     fun isRepeatedEmail(email: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -128,7 +158,6 @@ class SignupViewModel(
         }
     }
 
-
     fun registerOperation() {
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -144,7 +173,6 @@ class SignupViewModel(
                     name = _name.value ?: "",
                     lastName = _lastName.value ?: "",
                     email = _email.value ?: "",
-                    //photoUri = _photoUri.value ?: "",
                     age = _age.value ?: 0,
                     weight = (_weight.value ?: 0f),
                     height = (_height.value ?: 0f),
