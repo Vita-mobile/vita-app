@@ -69,9 +69,9 @@ class NutritionalPlanRepositoryImpl(
                     proteins = cal * MacroPercentages.Volume.PROTEINS
                 }
                 else -> {
-                    carbs = cal * MacroPercentages.Volume.CARBS
-                    fats = cal * MacroPercentages.Volume.FATS
-                    proteins = cal * MacroPercentages.Volume.PROTEINS
+                    carbs = cal * MacroPercentages.Maintain.CARBS
+                    fats = cal * MacroPercentages.Maintain.FATS
+                    proteins = cal * MacroPercentages.Maintain.PROTEINS
                 }
             }
 

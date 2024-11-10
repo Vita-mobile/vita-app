@@ -6,15 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.health.vita.core.utils.states_management.UiHandler
 import com.health.vita.core.utils.states_management.UiState
-import com.health.vita.meals.data.repository.MealTrackingRepository
-import com.health.vita.meals.data.repository.MealTrackingRepositoryImpl
 import com.health.vita.meals.data.repository.NutritionalPlanRepository
 import com.health.vita.meals.data.repository.NutritionalPlanRepositoryImpl
 import com.health.vita.meals.domain.model.Ingredient
-import com.health.vita.meals.domain.model.Meal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 class NutritionalPlanViewModel(
 
