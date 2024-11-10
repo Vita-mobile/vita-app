@@ -17,10 +17,17 @@ class IngredientViewModel(
     private val _ingredientsState = MutableLiveData<List<Ingredient?>>()
     val ingredientsState: LiveData<List<Ingredient?>> get() = _ingredientsState
 
+    private val _searchQuery = MutableLiveData<String>()
+    val searchQuery: LiveData<String> get() = _searchQuery
+
     fun getIngredients() {
         viewModelScope.launch(Dispatchers.IO) {
             val messages = ingredientRepository.getIngredients()
             withContext(Dispatchers.Main) { _ingredientsState.value = messages }
         }
+    }
+
+    fun setSearchQuery(query: String) {
+        _searchQuery.value = query
     }
 }

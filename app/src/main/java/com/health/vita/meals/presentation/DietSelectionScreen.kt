@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
@@ -53,6 +54,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.meals.domain.model.Ingredient
 import com.health.vita.meals.presentation.viewModels.IngredientViewModel
+import com.health.vita.meals.presentation.viewModels.NutritionalPlanViewModel
 import com.health.vita.ui.components.general.CustomPopup
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
@@ -64,10 +66,15 @@ import com.health.vita.ui.theme.MintGreen
 @Composable
 fun DietSelectionScreen(
     navController: NavController = rememberNavController(),
-    ingredientViewModel: IngredientViewModel = viewModel()
+    ingredientViewModel: IngredientViewModel = viewModel(),
+    nutritionalPlanViewModel: NutritionalPlanViewModel = viewModel()
 ) {
     val ingredientState by ingredientViewModel.ingredientsState.observeAsState(listOf())
-
+    val preferences by nutritionalPlanViewModel.preferences.observeAsState(listOf())
+    val restrictions by nutritionalPlanViewModel.restrictions.observeAsState(listOf())
+    val meals by nutritionalPlanViewModel.meals.observeAsState(3)
+    val searchQuery by ingredientViewModel.searchQuery.observeAsState("")
+    var isSettingPreferences = false
     var ingredientPopUp by remember {
         mutableStateOf(false)
     }
@@ -111,7 +118,7 @@ fun DietSelectionScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 BorderLabelText(
-                    text = "2",
+                    text = "$meals",
                     border = false,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
                 )
@@ -120,66 +127,154 @@ fun DietSelectionScreen(
                     modifier = Modifier.height(48.dp),
                     bgColor = Color.Transparent,
                     border = true,
-                    borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                    borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                    leftIconOnClick = {nutritionalPlanViewModel.setMeals(meals-1)},
+                    rightIconOnClick = {nutritionalPlanViewModel.setMeals(meals+1)},
                 )
             }
             Spacer(modifier = Modifier.weight(0.4f))
             BorderLabelText(
                 text = "Cuéntanos sobre los alimentos que quieres evitar",
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp),
+                icon = Icons.Outlined.Add,
+                onIconClick = {
+                    ingredientPopUp = !ingredientPopUp
+                    isSettingPreferences = false
+                }
             )
             Spacer(modifier = Modifier.weight(0.4f))
-            LazyColumn(modifier = Modifier.weight(5f)) {
-                items(ingredientState.chunked(2)) { itemGroup ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        itemGroup.forEach { item ->
-                            item?.let {
+            if (restrictions.isEmpty()) {
+                Column(
+                    modifier = Modifier.weight(5f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    BorderLabelText(
+                        text = "Agrega ingredientes para conocerte más, ve",
+                        border = false,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                    )
+                }
+            } else {
+                LazyColumn(modifier = Modifier.weight(5f), verticalArrangement = Arrangement.Center) {
+                    items(restrictions.chunked(2)) { itemGroup ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            itemGroup.forEach { item ->
                                 BorderLabelText(
-                                    text = it.name,
+                                    text = item.name,
                                     border = false,
                                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                                 )
                             }
                         }
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
             Spacer(modifier = Modifier.weight(0.4f))
             BorderLabelText(
                 text = "Cuéntanos sobre los alimentos a los que tienes fácil acceso",
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp),
+                icon = Icons.Outlined.Add,
+                onIconClick = {
+                    ingredientPopUp = !ingredientPopUp
+                    isSettingPreferences = true
+                }
             )
             Spacer(modifier = Modifier.weight(0.4f))
-            LazyColumn(modifier = Modifier.weight(5f)) {
-                items(List(50) { "Ingrediente #$it" }.chunked(2)) { itemGroup ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        itemGroup.forEach { item ->
-                            BorderLabelText(
-                                text = item,
-                                border = false,
-                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                            )
+            if (preferences.isEmpty()) {
+                Column(
+                    modifier = Modifier.weight(5f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    BorderLabelText(
+                        text = "Agrega ingredientes para conocerte más, ve",
+                        border = false,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                    )
+                }
+            } else {
+                LazyColumn(modifier = Modifier.weight(5f), verticalArrangement = Arrangement.Center) {
+                    items(preferences.chunked(2)) { itemGroup ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            itemGroup.forEach { item ->
+                                BorderLabelText(
+                                    text = item.name,
+                                    border = false,
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                                )
+                            }
                         }
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
             Spacer(modifier = Modifier.weight(0.4f))
-            PrimaryIconButton(text = "Continuar", color = MintGreen)
+            PrimaryIconButton(text = "Continuar", color = MintGreen, onClick = {nutritionalPlanViewModel.createNutritionalPlan()})
             CustomPopup(
                 showDialog = ingredientPopUp,
                 onDismiss = { /*TODO*/ },
-                onCancel = {},
-                onConfirm = {},
+                onCancel = { ingredientPopUp = !ingredientPopUp },
+                onConfirm = { ingredientPopUp = !ingredientPopUp },
                 title = "Selecciona los ingredientes",
-                content = { /*TODO*/ })
+                height = 0.6f,
+                content = {
+                    Column(modifier = Modifier) {
+                        TextField(
+                            value = searchQuery,
+                            onValueChange = { query -> ingredientViewModel.setSearchQuery(query) },
+                            label = { Text("Buscar ingrediente") },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                        )
+                        val filteredIngredients = ingredientState.filter {
+                            it?.name?.contains(
+                                searchQuery,
+                                ignoreCase = true
+                            ) == true && it !in preferences && it !in restrictions
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        LazyColumn(modifier = Modifier) {
+                            items(filteredIngredients.chunked(2)) { itemGroup ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    itemGroup.forEach { item ->
+                                        item?.let {
+                                            BorderLabelText(
+                                                text = it.name,
+                                                border = false,
+                                                color = MaterialTheme.colorScheme.onBackground.copy(
+                                                    alpha = 0.8f
+                                                ),
+                                                icon = Icons.Outlined.Add,
+                                                onIconClick = {
+                                                    if (isSettingPreferences) {
+                                                        nutritionalPlanViewModel.addPreference(it)
+                                                    } else {
+                                                        nutritionalPlanViewModel.addRestriction(it)
+                                                    }
+                                                }
+                                            )
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                }
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                        }
+                    }
+                })
         }
     })
 }
+
