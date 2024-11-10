@@ -1,5 +1,6 @@
 package com.health.vita.meals.presentation
 
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -52,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.meals.domain.model.Ingredient
 import com.health.vita.meals.presentation.viewModels.IngredientViewModel
 import com.health.vita.meals.presentation.viewModels.NutritionalPlanViewModel
@@ -74,6 +76,7 @@ fun DietSelectionScreen(
     val restrictions by nutritionalPlanViewModel.restrictions.observeAsState(listOf())
     val meals by nutritionalPlanViewModel.meals.observeAsState(3)
     val searchQuery by ingredientViewModel.searchQuery.observeAsState("")
+    val uiState by nutritionalPlanViewModel.uiState.observeAsState(UiState.Idle)
     var isSettingPreferences = false
     var ingredientPopUp by remember {
         mutableStateOf(false)
@@ -128,8 +131,8 @@ fun DietSelectionScreen(
                     bgColor = Color.Transparent,
                     border = true,
                     borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-                    leftIconOnClick = {nutritionalPlanViewModel.setMeals(meals-1)},
-                    rightIconOnClick = {nutritionalPlanViewModel.setMeals(meals+1)},
+                    leftIconOnClick = { nutritionalPlanViewModel.setMeals(meals - 1) },
+                    rightIconOnClick = { nutritionalPlanViewModel.setMeals(meals + 1) },
                 )
             }
             Spacer(modifier = Modifier.weight(0.4f))
@@ -156,7 +159,10 @@ fun DietSelectionScreen(
                     )
                 }
             } else {
-                LazyColumn(modifier = Modifier.weight(5f), verticalArrangement = Arrangement.Center) {
+                LazyColumn(
+                    modifier = Modifier.weight(5f),
+                    verticalArrangement = Arrangement.Center
+                ) {
                     items(restrictions.chunked(2)) { itemGroup ->
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -198,7 +204,10 @@ fun DietSelectionScreen(
                     )
                 }
             } else {
-                LazyColumn(modifier = Modifier.weight(5f), verticalArrangement = Arrangement.Center) {
+                LazyColumn(
+                    modifier = Modifier.weight(5f),
+                    verticalArrangement = Arrangement.Center
+                ) {
                     items(preferences.chunked(2)) { itemGroup ->
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -217,7 +226,17 @@ fun DietSelectionScreen(
                 }
             }
             Spacer(modifier = Modifier.weight(0.4f))
-            PrimaryIconButton(text = "Continuar", color = MintGreen, onClick = {nutritionalPlanViewModel.createNutritionalPlan()})
+            PrimaryIconButton(
+                text = {
+                    when (uiState) {
+                        is UiState.Idle -> "Continuar"
+                        is UiState.Error -> "Error"
+                        is UiState.Loading -> "Cargando"
+                        is UiState.Success -> "Creado"
+                    }
+                }.toString(),
+                color = MintGreen,
+                onClick = { nutritionalPlanViewModel.createNutritionalPlan() })
             CustomPopup(
                 showDialog = ingredientPopUp,
                 onDismiss = { /*TODO*/ },
