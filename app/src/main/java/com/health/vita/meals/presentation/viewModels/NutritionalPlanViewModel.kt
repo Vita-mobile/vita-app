@@ -47,7 +47,10 @@ class NutritionalPlanViewModel(
 
     fun createNutritionalPlan(){
         viewModelScope.launch(Dispatchers.IO) {
-            nutritionalPlanRepository.createNutritionalPlan()
+            val preferences = _preferences.value ?: emptyList()
+            val restrictions = _preferences.value ?: emptyList()
+            val meals  = _meals.value ?: 0
+            nutritionalPlanRepository.createNutritionalPlan(preferences, restrictions, meals)
         }
 
     }
