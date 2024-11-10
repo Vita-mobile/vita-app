@@ -33,6 +33,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.meals.domain.model.Ingredient
+import com.health.vita.ui.components.general.CustomPopup
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.components.meals.BorderLabelText
@@ -54,6 +59,11 @@ import com.health.vita.ui.theme.MintGreen
 @Preview
 @Composable
 fun DietSelectionScreen(navController: NavController = rememberNavController()) {
+
+    var ingredientPopUp by remember {
+        mutableStateOf(false)
+    }
+
     Scaffold(modifier = Modifier.fillMaxSize(), content = { innerPadding ->
         Column(
             modifier = Modifier
@@ -149,6 +159,11 @@ fun DietSelectionScreen(navController: NavController = rememberNavController()) 
             }
             Spacer(modifier = Modifier.weight(0.4f))
             PrimaryIconButton(text = "Continuar", color = MintGreen)
+            CustomPopup(
+                showDialog = ingredientPopUp,
+                onDismiss = { /*TODO*/ },
+                title = "Selecciona los ingredientes",
+                content = { /*TODO*/ })
         }
     })
 }
