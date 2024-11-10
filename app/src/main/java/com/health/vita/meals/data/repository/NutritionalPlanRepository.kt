@@ -1,6 +1,7 @@
 package com.health.vita.meals.data.repository
 
 import android.util.Log
+import com.google.firebase.Timestamp
 import com.health.vita.core.utils.DatabaseNames
 import com.health.vita.meals.data.data_source.NutritionalPlanService
 import com.health.vita.meals.data.data_source.NutritionalPlanServiceImpl
@@ -83,7 +84,7 @@ class NutritionalPlanRepositoryImpl(
                 hydrationLevel = hydrationLevel,
                 kcalGoal = cal,
                 meals = meals,
-                registerPlanDate = LocalDate.now(),
+                registerPlanDate = Timestamp.now(),
                 preferences = preferences,
                 restrictions = restrictions
             )
