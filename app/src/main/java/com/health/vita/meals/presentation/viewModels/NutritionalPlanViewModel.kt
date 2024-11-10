@@ -23,8 +23,6 @@ class NutritionalPlanViewModel(
     private val _meals = MutableLiveData(0)
     val meals: LiveData<Int> get() = _meals
 
-//    var registerPlanDate: LocalDate = LocalDate.now()
-
     private val _preferences = MutableLiveData<List<Ingredient>>(emptyList())
     val preferences : LiveData<List<Ingredient>> get() = _preferences
     private val _restrictions = MutableLiveData<List<Ingredient>>(emptyList())

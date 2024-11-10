@@ -33,7 +33,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,9 +48,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.meals.domain.model.Ingredient
+import com.health.vita.meals.presentation.viewModels.IngredientViewModel
 import com.health.vita.ui.components.general.CustomPopup
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
@@ -58,10 +62,18 @@ import com.health.vita.ui.theme.MintGreen
 
 @Preview
 @Composable
-fun DietSelectionScreen(navController: NavController = rememberNavController()) {
+fun DietSelectionScreen(
+    navController: NavController = rememberNavController(),
+    ingredientViewModel: IngredientViewModel = viewModel()
+) {
+    val ingredientState by ingredientViewModel.ingredientsState.observeAsState(listOf())
 
     var ingredientPopUp by remember {
         mutableStateOf(false)
+    }
+
+    LaunchedEffect(Unit) {
+        ingredientViewModel.getIngredients()
     }
 
     Scaffold(modifier = Modifier.fillMaxSize(), content = { innerPadding ->
@@ -118,17 +130,19 @@ fun DietSelectionScreen(navController: NavController = rememberNavController()) 
             )
             Spacer(modifier = Modifier.weight(0.4f))
             LazyColumn(modifier = Modifier.weight(5f)) {
-                items(List(50) { "Ingrediente #$it" }.chunked(2)) { itemGroup ->
+                items(ingredientState.chunked(2)) { itemGroup ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         itemGroup.forEach { item ->
-                            BorderLabelText(
-                                text = item,
-                                border = false,
-                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                            )
+                            item?.let {
+                                BorderLabelText(
+                                    text = it.name,
+                                    border = false,
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                                )
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(8.dp))
@@ -162,6 +176,8 @@ fun DietSelectionScreen(navController: NavController = rememberNavController()) 
             CustomPopup(
                 showDialog = ingredientPopUp,
                 onDismiss = { /*TODO*/ },
+                onCancel = {},
+                onConfirm = {},
                 title = "Selecciona los ingredientes",
                 content = { /*TODO*/ })
         }

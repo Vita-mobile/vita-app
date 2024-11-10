@@ -17,7 +17,7 @@ class IngredientViewModel(
     private val _ingredientsState = MutableLiveData<List<Ingredient?>>()
     val ingredientsState: LiveData<List<Ingredient?>> get() = _ingredientsState
 
-    fun getMessages(otherUserID: String) {
+    fun getIngredients() {
         viewModelScope.launch(Dispatchers.IO) {
             val messages = ingredientRepository.getIngredients()
             withContext(Dispatchers.Main) { _ingredientsState.value = messages }
