@@ -29,6 +29,7 @@ import com.health.vita.core.utils.states_management.UiState
 @Composable
 fun DietsPreviewScreen(
     navController: NavController = rememberNavController(),
+    meal: Int,
     dietsPreviewViewModel: DietsPreviewViewModel = viewModel()
 ) {
     val uiState by dietsPreviewViewModel.uiState.observeAsState(UiState.Idle)
@@ -53,7 +54,7 @@ fun DietsPreviewScreen(
     )
 
     LaunchedEffect(true) {
-        dietsPreviewViewModel.loadOrGenerateMealsIA()
+        dietsPreviewViewModel.loadOrGenerateMealsIA(meal)
         dietsPreviewViewModel.loadFavorites()
     }
 
@@ -206,16 +207,4 @@ fun DietsPreviewScreen(
             }
         }
     )
-}
-
-
-
-
-
-@Preview
-@Composable
-fun DietsPreview() {
-    VitaTheme {
-        DietsPreviewScreen()
-    }
 }

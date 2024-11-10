@@ -25,7 +25,7 @@ class DietsPreviewViewModel(
     private val _favorites = MutableLiveData<List<Meal>>(emptyList())
     val favorites: LiveData<List<Meal>> get() = _favorites
 
-    fun loadOrGenerateMealsIA() {
+    fun loadOrGenerateMealsIA(meal: Int) {
         viewModelScope.launch(Dispatchers.IO) {
 
             withContext(Dispatchers.Main) {
@@ -33,12 +33,12 @@ class DietsPreviewViewModel(
             }
 
                 try {
-                    val mealsList: List<Meal> = dietsPreviewRepository.getMealsIA()
+                    val mealsList: List<Meal> = dietsPreviewRepository.getMealsIA(meal)
 
                     if (mealsList.isEmpty()) {
                         val isGenerated = dietsPreviewRepository.generateMealsIA()
                         if (isGenerated) {
-                            val newMeals = dietsPreviewRepository.getMealsIA()
+                            val newMeals = dietsPreviewRepository.getMealsIA(meal)
                             _mealsIA.postValue(newMeals)
                             withContext(Dispatchers.Main) {
                                 _uiHandler.setSuccess()

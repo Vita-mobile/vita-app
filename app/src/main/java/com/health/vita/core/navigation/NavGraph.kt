@@ -7,8 +7,10 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.health.vita.auth.presentation.login.LoginScreen
 import com.health.vita.auth.presentation.ResetPasswordConfirmationScreen
 import com.health.vita.auth.presentation.ResetPasswordScreen
@@ -61,7 +63,7 @@ fun NavGraph(navController: NavHostController){
     val signupViewModel: SignupViewModel = viewModel()
     NavHost(
         navController = navController,
-        startDestination = Screen.MEAL_HOME,
+        startDestination = Screen.MEAL_HOME, // Screen.MEAL_HOME,
         enterTransition = {
             slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn()
         },
@@ -160,8 +162,13 @@ fun NavGraph(navController: NavHostController){
         composable(Screen.HYDRATION) {
             HydrationScreen(navController)
         }
-        composable(Screen.DIETS_PREVIEW) {
-            DietsPreviewScreen(navController)
+        composable(
+            route = Screen.DIETS_PREVIEW,
+            arguments = listOf(navArgument("meal") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val meal = backStackEntry.arguments?.getInt("meal")
+                ?: throw IllegalArgumentException("meal argument is required")
+            DietsPreviewScreen(navController = navController, meal = meal)
         }
         composable(Screen.ADDED_FOOD) {
             AddedFoodScreen(navController)

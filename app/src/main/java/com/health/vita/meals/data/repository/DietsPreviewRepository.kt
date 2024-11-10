@@ -1,5 +1,6 @@
 package com.health.vita.meals.data.repository
 
+import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.health.vita.meals.data.data_source.DietsPreviewService
@@ -14,7 +15,7 @@ interface DietsPreviewRepository{
 
     //suspend fun rechargeMealIA(): Boolean
     suspend fun generateMealsIA(): Boolean
-    suspend fun getMealsIA(): List<Meal>
+    suspend fun getMealsIA(meal: Int): List<Meal>
     suspend fun getFavorites(): List<Meal>
 }
 
@@ -38,10 +39,11 @@ class DietsPreviewRepositoryImpl(
     }
 
 
-    override suspend fun getMealsIA(): List<Meal> {
+    override suspend fun getMealsIA(meal: Int): List<Meal> {
         return try {
             Firebase.auth.currentUser?.let { user ->
                 dietsPreviewService.getMealsIA(user.uid)
+                    .filter { it.meal == meal }
             } ?: emptyList()
         } catch (e: Exception) {
             e.printStackTrace()

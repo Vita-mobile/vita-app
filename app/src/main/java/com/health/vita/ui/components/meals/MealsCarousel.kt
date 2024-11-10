@@ -126,7 +126,7 @@ fun DietCard(page: Int, navController: NavController = rememberNavController(), 
         .clickable {
             if (currentMeal < totalMeals) {
                 if (page == currentMeal) {
-                    navController.navigate(DIETS_PREVIEW)
+                    navController.navigate("DietsPreview/${currentMeal+1}")
                 } else if(page > currentMeal){
                     Toast
                         .makeText(
