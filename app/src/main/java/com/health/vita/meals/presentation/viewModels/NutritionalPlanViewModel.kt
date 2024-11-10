@@ -54,7 +54,7 @@ class NutritionalPlanViewModel(
                 _uiHandler.setLoadingState()
             }
             val preferences = _preferences.value ?: emptyList()
-            val restrictions = _preferences.value ?: emptyList()
+            val restrictions = _restrictions.value ?: emptyList()
             val meals = _meals.value ?: 3
             try {
                 nutritionalPlanRepository.createNutritionalPlan(

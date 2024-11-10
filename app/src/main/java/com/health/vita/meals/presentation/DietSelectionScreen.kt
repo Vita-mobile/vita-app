@@ -81,6 +81,13 @@ fun DietSelectionScreen(
     var ingredientPopUp by remember {
         mutableStateOf(false)
     }
+    var primaryIconButtonText = ""
+    primaryIconButtonText = when (uiState) {
+        is UiState.Idle -> "Continuar"
+        is UiState.Error -> "Pailas, manito"
+        is UiState.Loading -> "Cargando..."
+        is UiState.Success -> "Creado, ve!"
+    }
 
     LaunchedEffect(Unit) {
         ingredientViewModel.getIngredients()
@@ -227,14 +234,7 @@ fun DietSelectionScreen(
             }
             Spacer(modifier = Modifier.weight(0.4f))
             PrimaryIconButton(
-                text = {
-                    when (uiState) {
-                        is UiState.Idle -> "Continuar"
-                        is UiState.Error -> "Error"
-                        is UiState.Loading -> "Cargando"
-                        is UiState.Success -> "Creado"
-                    }
-                }.toString(),
+                text = primaryIconButtonText,
                 color = MintGreen,
                 onClick = { nutritionalPlanViewModel.createNutritionalPlan() })
             CustomPopup(
