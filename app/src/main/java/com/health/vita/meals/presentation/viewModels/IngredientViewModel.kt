@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.health.vita.meals.data.repository.IngredientRepository
+import com.health.vita.meals.data.repository.IngredientRepositoryImpl
 import com.health.vita.meals.domain.model.Ingredient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
