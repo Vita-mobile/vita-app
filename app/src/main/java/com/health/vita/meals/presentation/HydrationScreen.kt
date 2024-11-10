@@ -78,6 +78,12 @@ fun HydrationScreen(
 
     val weight = userState?.weight ?: 0f
 
+    Log.e(">>>", "El peso es $weight")
+
+    LaunchedEffect(Unit) {
+        profileViewModel.getCurrentUser()
+    }
+
     val waterIntakeGoal = if (weight == 0f) 2000 else (35 * weight).toInt()
 
     var waterIntake by remember {

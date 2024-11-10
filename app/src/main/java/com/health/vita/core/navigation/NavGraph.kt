@@ -61,7 +61,7 @@ fun NavGraph(navController: NavHostController){
     val signupViewModel: SignupViewModel = viewModel()
     NavHost(
         navController = navController,
-        startDestination = Screen.DIET_SELECTION,
+        startDestination = Screen.HYDRATION,
         enterTransition = {
             slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn()
         },
