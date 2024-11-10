@@ -33,15 +33,16 @@ fun DietsPreviewScreen(
 ) {
     val uiState by dietsPreviewViewModel.uiState.observeAsState(UiState.Idle)
 
-    var selectedOption by remember { mutableStateOf("Opción 1") }
+    var selectedOption by remember { mutableStateOf("Mi plan") }
 
     val mealsIA by dietsPreviewViewModel.mealsIA.observeAsState(emptyList())
 
+    val favorites by dietsPreviewViewModel.favorites.observeAsState(emptyList())
 
     val meals = when (selectedOption) {
-        "Opción 1" -> mealsIA
-        "Opción 2" -> mealsIA
-        "Opción 3" -> mealsIA
+        "Favoritas" -> favorites
+        "Mi plan" -> mealsIA
+        "Crear" -> mealsIA
         else -> mealsIA
     }
 
@@ -52,9 +53,8 @@ fun DietsPreviewScreen(
     )
 
     LaunchedEffect(true) {
-        Log.d("Current user", "Current user: ${Firebase.auth.currentUser?.uid}")
-
         dietsPreviewViewModel.loadOrGenerateMealsIA()
+        dietsPreviewViewModel.loadFavorites()
     }
 
     Scaffold(
@@ -76,7 +76,7 @@ fun DietsPreviewScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    listOf("Opción 1", "Opción 2", "Opción 3").forEach { option ->
+                    listOf("Favoritas", "Mi plan", "Crear").forEach { option ->
                         Text(
                             text = option,
                             style = MaterialTheme.typography.bodyMedium,
@@ -86,8 +86,8 @@ fun DietsPreviewScreen(
                                     onClick = {
                                         selectedOption = option
                                         selectedMeal = when (option) {
-                                            "Opción 1" -> mealsIA.firstOrNull()
-                                            "Opción 2" -> mealsIA.firstOrNull()
+                                            "Favoritas" -> favorites.firstOrNull()
+                                            "Mi plan" -> mealsIA.firstOrNull()
                                             else -> mealsIA.firstOrNull()
                                         }
                                     }

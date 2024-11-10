@@ -22,6 +22,9 @@ class DietsPreviewViewModel(
     private val _mealsIA = MutableLiveData<List<Meal>>(emptyList())
     val mealsIA: LiveData<List<Meal>> get() = _mealsIA
 
+    private val _favorites = MutableLiveData<List<Meal>>(emptyList())
+    val favorites: LiveData<List<Meal>> get() = _favorites
+
     fun loadOrGenerateMealsIA() {
         viewModelScope.launch(Dispatchers.IO) {
 
@@ -57,6 +60,30 @@ class DietsPreviewViewModel(
                         _uiHandler.setErrorState(DatabaseError())
                     }
                 }
+        }
+    }
+
+    fun loadFavorites() {
+        viewModelScope.launch(Dispatchers.IO) {
+
+        withContext(Dispatchers.Main) {
+            _uiHandler.setLoadingState()
+        }
+
+        try {
+            val favoritesList: List<Meal> = dietsPreviewRepository.getFavorites()
+            _favorites.postValue(favoritesList)
+
+            withContext(Dispatchers.Main) {
+                _uiHandler.setSuccess()
+            }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    _uiHandler.setErrorState(DatabaseError())
+            }
+        }
         }
     }
 }

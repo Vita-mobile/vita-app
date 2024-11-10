@@ -15,7 +15,7 @@ interface DietsPreviewRepository{
     //suspend fun rechargeMealIA(): Boolean
     suspend fun generateMealsIA(): Boolean
     suspend fun getMealsIA(): List<Meal>
-    //suspend fun getFavorites(): List<Meal>
+    suspend fun getFavorites(): List<Meal>
 }
 
 class DietsPreviewRepositoryImpl(
@@ -42,6 +42,17 @@ class DietsPreviewRepositoryImpl(
         return try {
             Firebase.auth.currentUser?.let { user ->
                 dietsPreviewService.getMealsIA(user.uid)
+            } ?: emptyList()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+    override suspend fun getFavorites(): List<Meal> {
+        return try {
+            Firebase.auth.currentUser?.let { user ->
+                dietsPreviewService.getFavorites(user.uid)
             } ?: emptyList()
         } catch (e: Exception) {
             e.printStackTrace()

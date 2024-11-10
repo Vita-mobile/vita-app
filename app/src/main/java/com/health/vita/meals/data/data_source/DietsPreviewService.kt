@@ -8,6 +8,7 @@ import kotlinx.coroutines.tasks.await
 interface DietsPreviewService {
     suspend fun generateMealsIA(userId: String, meals: List<Meal>): Boolean
     suspend fun getMealsIA(userId: String): List<Meal>
+    suspend fun getFavorites(userId: String): List<Meal>
 }
 
 class DietsPreviewServiceImpl : DietsPreviewService {
@@ -40,6 +41,24 @@ class DietsPreviewServiceImpl : DietsPreviewService {
                 .await()
 
             mealsIACollection.documents.mapNotNull { document ->
+                document.toObject(Meal::class.java)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+    override suspend fun getFavorites(userId: String): List<Meal> {
+        return try {
+            val favoritesCollection = Firebase.firestore
+                .collection("User")
+                .document(userId)
+                .collection("Favorites")
+                .get()
+                .await()
+
+            favoritesCollection.documents.mapNotNull { document ->
                 document.toObject(Meal::class.java)
             }
         } catch (e: Exception) {
