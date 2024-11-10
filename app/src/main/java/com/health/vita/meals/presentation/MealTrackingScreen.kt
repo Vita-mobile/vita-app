@@ -32,6 +32,7 @@ import com.google.firebase.ktx.Firebase
 import com.health.vita.core.utils.DatesFormat
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.meals.presentation.viewModels.MealTrackingViewModel
+import com.health.vita.meals.utils.MacronutrientType
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.theme.Dimens
 import java.time.LocalDate
