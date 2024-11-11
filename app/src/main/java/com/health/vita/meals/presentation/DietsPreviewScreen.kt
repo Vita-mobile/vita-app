@@ -2,6 +2,7 @@ package com.health.vita.meals.presentation
 
 import DietsPreviewViewModel
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -19,19 +20,27 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.health.vita.R
 import com.health.vita.core.utils.states_management.UiState
+import com.health.vita.meals.presentation.viewModels.DietsPreviewViewModelFactory
 
 @Composable
 fun DietsPreviewScreen(
     navController: NavController = rememberNavController(),
-    meal: Int,
-    dietsPreviewViewModel: DietsPreviewViewModel = viewModel()
+    meal: Int
 ) {
+    val dietsPreviewViewModel: DietsPreviewViewModel = viewModel(
+        factory = DietsPreviewViewModelFactory(LocalContext.current)
+    )
+
     val uiState by dietsPreviewViewModel.uiState.observeAsState(UiState.Idle)
 
     var selectedOption by remember { mutableStateOf("Mi plan") }
@@ -122,7 +131,10 @@ fun DietsPreviewScreen(
                             // HorizontalPager
                             HorizontalPager(
                                 state = pagerState,
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(500.dp)
+                                    .padding(horizontal = 16.dp),
                                 contentPadding = PaddingValues(horizontal = 16.dp),
                                 pageSize = PageSize.Fill,
                                 pageSpacing = 8.dp,
@@ -175,6 +187,23 @@ fun DietsPreviewScreen(
                                     }
                                 }
                             }
+                            if (selectedOption == "Mi plan") {
+                                Button(
+                                    onClick = { dietsPreviewViewModel.rechargeMealsIA(meal) },
+                                    modifier = Modifier
+                                        .size(72.dp)
+                                        .align(Alignment.CenterHorizontally),
+                                    shape = CircleShape,
+                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.outline_refresh_24),
+                                        contentDescription = "Refresh",
+                                        modifier = Modifier.size(54.dp)
+                                    )
+                                }
+                            }
+
                         }
                     }
                     is UiState.Error -> {

@@ -13,8 +13,8 @@ import com.health.vita.meals.domain.model.Meal
 
 interface DietsPreviewRepository{
 
-    //suspend fun rechargeMealIA(): Boolean
-    suspend fun generateMealsIA(): Boolean
+    suspend fun rechargeMealIA(meal: Int): Boolean
+    suspend fun generateMealsIA(mealsQuantity: Int): Boolean
     suspend fun getMealsIA(meal: Int): List<Meal>
     suspend fun getFavorites(): List<Meal>
 }
@@ -22,15 +22,18 @@ interface DietsPreviewRepository{
 class DietsPreviewRepositoryImpl(
     private val dietsPreviewService: DietsPreviewService = DietsPreviewServiceImpl(),
     private val mealsIAService: MealsIAService = MealsIAServiceImpl(),
-    private val mealsService: MealsService = MealsServiceImpl()
 ): DietsPreviewRepository {
-    override suspend fun generateMealsIA(): Boolean {
+    override suspend fun generateMealsIA(mealsQuantity: Int): Boolean {
         return try {
             Firebase.auth.currentUser?.let { user ->
-                val mealsQuantity: Int = mealsService.getMealsQuantity(user.uid)
                 val meals: List<Meal> = mealsIAService.getMeals(user.uid, mealsQuantity)
 
-                dietsPreviewService.generateMealsIA(user.uid, meals)
+                val updatedMeals = meals.mapIndexed { index, meal ->
+                    val mealNumber = (index) / 3 + 1
+                    meal.copy(meal = mealNumber)
+                }
+
+                dietsPreviewService.generateMealsIA(user.uid, updatedMeals)
             } ?: false
         } catch (e: Exception) {
             e.printStackTrace()
@@ -59,6 +62,32 @@ class DietsPreviewRepositoryImpl(
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()
+        }
+    }
+
+    override suspend fun rechargeMealIA(meal: Int): Boolean {
+        return try {
+            Firebase.auth.currentUser?.let { user ->
+                val isRemoved = dietsPreviewService.removeMealIA(user.uid, meal)
+
+                if (!isRemoved) {
+                    return false
+                }
+
+                val meals: List<Meal> = mealsIAService.getMeals(user.uid, 1)
+
+                if (meals.isNotEmpty()) {
+                    val updatedMeals = meals.map { mealItem ->
+                        mealItem.copy(meal = meal)
+                    }
+                    return dietsPreviewService.generateMealsIA(user.uid, updatedMeals)
+                } else {
+                    return false
+                }
+            } ?: false
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
         }
     }
 
