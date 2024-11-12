@@ -20,17 +20,35 @@ class ProfileViewModel(val userRepository: UserRepository = UserRepositoryImpl()
     private val _user = MutableLiveData<User?>(User())
     val user: LiveData<User?> get() = _user
 
+    private val _weight = MutableLiveData(0f)
+    val weight: LiveData<Float> get() = _weight
+
+    private val _height = MutableLiveData(0f)
+    val height: LiveData<Float> get() = _height
+
     private val uiHandler = UiHandler()
     val uiState: LiveData<UiState> get() = uiHandler.uiState
+
+    fun setWeight(weight: Float) {
+        _weight.value = weight
+    }
+
+    fun setHeight(height: Float) {
+        _height.value = height
+    }
 
     fun getCurrentUser() {
         viewModelScope.launch(Dispatchers.IO) {
             val me = userRepository.getCurrentUser()
             withContext(Dispatchers.Main) {
                 _user.value = me
+                _weight.value = me?.weight ?: 0f
+                _height.value = me?.height ?: 0f
             }
         }
     }
+
+
 
     fun updatePersonalUserData(user: User){
 
@@ -58,5 +76,10 @@ class ProfileViewModel(val userRepository: UserRepository = UserRepositoryImpl()
 
 
         }
+
+    }
+
+    fun resetUiState(){
+        uiHandler.setIdleState()
     }
 }

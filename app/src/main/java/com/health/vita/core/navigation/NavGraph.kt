@@ -28,6 +28,7 @@ import com.health.vita.meals.presentation.MealDetailScreen
 import com.health.vita.meals.presentation.MealHomeScreen
 import com.health.vita.meals.presentation.MealTrackingScreen
 import com.health.vita.meals.presentation.NutritionWelcomeScreen
+import com.health.vita.profile.presentation.EditHeightScreen
 import com.health.vita.profile.presentation.EditWeightScreen
 import com.health.vita.register.presentation.AgeSelectionScreen
 import com.health.vita.register.presentation.FitnessGoalSelectionScreen
@@ -36,6 +37,7 @@ import com.health.vita.register.presentation.HeightSelectionScreen
 import com.health.vita.profile.presentation.NotificationsScreen
 import com.health.vita.profile.presentation.ProfileEditionScreen
 import com.health.vita.profile.presentation.ProfileScreen
+import com.health.vita.profile.presentation.viewModel.ProfileViewModel
 import com.health.vita.register.presentation.SexSelectionScreen
 import com.health.vita.register.presentation.WeightSelectionScreen
 import com.health.vita.sports.presentation.DayWorkoutScreen
@@ -59,6 +61,7 @@ import com.health.vita.sports.presentation.WorkoutPreviewScreen
 @Composable
 fun NavGraph(navController: NavHostController){
     val signupViewModel: SignupViewModel = viewModel()
+    val profileViewModel: ProfileViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = Screen.SPLASH_SCREEN,
@@ -139,13 +142,13 @@ fun NavGraph(navController: NavHostController){
             NotificationsScreen(navController)
         }
         composable(Screen.PROFILE_EDITION) {
-            ProfileEditionScreen(navController)
+            ProfileEditionScreen(navController,profileViewModel)
         }
         composable(Screen.EDIT_WEIGHT_SELECTION) {
-            EditWeightScreen(navController)
+            EditWeightScreen(navController,profileViewModel)
         }
         composable(Screen.EDIT_HEIGHT_SELECTION) {
-            EditWeightScreen(navController)
+            EditHeightScreen(navController,profileViewModel)
         }
         // Meals
         composable(Screen.MEAL_HOME) {

@@ -13,9 +13,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -47,6 +51,7 @@ import com.health.vita.ui.components.general.CustomPopup
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.VitaTheme
+import kotlinx.coroutines.delay
 
 @Composable
 fun ProfileEditionScreen(navController: NavController = rememberNavController(), profileViewModel: ProfileViewModel = viewModel()) {
@@ -71,6 +76,10 @@ fun ProfileEditionScreen(navController: NavController = rememberNavController(),
 
     var isEmailValid by remember { mutableStateOf(true) }
 
+    LaunchedEffect (true){
+        profileViewModel.getCurrentUser()
+    }
+
     LaunchedEffect(userState) {
         userState?.let {
             email = it.email
@@ -79,13 +88,12 @@ fun ProfileEditionScreen(navController: NavController = rememberNavController(),
         }
     }
 
-    LaunchedEffect(true) {
-        profileViewModel.getCurrentUser()
-    }
-
     LaunchedEffect(uiState) {
         if (uiState is UiState.Success) {
             openDataUpdatePopup = true
+            delay(2200)
+            openDataUpdatePopup = false
+            profileViewModel.resetUiState()
         }
     }
 
@@ -194,12 +202,16 @@ fun ProfileEditionScreen(navController: NavController = rememberNavController(),
                             text = "Guardar",
                             onClick = {
 
-                                val updatedUser = User(
-                                    id = userState?.id ?: "",
-                                    email = if (email.isEmpty()) userState?.email ?: "" else email,
+                                val updatedUser = userState?.copy(
+                                    email = email.ifEmpty { userState?.email ?: "" },
                                     name = if (name.isEmpty()) userState?.name ?: "" else name,
                                     lastName = if (lastname.isEmpty()) userState?.lastName ?: "" else lastname
+                                )?: User(
+                                    email = email,
+                                    name = name,
+                                    lastName = lastname
                                 )
+
                                 if (isEmailFormatValid(updatedUser.email)) {
                                     profileViewModel.updatePersonalUserData(updatedUser)
                                 }
@@ -258,11 +270,13 @@ fun ProfileEditionScreen(navController: NavController = rememberNavController(),
                 onDismiss = { openDataUpdatePopup = false },
                 title = "¡Operación exitosa!" ,
                 height = 0.3f,
-                onCancel = { openDataUpdatePopup  = false},
-                onConfirm = {
-
-                    openDataUpdatePopup = false
-
+                icon = {
+                    Icon(
+                        imageVector = Icons.Filled.CheckCircle,
+                        contentDescription = "Success",
+                        modifier = Modifier.size(70.dp),
+                        tint = MaterialTheme.colorScheme.tertiary
+                    )
                 },
                 content = {
 
