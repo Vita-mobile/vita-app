@@ -2,7 +2,9 @@ package com.health.vita.meals.presentation
 
 import DietsPreviewViewModel
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -31,6 +33,7 @@ import com.google.firebase.ktx.Firebase
 import com.health.vita.R
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.meals.presentation.viewModels.DietsPreviewViewModelFactory
+import com.health.vita.ui.components.general.PrimaryIconButton
 
 @Composable
 fun DietsPreviewScreen(
@@ -61,6 +64,48 @@ fun DietsPreviewScreen(
     val pagerState = rememberPagerState(
         pageCount = { meals.size }
     )
+
+    val consumeMealState by dietsPreviewViewModel.consumeMealState.observeAsState(false)
+
+    val context = LocalContext.current
+
+    var hasConsumed by remember { mutableStateOf(false) }
+
+    LaunchedEffect(consumeMealState) {
+        if (consumeMealState && !hasConsumed) {
+            hasConsumed = true
+            navController.popBackStack()
+        } else if (consumeMealState && hasConsumed) {
+            Toast.makeText(context, "Hubo un error al consumir la comida", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    var showConfirmDialog by remember { mutableStateOf(false) }
+
+    if (showConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { showConfirmDialog = false },
+            title = { Text("Confirmación") },
+            text = { Text("¿Deseas consumir esta comida?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        selectedMeal?.let {
+                            dietsPreviewViewModel.consumeMeal(it)
+                        }
+                        showConfirmDialog = false
+                    }
+                ) {
+                    Text("Sí")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showConfirmDialog = false }) {
+                    Text("No")
+                }
+            }
+        )
+    }
 
     LaunchedEffect(true) {
         dietsPreviewViewModel.loadOrGenerateMealsIA(meal)
@@ -128,6 +173,8 @@ fun DietsPreviewScreen(
                                 modifier = Modifier.align(Alignment.CenterHorizontally)
                             )
                         } else {
+                            selectedMeal = meals[pagerState.currentPage]
+
                             // HorizontalPager
                             HorizontalPager(
                                 state = pagerState,
@@ -142,20 +189,41 @@ fun DietsPreviewScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                                 snapPosition = SnapPosition.Start
                             ) { pageIndex ->
-                                val meal = meals[pageIndex]
+                                val meal_ = meals[pageIndex]
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .fillMaxHeight(),
                                     verticalArrangement = Arrangement.Center,
                                 ) {
+                                    if (selectedOption == "Mi plan") {
+                                        Button(
+                                            onClick = { dietsPreviewViewModel.rechargeMealsIA(meal) },
+                                            modifier = Modifier
+                                                .size(72.dp)
+                                                .align(Alignment.CenterHorizontally)
+                                                .border(1.dp, Color.LightGray, CircleShape),
+                                            shape = CircleShape,
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = Color.Transparent,
+                                                contentColor = MaterialTheme.colorScheme.primary
+                                            )
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.outline_refresh_24),
+                                                contentDescription = "Refresh",
+                                                modifier = Modifier.size(54.dp)
+                                            )
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.height(32.dp))
                                     Text(
-                                        text = meal.name,
+                                        text = meal_.name,
                                         style = MaterialTheme.typography.bodyLarge,
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clickable {
-                                                selectedMeal = meal
+                                                selectedMeal = meal_
                                             }
                                             .wrapContentWidth(Alignment.CenterHorizontally)
                                     )
@@ -164,7 +232,7 @@ fun DietsPreviewScreen(
 
                                     Column(modifier = Modifier.fillMaxWidth()) {
                                         Text(
-                                            "Proteínas: ${meal.proteins}g",
+                                            "Proteínas: ${meal_.proteins}g",
                                             style = MaterialTheme.typography.bodyLarge
                                         )
                                         Spacer(modifier = Modifier.height(8.dp))
@@ -172,7 +240,7 @@ fun DietsPreviewScreen(
                                         Spacer(modifier = Modifier.height(16.dp))
 
                                         Text(
-                                            "Grasas: ${meal.fats}g",
+                                            "Grasas: ${meal_.fats}g",
                                             style = MaterialTheme.typography.bodyLarge
                                         )
                                         Spacer(modifier = Modifier.height(8.dp))
@@ -180,27 +248,16 @@ fun DietsPreviewScreen(
                                         Spacer(modifier = Modifier.height(16.dp))
 
                                         Text(
-                                            "Carbohidratos: ${meal.carbs}g",
+                                            "Carbohidratos: ${meal_.carbs}g",
                                             style = MaterialTheme.typography.bodyLarge
                                         )
-                                        Spacer(modifier = Modifier.height(8.dp))
                                     }
-                                }
-                            }
-                            if (selectedOption == "Mi plan") {
-                                Button(
-                                    onClick = { dietsPreviewViewModel.rechargeMealsIA(meal) },
-                                    modifier = Modifier
-                                        .size(72.dp)
-                                        .align(Alignment.CenterHorizontally),
-                                    shape = CircleShape,
-                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.outline_refresh_24),
-                                        contentDescription = "Refresh",
-                                        modifier = Modifier.size(54.dp)
-                                    )
+                                    Spacer(modifier = Modifier.height(32.dp))
+                                    PrimaryIconButton(
+                                        text = "Consumir",
+                                        onClick = {showConfirmDialog = true},
+                                        arrow = true,
+                                        )
                                 }
                             }
 
@@ -227,12 +284,13 @@ fun DietsPreviewScreen(
                     }
                 }
 
-
                 LaunchedEffect(pagerState.currentPage) {
                     if (meals.isNotEmpty()) {
                         selectedMeal = meals[pagerState.currentPage]
                     }
                 }
+
+
             }
         }
     )

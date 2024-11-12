@@ -1,6 +1,7 @@
 package com.health.vita.meals.data.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -12,6 +13,7 @@ import com.google.firebase.ktx.Firebase
 import com.health.vita.meals.data.data_source.MealsService
 import com.health.vita.meals.data.data_source.MealsServiceImpl
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "storeData")

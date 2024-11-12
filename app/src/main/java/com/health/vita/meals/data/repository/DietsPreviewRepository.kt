@@ -17,6 +17,7 @@ interface DietsPreviewRepository{
     suspend fun generateMealsIA(mealsQuantity: Int): Boolean
     suspend fun getMealsIA(meal: Int): List<Meal>
     suspend fun getFavorites(): List<Meal>
+    suspend fun consumeMeal(meal: Meal): Boolean
 }
 
 class DietsPreviewRepositoryImpl(
@@ -62,6 +63,17 @@ class DietsPreviewRepositoryImpl(
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()
+        }
+    }
+
+    override suspend fun consumeMeal(meal: Meal): Boolean {
+        return try {
+            Firebase.auth.currentUser?.let { user ->
+                dietsPreviewService.consumeMeal(user.uid, meal)
+            } ?: false
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
     }
 

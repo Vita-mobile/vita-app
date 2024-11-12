@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.firebase.common.ktx)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore.core.android)
+    implementation(libs.androidx.room.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

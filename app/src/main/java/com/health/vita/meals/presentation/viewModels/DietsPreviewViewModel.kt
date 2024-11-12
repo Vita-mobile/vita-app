@@ -30,6 +30,9 @@ class DietsPreviewViewModel(
     private val _favorites = MutableLiveData<List<Meal>>(emptyList())
     val favorites: LiveData<List<Meal>> get() = _favorites
 
+    private val _consumeMealState = MutableLiveData<Boolean>()
+    val consumeMealState: LiveData<Boolean> = _consumeMealState
+
     fun loadOrGenerateMealsIA(meal: Int) {
         viewModelScope.launch(Dispatchers.IO) {
 
@@ -117,6 +120,37 @@ class DietsPreviewViewModel(
                 e.printStackTrace()
                 withContext(Dispatchers.Main) {
                     _uiHandler.setErrorState(DatabaseError())
+                }
+            }
+        }
+    }
+
+    fun consumeMeal(meal: Meal){
+        viewModelScope.launch(Dispatchers.IO) {
+
+            withContext(Dispatchers.Main) {
+                _uiHandler.setLoadingState()
+            }
+
+            try {
+                val isConsumed = dietsPreviewRepository.consumeMeal(meal)
+                if (isConsumed) {
+                    withContext(Dispatchers.Main) {
+                        mealsRepository.incrementMealIndex()
+                        _uiHandler.setSuccess()
+                        _consumeMealState.value = true
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        _uiHandler.setErrorState(DatabaseError())
+                        _consumeMealState.value = false
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    _uiHandler.setErrorState(DatabaseError())
+                    _consumeMealState.value = false
                 }
             }
         }

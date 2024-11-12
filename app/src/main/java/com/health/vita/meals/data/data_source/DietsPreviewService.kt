@@ -1,8 +1,11 @@
 package com.health.vita.meals.data.data_source
 
+import androidx.room.util.copy
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.health.vita.meals.domain.model.Meal
+import com.health.vita.meals.domain.model.toConsumedMeal
 import kotlinx.coroutines.tasks.await
 
 interface DietsPreviewService {
@@ -10,6 +13,7 @@ interface DietsPreviewService {
     suspend fun generateMealsIA(userId: String, meals: List<Meal>): Boolean
     suspend fun getMealsIA(userId: String): List<Meal>
     suspend fun getFavorites(userId: String): List<Meal>
+    suspend fun consumeMeal(userId: String, meal: Meal): Boolean
 }
 
 class DietsPreviewServiceImpl : DietsPreviewService {
@@ -88,6 +92,24 @@ class DietsPreviewServiceImpl : DietsPreviewService {
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()
+        }
+    }
+
+    override suspend fun consumeMeal(userId: String, meal: Meal): Boolean {
+        return try {
+            val mealsTrackingCollection = Firebase.firestore
+                .collection("User")
+                .document(userId)
+                .collection("MealsTracking")
+
+            val consumedMeal = meal.toConsumedMeal()
+            val consumedMealWithId = consumedMeal.copy(id = mealsTrackingCollection.document().id)
+
+            mealsTrackingCollection.document(consumedMealWithId.id).set(consumedMealWithId).await()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
     }
 }
