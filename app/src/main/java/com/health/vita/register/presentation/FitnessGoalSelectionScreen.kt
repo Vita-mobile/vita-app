@@ -42,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen
+import com.health.vita.core.navigation.Screen.SELECT_AVATAR
 import com.health.vita.core.utils.DatabaseNames
 import com.health.vita.core.utils.error_management.AppError
 import com.health.vita.core.utils.states_management.UiState
@@ -127,47 +128,6 @@ fun FitnessGoalSelectionScreen(
                     }
                 }
 
-                Text(
-                    text = infoSingup,
-                    style = MaterialTheme.typography.labelSmall,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Box(modifier = Modifier.weight(1f))
-
-                when (uiState) {
-
-                    is UiState.Idle -> {
-
-                        infoSingup = ""
-
-                    }
-
-                    is UiState.Loading -> {
-
-
-                        CircularProgressIndicator()
-                    }
-
-                    is UiState.Success -> {
-
-                        infoSingup = "Registro exitoso"
-                        navController.navigate(Screen.HOME)
-
-                    }
-
-                    is UiState.Error -> {
-
-
-                        val error = (uiState as UiState.Error).error
-                        Log.e( "SING-UP", error.message)
-                        infoSingup = "Error al realizar el registro."
-
-                    }
-
-                }
 
                 Box(modifier = Modifier.weight(0.1f))
 
@@ -179,7 +139,8 @@ fun FitnessGoalSelectionScreen(
                             if (physicalTarget?.isNotEmpty() == true) {
 
                                 signupViewModel.setGoal(physicalTarget?:"")
-                                signupViewModel.registerOperation()
+
+                                navController.navigate(SELECT_AVATAR)
                             } else {
 
                                 Toast.makeText(

@@ -41,7 +41,7 @@ class SignupViewModel(
     private val _email = MutableLiveData("")
     val email: LiveData<String> get() = _email
 
-    private val _profileImage = MutableLiveData("")
+    private val _profileImage = MutableLiveData<String?>()
     val profileImage: LiveData<String?> get() = _profileImage
 
     private val _age = MutableLiveData(18)
@@ -65,6 +65,9 @@ class SignupViewModel(
 
     private val _defaultImages = MutableLiveData<List<String>>()
     val defaultImages: LiveData<List<String>> get() = _defaultImages
+
+    private val _isProfileImageLoading = MutableLiveData<Boolean>(false)
+    val isProfileImageLoading: LiveData<Boolean> get() = _isProfileImageLoading
 
     private val uiHandler = UiHandler()
 
@@ -95,6 +98,10 @@ class SignupViewModel(
         _profileImage.value = uri
     }
 
+    fun setIsProfileImageLoading(boolean: Boolean) {
+        _isProfileImageLoading.value = boolean
+    }
+
     fun setActivityLevel(activityLevel: Int) {
         _activityLevel.value = activityLevel
     }
@@ -119,26 +126,58 @@ class SignupViewModel(
         _gender.value = gender
     }
 
-    init {
-
-        loadDefaultImages()
-
-    }
-
     fun loadDefaultImages() {
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val images = profileImageRepository.getDefaultProfileImages()
-                _defaultImages.postValue(images)
 
-                Log.d("SignupViewModel", "Imágenes predeterminadas cargadas: $images")
-            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    _defaultImages.value = images
+                }
 
-                e.printStackTrace()
+            } catch (e: SQLException) {
+
+                withContext(Dispatchers.Main) {
+                    Log.e("SIGN-UP VIEW  MODEL", e.message ?: "Error desconocido")
+                    uiHandler.setErrorState(DatabaseError("Error en la base de datos", e))
+                    ErrorManager.postError(NetworkError(cause = e))
+                }
+
             }
         }
 
+    }
+
+    fun updateProfileImage(uri: Uri?, isDefault: Boolean) {
+        _isProfileImageLoading.value = true
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            try {
+
+                profileImageRepository.uploadUserProfileImage(uri, isDefault)
+
+                withContext(Dispatchers.Main){
+                    _profileImage.value = if (isDefault) {
+                    uri?.lastPathSegment
+                } else  {
+                    uri?.toString()
+                }
+                    _isProfileImageLoading.value = false
+                }
+
+
+            } catch (e: Exception) {
+
+                withContext(Dispatchers.Main) {
+                    _isProfileImageLoading.value = false
+                    Log.e("SIGN-UP VIEW MODEL", e.message ?: "Error al cargar la imagen de perfil")
+                    uiHandler.setErrorState(UnknownError("Error al cargar la imagen de perfil", e))
+                    ErrorManager.postError(NetworkError(cause = e))
+                }
+            }
+        }
     }
 
     fun isRepeatedEmail(email: String) {
@@ -174,6 +213,7 @@ class SignupViewModel(
                     lastName = _lastName.value ?: "",
                     email = _email.value ?: "",
                     age = _age.value ?: 0,
+                    imageID = _profileImage.value?: null,
                     weight = (_weight.value ?: 0f),
                     height = (_height.value ?: 0f),
                     physicalLevel = _activityLevel.value ?: 0,
