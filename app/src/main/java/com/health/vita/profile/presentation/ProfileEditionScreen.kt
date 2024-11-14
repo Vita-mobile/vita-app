@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.health.vita.core.navigation.Screen
 import com.health.vita.core.navigation.Screen.EDIT_HEIGHT_SELECTION
 import com.health.vita.core.navigation.Screen.EDIT_WEIGHT_SELECTION
 import com.health.vita.core.utils.states_management.UiState
@@ -65,16 +64,16 @@ fun ProfileEditionScreen(navController: NavController = rememberNavController(),
     var updateInfo by remember { mutableStateOf("") }
 
 
-    var email by remember { mutableStateOf("") }
+    //var email by remember { mutableStateOf("") }
 
     var name by remember { mutableStateOf("")}
 
     var lastname by remember { mutableStateOf("")}
 
 
-    var emailTouched by remember { mutableStateOf(false) }
+    //var emailTouched by remember { mutableStateOf(false) }
 
-    var isEmailValid by remember { mutableStateOf(true) }
+    //var isEmailValid by remember { mutableStateOf(true) }
 
     LaunchedEffect (true){
         profileViewModel.getCurrentUser()
@@ -82,7 +81,7 @@ fun ProfileEditionScreen(navController: NavController = rememberNavController(),
 
     LaunchedEffect(userState) {
         userState?.let {
-            email = it.email
+            //email = it.email
             name = "${it.name} "
             lastname = it.lastName
         }
@@ -97,10 +96,10 @@ fun ProfileEditionScreen(navController: NavController = rememberNavController(),
         }
     }
 
-    fun isEmailFormatValid(email: String): Boolean {
+    /*fun isEmailFormatValid(email: String): Boolean {
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
         return email.matches(emailRegex.toRegex())
-    }
+    }*/
 
     Scaffold(
 
@@ -139,20 +138,20 @@ fun ProfileEditionScreen(navController: NavController = rememberNavController(),
 
                         Box(modifier = Modifier.weight(0.09f))
 
-                        ProfileTextField(value = email, label = "Dirección de correo", onValueChange = { newValue ->
+                        /*ProfileTextField(value = email, label = "Dirección de correo", onValueChange = { newValue ->
                             email = newValue
                             emailTouched = true
                             isEmailValid = isEmailFormatValid(email)
-                        })
+                        })*/
 
-                        if (emailTouched && !isEmailFormatValid(email)) {
+                        /*if (emailTouched && !isEmailFormatValid(email)) {
                             Text(
                                 "El nuevo formato de correo no es válido. Intente de nuevo",
                                 color = Color.Red,
                                 style = MaterialTheme.typography.bodySmall,
                                 modifier = Modifier.padding(top = 4.dp)
                             )
-                        }
+                        }*/
 
                         Box(modifier = Modifier.weight(0.05f))
 
@@ -203,23 +202,26 @@ fun ProfileEditionScreen(navController: NavController = rememberNavController(),
                             onClick = {
 
                                 val updatedUser = userState?.copy(
-                                    email = email.ifEmpty { userState?.email ?: "" },
+                                    //email = if (email.isEmpty()) userState?.email ?: "" else email,
                                     name = if (name.isEmpty()) userState?.name ?: "" else name,
                                     lastName = if (lastname.isEmpty()) userState?.lastName ?: "" else lastname
                                 )?: User(
-                                    email = email,
+                                    //email = email,
                                     name = name,
                                     lastName = lastname
                                 )
 
-                                if (isEmailFormatValid(updatedUser.email)) {
+
+                                //if (isEmailFormatValid(updatedUser.email) ) {
                                     profileViewModel.updatePersonalUserData(updatedUser)
-                                }
+                                // }
+
+
 
                             }
                             ,
                             arrow = true,
-                            enabled = isEmailFormatValid(email)
+                            //enabled = isEmailFormatValid(email)
                         )
 
                         Box(modifier = Modifier.weight(0.5f))

@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.health.vita.auth.data.repository.AuthRepository
+import com.health.vita.auth.data.repository.AuthRepositoryImpl
 import com.health.vita.core.utils.error_management.UnknownError
 import com.health.vita.core.utils.states_management.UiHandler
 import com.health.vita.core.utils.states_management.UiState
@@ -14,7 +16,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ProfileViewModel(val userRepository: UserRepository = UserRepositoryImpl()): ViewModel() {
+class ProfileViewModel(val userRepository: UserRepository = UserRepositoryImpl(),
+                       val authRepository: AuthRepository = AuthRepositoryImpl()
+): ViewModel() {
 
 
     private val _user = MutableLiveData<User?>(User())
