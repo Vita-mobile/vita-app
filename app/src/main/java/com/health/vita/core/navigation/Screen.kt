@@ -39,7 +39,7 @@ object Screen {
     const val DIET_SELECTION = "DietSelection"
     const val MEAL_TRACKING = "MealTracking"
     const val HYDRATION = "Hydration"
-    const val DIETS_PREVIEW = "DietsPreview"
+    const val DIETS_PREVIEW = "DietsPreview/{meal}"
     const val ADDED_FOOD = "AddedFood"
     const val NUTRITION_WELCOME = "NutritionWelcome"
     const val MEAL_DETAIL = "MealDetail"
