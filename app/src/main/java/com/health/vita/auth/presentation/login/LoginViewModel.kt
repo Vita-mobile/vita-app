@@ -41,7 +41,6 @@ class LoginViewModel(
             try {
 
                 authRepositoryImpl.signin(email, password)
-                authRepositoryImpl.updateEmail(email,password)
 
                 withContext(Dispatchers.Main) { uiHandler.setSuccess() }
 

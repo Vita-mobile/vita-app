@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -151,7 +150,8 @@ fun EditHeightScreen(
                             },
                             blackContent = true,
                             text = "Guardar",
-                            color = MaterialTheme.colorScheme.onPrimary
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            isLoading = uiState is UiState.Loading
                         )
 
 
@@ -165,12 +165,8 @@ fun EditHeightScreen(
 
                             is UiState.Loading -> {
 
-                                Box(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator()
-                                }
+                                updateInfo = "loading"
+
                             }
 
                             is UiState.Success -> {

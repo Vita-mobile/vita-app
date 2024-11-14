@@ -24,11 +24,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -138,6 +136,7 @@ fun EditWeightScreen(navController: NavController = rememberNavController(), pro
                         profileViewModel.setWeight(newValue.toFloat())
                     })
                     Box(modifier = Modifier.weight(1f))
+
                     Box(modifier = Modifier.padding(bottom = 36.dp)) {
 
                         PrimaryIconButton(
@@ -152,7 +151,8 @@ fun EditWeightScreen(navController: NavController = rememberNavController(), pro
                             },
                             blackContent = true,
                             text = "Guardar",
-                            color = MaterialTheme.colorScheme.onPrimary
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            isLoading = uiState is UiState.Loading
                         )
 
                         when(uiState){
@@ -165,12 +165,8 @@ fun EditWeightScreen(navController: NavController = rememberNavController(), pro
 
                             is UiState.Loading -> {
 
-                                Box(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator()
-                                }
+                                updateInfo = "Loading"
+
                             }
 
                             is UiState.Success -> {
