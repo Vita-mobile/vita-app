@@ -2,22 +2,22 @@ package com.health.vita.register.data.repository
 
 
 import android.net.Uri
+import android.util.Log
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.health.vita.domain.model.User
 
 import com.health.vita.register.data.data_source.ImageStorageService
 import com.health.vita.register.data.data_source.ImageStorageServiceImpl
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import java.util.UUID
 
 interface ProfileImageRepository {
 
-    suspend fun uploadUserProfileImage(uri: Uri?, isDefault: Boolean)
+    suspend fun uploadUserProfileImage(uri: Uri?, isDefault: Boolean): String
     suspend fun getDefaultProfileImages(): List<String>
+    suspend fun updateUserProfileImageID(imageId: String?)
 
 }
 
@@ -27,27 +27,24 @@ class ProfileImageRepositoryImpl(
 
 
     override suspend fun uploadUserProfileImage(//user: User,
-        uri: Uri?, isDefault: Boolean){
+        uri: Uri?, isDefault: Boolean): String{
 
-        val imageID: String
-        //val user : User
+        var imageId = ""
 
         uri?.let {
-
             if (isDefault) {
-
-                imageID = uri.lastPathSegment ?: ""
-
-                imageStorageService.saveDefaultImage(imageID)
+                imageId = uri.lastPathSegment ?: ""
+                imageStorageService.saveDefaultImage(imageId)
             } else {
-
-                imageID = UUID.randomUUID().toString()
-
-                imageStorageService.uploadProfileImage(it, imageID)
+                imageId = UUID.randomUUID().toString()
+                imageStorageService.uploadProfileImage(it, imageId)
             }
         }
 
+         return imageId
+
     }
+
     
     override suspend fun getDefaultProfileImages(): List<String> {
 
@@ -59,5 +56,20 @@ class ProfileImageRepositoryImpl(
         }
 
         return imageUrls
+    }
+
+    override suspend fun updateUserProfileImageID(imageId: String?) {
+
+        val currentUser = Firebase.auth.currentUser
+
+        if (currentUser != null) {
+
+            imageStorageService.updateUserImageId(currentUser.uid, imageId)
+
+        } else {
+
+            Log.e("ProfileImageRepository", "Usuario no autenticado")
+
+        }
     }
 }

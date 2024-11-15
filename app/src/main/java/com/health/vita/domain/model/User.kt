@@ -5,7 +5,6 @@ data class User (
     var name: String = "",
     var lastName: String = "",
     var imageID:String? = null,
-    var imageURL:String? = null,
     var email: String = "",
     var age: Int = 0,
     var weight: Float = 0.0f,
@@ -13,5 +12,4 @@ data class User (
     var physicalLevel: Int = 0,
     var sex: String = "",
     var physicalTarget: String = ""
-
 )

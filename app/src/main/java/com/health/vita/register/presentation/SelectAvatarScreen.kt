@@ -72,17 +72,17 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
     }
 
     val defaultAvatars by signupViewModel.defaultImages.observeAsState(emptyList())
+
     val selectedAvatar by signupViewModel.profileImage.observeAsState()
-    var isLoading by remember { mutableStateOf(true) }
-
-    var selectedUri: Uri? by remember { mutableStateOf(null) }
-
 
     val listState = rememberLazyListState()
-
     val uiState by signupViewModel.uiState.observeAsState(UiState.Idle)
 
-    var infoSingup by remember {
+    var isLoading by remember { mutableStateOf(true) }
+
+    var selectedUri:Uri? by remember { mutableStateOf(null) }
+
+    var infoSignup by remember {
 
         mutableStateOf("")
     }
@@ -92,7 +92,11 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         selectedUri = uri
-        signupViewModel.setProfileImage(null)
+
+        if (uri != null) {
+            signupViewModel.selectUploadedImage(uri)
+        }
+
     }
 
     LaunchedEffect(defaultAvatars) {
@@ -147,7 +151,25 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
                             label = ""
                         )
 
-                        Box{
+                        Box(contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .size(size)
+                                .clip(CircleShape)
+                                .clickable {
+
+                                    if (selectedUri != null) {
+                                        selectedUri = null
+                                    }
+                                    signupViewModel.selectDefaultImage(imageUrl)
+                                }
+                                .border(
+                                    BorderStroke(
+                                        4.dp,
+                                        if (selectedAvatar == imageUrl) MaterialTheme.colorScheme.primary else Color.Transparent
+                                    ),
+                                    CircleShape
+                                )
+                        ){
 
                             if(isLoading){
 
@@ -157,26 +179,13 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
                                 )
                             }
                             else{
+
                                 Image(
                                     painter = rememberAsyncImagePainter(imageUrl),
                                     contentDescription = "Avatar",
-                                    modifier = Modifier
-                                        .size(size)
-                                        .clip(CircleShape)
-                                        .clickable {
-                                            signupViewModel.setProfileImage(imageUrl)
-                                            selectedUri = null
-                                        }.border(
-                                            BorderStroke(
-                                                4.dp,
-                                                if (selectedAvatar == imageUrl) MaterialTheme.colorScheme.primary else Color.Transparent
-                                            ),
-                                            CircleShape
-                                        ),
-
                                     contentScale = ContentScale.Crop
-
                                 )
+
                             }
                         }
 
@@ -225,13 +234,17 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
                         Box(
                             modifier = Modifier.fillMaxSize().clickable {
 
+                                if (selectedAvatar != null) {
+                                    signupViewModel.selectDefaultImage(null)
+                                }
+
                                 launcher.launch("image/*")
                             },
                             contentAlignment = Alignment.BottomCenter
 
                         ) {
 
-                            if (selectedUri != null) {
+                            if(selectedUri!=null) {
 
                                 Image(
                                     painter = rememberAsyncImagePainter(selectedUri),
@@ -239,7 +252,8 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
                                     modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)),
                                     contentScale = ContentScale.Crop
                                 )
-                            }else{
+
+                            } else {
 
                                 Box(
                                     modifier = Modifier
@@ -252,7 +266,6 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
 
 
                                 }
-
 
                                 Icon(
                                     painter = painterResource(R.drawable.round_arrow_upward_24),
@@ -282,29 +295,20 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
                 Box(modifier = Modifier.weight(0.8f))
 
                 PrimaryIconButton(
-                    text = "Continuar",
-                    color = Color.Black,
+                    text = "Comenzar",
+                    color = if (selectedAvatar != null) Color.Black else Color.Gray,
                     onClick = {
-
-                        if (selectedUri != null) {
-
-                        signupViewModel.updateProfileImage(selectedUri, false)
-
-                        }
-                        if (selectedAvatar != null) {
-
-                        signupViewModel.updateProfileImage(Uri.parse(selectedAvatar), true)
-                        }
 
                         signupViewModel.registerOperation()
 
-                    }
+                    },
+                    enabled = selectedAvatar != null,
                 )
 
-                Box(modifier = Modifier.weight(0.6f))
+                Box(modifier = Modifier.weight(0.2f))
 
                 Text(
-                    text = infoSingup,
+                    text = infoSignup,
                     style = MaterialTheme.typography.labelSmall,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.error,
@@ -315,7 +319,7 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
 
                     is UiState.Idle -> {
 
-                        infoSingup = ""
+                        infoSignup = ""
 
                     }
 
@@ -327,17 +331,21 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
 
                     is UiState.Success -> {
 
-                        infoSingup = "Registro exitoso"
-                        navController.navigate(Screen.HOME)
+                        infoSignup = "Registro exitoso"
+
+                        if (selectedAvatar != null) {
+                            signupViewModel.updateProfileImage()
+
+                            navController.navigate(Screen.HOME)
+                        }
 
                     }
 
                     is UiState.Error -> {
 
-
                         val error = (uiState as UiState.Error).error
                         Log.e( "SING-UP", error.message)
-                        infoSingup = "Error al realizar el registro."
+                        infoSignup = "Error al realizar el registro."
 
                     }
 

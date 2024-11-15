@@ -58,7 +58,7 @@ fun FitnessGoalSelectionScreen(
     signupViewModel: SignupViewModel = viewModel()
 ) {
 
-    val physicalTargetObserver by signupViewModel.gender.observeAsState()
+    val physicalTargetObserver by signupViewModel.goal.observeAsState()
 
     var physicalTarget by remember { mutableStateOf(physicalTargetObserver) }
 
@@ -101,7 +101,7 @@ fun FitnessGoalSelectionScreen(
                     )
                 }
 
-                Box(modifier = Modifier.weight(1f))
+                Box(modifier = Modifier.weight(0.8f))
 
                 Column {
 
@@ -119,9 +119,11 @@ fun FitnessGoalSelectionScreen(
                             iconId = target.second,
                             selected = physicalTarget == DatabaseNames.physicalTarget[index + 1],
                             onClick = {
-                                physicalTarget = DatabaseNames.physicalTarget[index + 1] ?: ""
+                                val selectedGoal = DatabaseNames.physicalTarget[index + 1]
+                                physicalTarget = selectedGoal
+
                                 signupViewModel.setGoal(
-                                    DatabaseNames.physicalTarget[index + 1] ?: ""
+                                   selectedGoal ?: ""
                                 )
                             }
                         )
@@ -129,13 +131,14 @@ fun FitnessGoalSelectionScreen(
                 }
 
 
-                Box(modifier = Modifier.weight(0.1f))
+                Box(modifier = Modifier.weight(1f))
 
                 Box(modifier = Modifier.padding(bottom = 36.dp)) {
 
                     PrimaryIconButton(
-                        text = "Comenzar",
+                        text = "Continuar",
                         onClick = {
+
                             if (physicalTarget?.isNotEmpty() == true) {
 
                                 signupViewModel.setGoal(physicalTarget?:"")
@@ -145,18 +148,19 @@ fun FitnessGoalSelectionScreen(
 
                                 Toast.makeText(
                                     navController.context,
-                                    "Realiza la selección de uno de los dos campos",
+                                    "Realiza la selección de uno de los cuatro campos",
                                     Toast.LENGTH_LONG
                                 ).show()
 
-
                             }
                         },
-                        arrow = true
+                        arrow = true,
+                        enabled = physicalTarget?.isNotEmpty() ==true
                     )
 
                 }
 
+                Box(modifier = Modifier.weight(0.05f))
 
             }
         }

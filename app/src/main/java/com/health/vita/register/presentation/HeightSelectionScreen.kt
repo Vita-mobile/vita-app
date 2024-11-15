@@ -74,7 +74,7 @@ fun HeightSelectionScreen(
                     //Modo Claro
                     GeneralTopBar(
                         text = "Valoración",
-                        step = 2,
+                        step = 3,
                         total = 6,
                         onClick = { navController.navigateUp() },
                         lightMode = false,

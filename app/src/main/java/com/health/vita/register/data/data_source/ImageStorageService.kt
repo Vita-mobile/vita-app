@@ -1,18 +1,18 @@
 package com.health.vita.register.data.data_source
 
 import android.net.Uri
-import android.util.Log
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.storage.storage
 import kotlinx.coroutines.tasks.await
-import java.util.UUID
 
 interface ImageStorageService {
 
     suspend fun uploadProfileImage(uri: Uri, id: String)
     suspend fun getDefaultImageUris(): List<String>
     suspend fun saveDefaultImage(imageId: String)
+    suspend fun updateUserImageId(userId:String, imageId: String?)
 }
 
 class ImageStorageServiceImpl : ImageStorageService {
@@ -42,5 +42,10 @@ class ImageStorageServiceImpl : ImageStorageService {
 
         Firebase.storage.reference.child("profile_images").child(imageId).putFile(uri).await()
 
+    }
+
+    override suspend fun updateUserImageId(userId:String, imageId: String?) {
+
+        Firebase.firestore.collection("User").document(userId).update("imageID", imageId).await()
     }
 }

@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.health.vita.auth.data.repository.AuthRepository
+import com.health.vita.auth.data.repository.AuthRepositoryImpl
 import com.health.vita.core.utils.error_management.DatabaseError
 import com.health.vita.core.utils.error_management.ErrorManager
 import com.health.vita.core.utils.error_management.NetworkError
@@ -26,7 +28,8 @@ import java.util.UUID
 
 class SignupViewModel(
     private val signUpRepository: SignUpRepository = SignUpRepositoryImpl(),
-    private val profileImageRepository: ProfileImageRepository = ProfileImageRepositoryImpl()
+    private val profileImageRepository: ProfileImageRepository = ProfileImageRepositoryImpl(),
+    private val authRepositoryImpl: AuthRepository = AuthRepositoryImpl()
 ) : ViewModel() {
 
     private val _name = MutableLiveData("")
@@ -41,8 +44,12 @@ class SignupViewModel(
     private val _email = MutableLiveData("")
     val email: LiveData<String> get() = _email
 
-    private val _profileImage = MutableLiveData<String?>()
+    //user profile image
+    private var _profileImage = MutableLiveData<String?>()
     val profileImage: LiveData<String?> get() = _profileImage
+
+    private val _isDefaultImage = MutableLiveData<Boolean>()
+    val isDefaultImage: LiveData<Boolean> get() = _isDefaultImage
 
     private val _age = MutableLiveData(18)
     val age: LiveData<Int> get() = _age
@@ -149,37 +156,6 @@ class SignupViewModel(
 
     }
 
-    fun updateProfileImage(uri: Uri?, isDefault: Boolean) {
-        _isProfileImageLoading.value = true
-
-        viewModelScope.launch(Dispatchers.IO) {
-
-            try {
-
-                profileImageRepository.uploadUserProfileImage(uri, isDefault)
-
-                withContext(Dispatchers.Main){
-                    _profileImage.value = if (isDefault) {
-                    uri?.lastPathSegment
-                } else  {
-                    uri?.toString()
-                }
-                    _isProfileImageLoading.value = false
-                }
-
-
-            } catch (e: Exception) {
-
-                withContext(Dispatchers.Main) {
-                    _isProfileImageLoading.value = false
-                    Log.e("SIGN-UP VIEW MODEL", e.message ?: "Error al cargar la imagen de perfil")
-                    uiHandler.setErrorState(UnknownError("Error al cargar la imagen de perfil", e))
-                    ErrorManager.postError(NetworkError(cause = e))
-                }
-            }
-        }
-    }
-
     fun isRepeatedEmail(email: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -197,6 +173,17 @@ class SignupViewModel(
         }
     }
 
+    fun selectDefaultImage(imageUrl: String?) {
+        _profileImage.value = imageUrl
+        _isDefaultImage.value = true
+    }
+
+    fun selectUploadedImage(uri: Uri?) {
+        _profileImage.value = uri?.toString()
+        _isDefaultImage.value = false
+    }
+
+
     fun registerOperation() {
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -213,7 +200,7 @@ class SignupViewModel(
                     lastName = _lastName.value ?: "",
                     email = _email.value ?: "",
                     age = _age.value ?: 0,
-                    imageID = _profileImage.value?: null,
+                    imageID = _profileImage.value,
                     weight = (_weight.value ?: 0f),
                     height = (_height.value ?: 0f),
                     physicalLevel = _activityLevel.value ?: 0,
@@ -235,7 +222,6 @@ class SignupViewModel(
                     ErrorManager.postError(NetworkError(cause = e))
                 }
 
-
             } catch (e: SQLException) {
 
                 withContext(Dispatchers.Main) {
@@ -255,5 +241,40 @@ class SignupViewModel(
             }
         }
     }
+
+    fun updateProfileImage() {
+
+        val currentImage = _profileImage.value ?: return
+        val isDefault = _isDefaultImage.value ?: true
+
+        _isProfileImageLoading.value = true
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            try {
+
+                var imageId = profileImageRepository.uploadUserProfileImage(Uri.parse(currentImage), isDefault)
+
+
+                profileImageRepository.updateUserProfileImageID(imageId)
+
+                withContext(Dispatchers.Main){
+                    _profileImage.value =  imageId
+                    _isProfileImageLoading.value = false
+                }
+
+
+            } catch (e: Exception) {
+
+                withContext(Dispatchers.Main) {
+                    _isProfileImageLoading.value = false
+                    Log.e("SIGN-UP VIEW MODEL", e.message ?: "Error al cargar la imagen de perfil")
+                    uiHandler.setErrorState(UnknownError("Error al cargar la imagen de perfil", e))
+                    ErrorManager.postError(NetworkError(cause = e))
+                }
+            }
+        }
+    }
+
 
 }
