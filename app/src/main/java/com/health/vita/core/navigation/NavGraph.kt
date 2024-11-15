@@ -179,12 +179,17 @@ fun NavGraph(navController: NavHostController){
         }
         composable(
             route = Screen.MEAL_DETAIL,
-            arguments = listOf(navArgument("meal") { type = NavType.StringType })
+            arguments = listOf(
+                navArgument("meal") { type = NavType.StringType },
+                navArgument("isFavorite") { type = NavType.BoolType }
+            )
         ) { backStackEntry ->
             val meal = backStackEntry.arguments?.getString("meal")
                 ?: throw IllegalArgumentException("meal argument is required")
+            val isFavorite = backStackEntry.arguments?.getBoolean("isFavorite")
+                ?: false
 
-            MealDetailScreen(navController = navController, meal = meal)
+            MealDetailScreen(navController = navController, meal = meal, isFavorite = isFavorite)
         }
 
         // Sports

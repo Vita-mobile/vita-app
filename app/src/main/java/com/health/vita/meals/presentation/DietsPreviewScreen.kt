@@ -239,7 +239,8 @@ fun DietsPreviewScreen(
                                             .align(Alignment.CenterHorizontally)
                                             .clickable {
                                                 val mealJson = Gson().toJson(meal_)
-                                                navController.navigate("MealDetail/$mealJson")
+                                                val isFavorite = favorites.contains(meal_)
+                                                navController.navigate("MealDetail/$mealJson/$isFavorite")
                                             }
                                     )
 

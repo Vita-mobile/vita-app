@@ -18,7 +18,8 @@ import com.health.vita.ui.components.general.GeneralTopBar
 @Composable
 fun MealDetailScreen(
     navController: NavController = rememberNavController(),
-    meal: String
+    meal: String,
+    isFavorite: Boolean
 ) {
 
     val gson = Gson()

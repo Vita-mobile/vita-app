@@ -42,7 +42,7 @@ object Screen {
     const val DIETS_PREVIEW = "DietsPreview/{meal}"
     const val ADDED_FOOD = "AddedFood"
     const val NUTRITION_WELCOME = "NutritionWelcome"
-    const val MEAL_DETAIL = "MealDetail/{meal}"
+    const val MEAL_DETAIL = "MealDetail/{meal}/{isFavorite}"
 
     // Sports
     const val WORKOUT_HOME = "WorkoutHome"
