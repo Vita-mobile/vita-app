@@ -25,7 +25,7 @@ class MealsIAServiceImpl(): MealsIAService {
         .build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://192.168.1.17:5000/")
+        .baseUrl("http://192.168.1.3:5000/")
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()

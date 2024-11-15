@@ -43,7 +43,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -58,8 +57,8 @@ import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.theme.VitaTheme
 
 @Composable
-fun HeartToggle() {
-    var isFavorite by remember { mutableStateOf(false) }
+fun HeartToggle(fav: Boolean = false) {
+    var isFavorite by remember { mutableStateOf(fav) }
 
     val color by animateColorAsState(if (isFavorite) Color.Red else Color.Gray)
 
@@ -139,11 +138,11 @@ fun MealDetailScreen(
     meal: String,
     isFavorite: Boolean
 ) {
-    val totalGrams by mealDetailViewModel.pesoTotal.observeAsState()
-    val gson = Gson()
-    val mealObj: Meal = gson.fromJson(meal, Meal::class.java)
+    val totalGrams by mealDetailViewModel.pesoTotal.observeAsState(0)
+    val macroImage by mealDetailViewModel.macroDominantImage.observeAsState(com.health.vita.R.drawable.grasas)
+    val mealObj by mealDetailViewModel.meal.observeAsState()
     LaunchedEffect(true){
-        mealDetailViewModel.calcularPesoTotal(mealObj)
+        mealDetailViewModel.setMealFromJson(meal)
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -167,11 +166,11 @@ fun MealDetailScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.End
                             ) {
-                                HeartToggle()
+                                HeartToggle(isFavorite)
 
                             }
                             Image(
-                                painter = painterResource(id = R.drawable.proteina),
+                                painter = painterResource(id = macroImage),
                                 contentDescription = "",
                                 modifier = Modifier.fillMaxWidth().height(200.dp)
                             )
@@ -185,7 +184,7 @@ fun MealDetailScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = mealObj.name,
+                                text = mealObj?.name?:"Meal",
                                 style = MaterialTheme.typography.titleSmall
                             )
                             Text(text = "${totalGrams}g", style = MaterialTheme.typography.titleSmall) // Hacer vm que me obtenga los gramosx
@@ -202,7 +201,7 @@ fun MealDetailScreen(
                                 modifier = Modifier.graphicsLayer(alpha = 0.5f)
                             )
                             Text(
-                                text = "${mealObj.calories.toInt()}cal",
+                                text = "${mealObj?.calories?.toInt()?:0}cal",
                                 style = MaterialTheme.typography.bodyLarge,
                                 modifier = Modifier.graphicsLayer(alpha = 0.5f)
                             )
@@ -210,18 +209,18 @@ fun MealDetailScreen(
                     }
                     Column {
                         MacronutrientDetails(
-                            grams = mealObj.proteins,
-                            totalGrams = totalGrams?.toFloat() ?:0f,
+                            grams = mealObj?.proteins?:0f,
+                            totalGrams = totalGrams.toFloat(),
                             macronutrientType = MacronutrientType.PROTEIN
                         )
                         MacronutrientDetails(
-                            grams = mealObj.carbs,
-                            totalGrams = totalGrams?.toFloat() ?:0f,
+                            grams = mealObj?.carbs?:0f,
+                            totalGrams = totalGrams.toFloat(),
                             macronutrientType = MacronutrientType.CARBOHYDRATE
                         )
                         MacronutrientDetails(
-                            grams = mealObj.fats,
-                            totalGrams = totalGrams?.toFloat() ?:0f,
+                            grams = mealObj?.fats?:0f,
+                            totalGrams = totalGrams.toFloat() ?:0f,
                             macronutrientType = MacronutrientType.FAT
                         )
 
@@ -232,8 +231,10 @@ fun MealDetailScreen(
                             Text(text = "Ingredientes", style = MaterialTheme.typography.titleSmall)
                         }
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
-                            items(mealObj.ingredients) { ingredient ->
-                                Ingredient(ingredient.name, ingredient.grams)
+                            mealObj?.let {
+                                items(it.ingredients) { ingredient ->
+                                    Ingredient(ingredient.name, ingredient.grams)
+                                }
                             }
                         }
                     }
