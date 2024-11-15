@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -29,7 +31,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,13 +43,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
 import com.health.vita.R
 import com.health.vita.meals.domain.model.Meal
+import com.health.vita.meals.presentation.viewModels.MealDetailViewModel
 import com.health.vita.meals.utils.MacronutrientType
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.theme.VitaTheme
@@ -91,52 +98,58 @@ fun HeartToggle() {
 @Composable
 fun MealDetailPrev() {
     VitaTheme {
-        MealDetailScreen(meal = "Hola", isFavorite = true)
+        MealDetailScreen(meal = "{\n" +
+                "  \"id\": \"12345\",\n" +
+                "  \"name\": \"Grilled Chicken Salad\",\n" +
+                "  \"description\": \"A healthy salad with grilled chicken, fresh vegetables, and a light dressing.\",\n" +
+                "  \"calories\": 350.5,\n" +
+                "  \"carbs\": 20.0,\n" +
+                "  \"fats\": 10.5,\n" +
+                "  \"proteins\": 30.0,\n" +
+                "  \"ingredients\": [\n" +
+                "    {\n" +
+                "      \"id\": \"1\",\n" +
+                "      \"name\": \"Chicken Breast\",\n" +
+                "      \"quantity\": 200,\n" +
+                "      \"unit\": \"grams\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"id\": \"2\",\n" +
+                "      \"name\": \"Lettuce\",\n" +
+                "      \"quantity\": 100,\n" +
+                "      \"unit\": \"grams\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"id\": \"3\",\n" +
+                "      \"name\": \"Tomatoes\",\n" +
+                "      \"quantity\": 50,\n" +
+                "      \"unit\": \"grams\"\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"meal\": 1\n" +
+                "}\n", isFavorite = true)
     }
 }
 
 
 @Composable
 fun MealDetailScreen(
+    mealDetailViewModel: MealDetailViewModel = viewModel(),
     navController: NavController = rememberNavController(),
     meal: String,
     isFavorite: Boolean
-) {   
-     val gson = Gson()
-
+) {
+    val totalGrams by mealDetailViewModel.pesoTotal.observeAsState()
+    val gson = Gson()
     val mealObj: Meal = gson.fromJson(meal, Meal::class.java)
-     Scaffold(
+    LaunchedEffect(true){
+        mealDetailViewModel.calcularPesoTotal(mealObj)
+    }
+    Scaffold(
         modifier = Modifier.fillMaxSize(),
         content = { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {
-
-                            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(horizontal = 16.dp)
-            ){
-
-                GeneralTopBar(
-                    text = "Seguimiento",
-                    onClick = { navController.popBackStack() },
-                    hasStep = false,
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Text(text = "Name: ${mealObj.name}")
-                Text(text = "Description: ${mealObj.description}")
-                Text(text = "Calories: ${mealObj.calories}")
-                Text(text = "Carbs: ${mealObj.carbs}")
-                Text(text = "Fats: ${mealObj.fats}")
-                Text(text = "Proteins: ${mealObj.proteins}")
-
-                Text(text = "Ingredients:")
-                mealObj.ingredients.forEach { ingredient ->
-                    Text(text = "- ${ingredient.name}")
-                }
-            }
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Column(modifier = Modifier.padding(bottom =40.dp, start = 16.dp, end = 16.dp)) {
                     GeneralTopBar(
                         onClick = { navController.navigateUp() },
                         text = "Nutrición",
@@ -160,7 +173,7 @@ fun MealDetailScreen(
                             Image(
                                 painter = painterResource(id = R.drawable.proteina),
                                 contentDescription = "",
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth().height(200.dp)
                             )
                         }
                     }
@@ -172,10 +185,10 @@ fun MealDetailScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "Tacos Vegetales",
+                                text = mealObj.name,
                                 style = MaterialTheme.typography.titleSmall
                             )
-                            Text(text = "100g", style = MaterialTheme.typography.titleSmall)
+                            Text(text = "${totalGrams}g", style = MaterialTheme.typography.titleSmall) // Hacer vm que me obtenga los gramosx
                         }
                         Row(
                             modifier = Modifier
@@ -189,7 +202,7 @@ fun MealDetailScreen(
                                 modifier = Modifier.graphicsLayer(alpha = 0.5f)
                             )
                             Text(
-                                text = "457cal",
+                                text = "${mealObj.calories.toInt()}cal",
                                 style = MaterialTheme.typography.bodyLarge,
                                 modifier = Modifier.graphicsLayer(alpha = 0.5f)
                             )
@@ -197,16 +210,32 @@ fun MealDetailScreen(
                     }
                     Column {
                         MacronutrientDetails(
-                            grams = 100f,
-                            totalGrams = 1000f,
+                            grams = mealObj.proteins,
+                            totalGrams = totalGrams?.toFloat() ?:0f,
+                            macronutrientType = MacronutrientType.PROTEIN
+                        )
+                        MacronutrientDetails(
+                            grams = mealObj.carbs,
+                            totalGrams = totalGrams?.toFloat() ?:0f,
+                            macronutrientType = MacronutrientType.CARBOHYDRATE
+                        )
+                        MacronutrientDetails(
+                            grams = mealObj.fats,
+                            totalGrams = totalGrams?.toFloat() ?:0f,
                             macronutrientType = MacronutrientType.FAT
                         )
+
+
                     }
                     Column {
-                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                        Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), horizontalArrangement = Arrangement.Center) {
                             Text(text = "Ingredientes", style = MaterialTheme.typography.titleSmall)
                         }
-                        Ingredient()
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            items(mealObj.ingredients) { ingredient ->
+                                Ingredient(ingredient.name, ingredient.grams)
+                            }
+                        }
                     }
                 }
 
@@ -216,11 +245,14 @@ fun MealDetailScreen(
 }
 
 @Composable
-fun Ingredient() {
-    Column {
+fun Ingredient(
+    name: String,
+    weight: Float
+) {
+    Column(modifier = Modifier.padding(vertical = 6.dp)){
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = "Tortilla", style = MaterialTheme.typography.bodyLarge)
-            Text(text = "200g", style = MaterialTheme.typography.bodyLarge)
+            Text(text = name, style = MaterialTheme.typography.bodyLarge)
+            Text(text = "${weight.toInt()}g", style = MaterialTheme.typography.bodyLarge)
         }
         Spacer(
             modifier = Modifier
@@ -250,20 +282,31 @@ fun MacronutrientDetails(
         MacronutrientType.CARBOHYDRATE -> R.drawable.carbohidrato
         MacronutrientType.FAT -> R.drawable.grasas
     }
-    
+
     val macroName = when (macronutrientType) {
         MacronutrientType.PROTEIN -> "Proteína"
         MacronutrientType.CARBOHYDRATE -> "Carbos"
         MacronutrientType.FAT -> "Grasas"
     }
-    Row(modifier = Modifier.padding(vertical = 12.dp)){
-        Column(modifier = Modifier.padding(horizontal =  12.dp)){
-            Image(painter = painterResource(id = icon), contentDescription = "", modifier = Modifier.size(24.dp))
+    Row(modifier = Modifier.padding(vertical = 12.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 12.dp)) {
+            Image(
+                painter = painterResource(id = icon),
+                contentDescription = "",
+                modifier = Modifier.size(24.dp)
+            )
         }
-        Column(verticalArrangement = Arrangement.Center){
-            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween){
+        Column(verticalArrangement = Arrangement.Center) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Text(text = macroName, style = MaterialTheme.typography.bodyMedium)
-                Text(text = ""+grams.toInt()+"g", style = MaterialTheme.typography.labelSmall, modifier = Modifier.graphicsLayer(alpha = 0.5f))
+                Text(
+                    text = "" + grams.toInt() + "g",
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.graphicsLayer(alpha = 0.5f)
+                )
             }
             Row(
                 modifier = Modifier
