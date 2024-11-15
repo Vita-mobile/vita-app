@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
 import com.health.vita.R
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.meals.presentation.viewModels.DietsPreviewViewModelFactory
@@ -227,6 +228,21 @@ fun DietsPreviewScreen(
                                             }
                                             .wrapContentWidth(Alignment.CenterHorizontally)
                                     )
+
+                                    Spacer(modifier = Modifier.height(8.dp))
+
+                                    Text(
+                                        text = "Ver detalles",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier
+                                            .align(Alignment.CenterHorizontally)
+                                            .clickable {
+                                                val mealJson = Gson().toJson(meal_)
+                                                navController.navigate("MealDetail/$mealJson")
+                                            }
+                                    )
+
 
                                     Spacer(modifier = Modifier.height(32.dp))
 
