@@ -57,11 +57,12 @@ import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.theme.VitaTheme
 
 @Composable
-fun HeartToggle(fav: Boolean = false) {
+fun HeartToggle(fav: Boolean = false,
+                foodId: String = "",
+                onClick: (Boolean) -> Unit
+) {
     var isFavorite by remember { mutableStateOf(fav) }
-
     val color by animateColorAsState(if (isFavorite) Color.Red else Color.Gray)
-
     val transition = updateTransition(targetState = isFavorite, label = "heartTransition")
 
     val scale by transition.animateFloat(
@@ -80,7 +81,10 @@ fun HeartToggle(fav: Boolean = false) {
     Box(
         modifier = Modifier
             .size(48.dp)
-            .clickable { isFavorite = !isFavorite }
+            .clickable {
+                isFavorite = !isFavorite
+                onClick(isFavorite)
+            }
             .graphicsLayer(scaleX = scale, scaleY = scale, shape = CircleShape, clip = false),
         contentAlignment = Alignment.Center
     ) {
@@ -166,7 +170,9 @@ fun MealDetailScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.End
                             ) {
-                                HeartToggle(isFavorite)
+                                HeartToggle(isFavorite, mealObj?.id.toString()){isFav ->
+                                    mealDetailViewModel.toggleFavorite(isFav)
+                                }
 
                             }
                             Image(

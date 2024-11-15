@@ -3,10 +3,23 @@ package com.health.vita.meals.presentation.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import com.health.vita.meals.data.repository.MealDetailRepository
+import com.health.vita.meals.data.repository.MealDetailRepositoryImpl
 import com.health.vita.meals.domain.model.Meal
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class MealDetailViewModel() : ViewModel() {
+class MealDetailViewModel(
+    private val mealDetailRepository : MealDetailRepository = MealDetailRepositoryImpl()
+) : ViewModel() {
+
+    fun toggleFavorite(isFavorite: Boolean): Unit {
+        viewModelScope.launch(Dispatchers.IO){
+            _meal.value?.let { mealDetailRepository.toggleFavorite(it,isFavorite) }
+        }
+    }
 
     private val _meal = MutableLiveData<Meal>()
     val meal: LiveData<Meal> get() = _meal

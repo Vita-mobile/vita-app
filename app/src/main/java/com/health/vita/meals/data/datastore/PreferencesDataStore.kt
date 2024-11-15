@@ -17,9 +17,6 @@ object DataStoreKeys {
 }
 
 suspend fun saveValueAndTimestamp(context: Context, value: Int, timestamp: Long) {
-
-
-
     context.dataStore.edit { preferences ->
         Log.e("VALUE SAVED", "$value")
         Log.e("TIMESTAMP SAVED", "$timestamp")
