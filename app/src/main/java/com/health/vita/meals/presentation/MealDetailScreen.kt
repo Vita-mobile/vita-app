@@ -14,14 +14,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -46,7 +43,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.google.gson.Gson
 import com.health.vita.R
+import com.health.vita.meals.domain.model.Meal
+import com.health.vita.meals.utils.MacronutrientType
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.theme.VitaTheme
 
@@ -91,17 +91,51 @@ fun HeartToggle() {
 @Composable
 fun MealDetailPrev() {
     VitaTheme {
-        MealDetailScreen()
+        MealDetailScreen(meal = "Hola", isFavorite = true)
     }
 }
 
 
 @Composable
-fun MealDetailScreen(navController: NavController = rememberNavController()) {
-    Scaffold(
+fun MealDetailScreen(
+    navController: NavController = rememberNavController(),
+    meal: String,
+    isFavorite: Boolean
+) {   
+     val gson = Gson()
+
+    val mealObj: Meal = gson.fromJson(meal, Meal::class.java)
+     Scaffold(
         modifier = Modifier.fillMaxSize(),
         content = { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {
+
+                            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(horizontal = 16.dp)
+            ){
+
+                GeneralTopBar(
+                    text = "Seguimiento",
+                    onClick = { navController.popBackStack() },
+                    hasStep = false,
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(text = "Name: ${mealObj.name}")
+                Text(text = "Description: ${mealObj.description}")
+                Text(text = "Calories: ${mealObj.calories}")
+                Text(text = "Carbs: ${mealObj.carbs}")
+                Text(text = "Fats: ${mealObj.fats}")
+                Text(text = "Proteins: ${mealObj.proteins}")
+
+                Text(text = "Ingredients:")
+                mealObj.ingredients.forEach { ingredient ->
+                    Text(text = "- ${ingredient.name}")
+                }
+            }
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     GeneralTopBar(
                         onClick = { navController.navigateUp() },
@@ -247,9 +281,4 @@ fun MacronutrientDetails(
             }
         }
     }
-
 }
-
-
-
-

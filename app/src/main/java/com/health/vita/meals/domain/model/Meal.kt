@@ -12,8 +12,6 @@ data class Meal (
     var proteins: Float = 0.0f,
 
     var ingredients: List<Ingredient> = emptyList(),
+    var meal: Int = 0,
 
 )
-
-
-
