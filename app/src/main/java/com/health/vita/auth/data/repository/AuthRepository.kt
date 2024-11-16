@@ -1,5 +1,9 @@
 package com.health.vita.auth.data.repository
 
+import android.util.Log
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 import com.health.vita.auth.data.data_source.AuthService
 import com.health.vita.auth.data.data_source.AuthServiceImpl
 import com.health.vita.domain.model.User
