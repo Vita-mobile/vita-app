@@ -51,6 +51,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.R
+import com.health.vita.meals.data.datastore.DataStoreKeys
 import com.health.vita.meals.data.datastore.getValueAndTimestamp
 import com.health.vita.meals.data.datastore.saveValueAndTimestamp
 import com.health.vita.profile.presentation.viewModel.ProfileViewModel
@@ -98,7 +99,7 @@ fun HydrationScreen(
         mutableStateOf(500)
     }
 
-    val dataFlow = getValueAndTimestamp(context).collectAsState(initial = Pair(0, 0L))
+    val dataFlow = getValueAndTimestamp(context, DataStoreKeys.HYDRATION).collectAsState(initial = Pair(0, 0L))
     val (storedValue, lastUpdated) = dataFlow.value
 
     LaunchedEffect(storedValue, lastUpdated) {
@@ -116,7 +117,7 @@ fun HydrationScreen(
 
                 waterIntake = 0
                 scope.launch(Dispatchers.IO) {
-                    saveValueAndTimestamp(context, 0, currentTime)
+                    saveValueAndTimestamp(context, 0, currentTime, DataStoreKeys.HYDRATION)
                 }
             } else {
                 waterIntake = storedValue
@@ -244,7 +245,7 @@ fun HydrationScreen(
                 onConfirm = {
                     waterIntake += waterAddition
                     scope.launch(Dispatchers.IO) {
-                        saveValueAndTimestamp(context, waterIntake, System.currentTimeMillis())
+                        saveValueAndTimestamp(context, waterIntake, System.currentTimeMillis(), DataStoreKeys.HYDRATION)
                     }
                     openWaterPopup = !openWaterPopup
                     waterAddition = 500
