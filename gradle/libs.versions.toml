@@ -22,10 +22,13 @@ googleGmsGoogleServices = "4.4.2"
 firebaseFirestore = "25.1.0"
 firebaseAuthKtx = "23.0.0"
 firebaseCommonKtx = "21.0.0"
+firebaseStorageKtx = "21.0.1"
+firebaseStorage = "21.0.1"
 datastorePreferencesCoreJvm = "1.1.1"
 datastoreCoreAndroid = "1.1.1"
 retrofitVersion = "2.9.0"
 roomKtx = "2.6.1"
+firebaseStorageVersion = "21.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,6 +56,7 @@ androidx-compose-material = { group = "androidx.wear.compose", name = "compose-m
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx", version.ref = "firebaseCommonKtx" }
+firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 androidx-datastore-preferences-core-jvm = { group = "androidx.datastore", name = "datastore-preferences-core-jvm", version.ref = "datastorePreferencesCoreJvm" }
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroid" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
@@ -60,6 +64,7 @@ kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-cor
 
 retrofit2-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofitVersion" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
+firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorageVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

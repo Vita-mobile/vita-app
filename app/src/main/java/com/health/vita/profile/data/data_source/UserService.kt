@@ -8,6 +8,7 @@ import kotlinx.coroutines.tasks.await
 
 interface UserService {
     suspend fun getUserById(id:String): User?
+    suspend fun updateUserData(user: User):User?
 }
 
 class UserServiceImpl:UserService{
@@ -21,5 +22,15 @@ class UserServiceImpl:UserService{
         val userObject = user.toObject(User::class.java)
         return userObject
     }
+
+    override suspend fun updateUserData(user: User): User? {
+
+        val  updateUser = Firebase.firestore.collection("User").document(user.id).set(user).await()
+        return getUserById(user.id)
+    }
+
+
+
+
 
 }

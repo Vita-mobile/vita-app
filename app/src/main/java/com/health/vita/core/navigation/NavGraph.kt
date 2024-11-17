@@ -113,7 +113,7 @@ fun NavGraph(navController: NavHostController){
             SignUpScreen(navController, signupViewModel)
         }
         composable(Screen.SELECT_AVATAR) {
-            SelectAvatarScreen(navController)
+            SelectAvatarScreen(navController, signupViewModel)
         }
         composable(Screen.AGE_SELECTION) {
             AgeSelectionScreen(navController, signupViewModel)

@@ -32,10 +32,15 @@ fun CardWithTitle(
     title: String,
     @DrawableRes background: Int,
     onClick: () -> Unit = {},
+    hasTitle: Boolean = true,
     content: @Composable () -> Unit
 ) {
     Column(Modifier.background(MaterialTheme.colorScheme.background).padding(vertical = 10.dp)) {
-        Text(text = title, style = MaterialTheme.typography.bodyMedium)
+
+        if(hasTitle){
+            Text(text = title, style = MaterialTheme.typography.bodyMedium)
+        }
+
         Card(
             onClick = { /*TODO*/ },
             modifier = Modifier

@@ -14,6 +14,7 @@ import java.util.UUID
 
 interface NutritionalPlanRepository {
     suspend fun createNutritionalPlan(preferences: List<IngredientMeal>, restrictions: List<IngredientMeal>, meals: Int): Boolean
+    suspend fun getNutritionalPlan(): NutritionalPlan?
 }
 
 class NutritionalPlanRepositoryImpl(
@@ -93,7 +94,17 @@ class NutritionalPlanRepositoryImpl(
             return false
         }
 
-
     }
+
+    override suspend fun getNutritionalPlan():NutritionalPlan? {
+
+        val user = userRepo.getCurrentUser()
+
+        val nutritionalPlan = nutritionalPlanService.getNutritionalPlan(user?.id?:"")
+
+        return nutritionalPlan
+    }
+
+
 
 }
