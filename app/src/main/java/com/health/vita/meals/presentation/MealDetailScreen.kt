@@ -246,7 +246,7 @@ fun MealDetailScreen(
                         }
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
                             mealObj?.let {
-                                items(it.ingredientMeals) { ingredient ->
+                                items(it.ingredients) { ingredient ->
                                     Ingredient(ingredient.name, ingredient.grams)
                                 }
                             }

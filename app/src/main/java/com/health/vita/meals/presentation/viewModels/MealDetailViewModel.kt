@@ -54,6 +54,6 @@ class MealDetailViewModel(
     }
 
     private fun calculateWeight(meal: Meal) {
-        _pesoTotal.value = meal.ingredientMeals.sumOf { it.grams.toInt() }
+        _pesoTotal.value = meal.ingredients.sumOf { it.grams.toInt() }
     }
 }

@@ -1,6 +1,6 @@
 package com.health.vita.meals.domain.model
 
-data class IngredientMeal (
+data class Ingredient (
 
     var grams: Float = 100.0f,
     var name: String = "",

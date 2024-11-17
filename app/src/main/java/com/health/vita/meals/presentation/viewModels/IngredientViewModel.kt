@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.health.vita.meals.data.repository.IngredientRepository
 import com.health.vita.meals.data.repository.IngredientRepositoryImpl
-import com.health.vita.meals.domain.model.IngredientMeal
+import com.health.vita.meals.domain.model.Ingredient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -14,8 +14,8 @@ import kotlinx.coroutines.withContext
 class IngredientViewModel(
     private val ingredientRepository: IngredientRepository = IngredientRepositoryImpl()
 ) : ViewModel() {
-    private val _ingredientsState = MutableLiveData<List<IngredientMeal?>>()
-    val ingredientsState: LiveData<List<IngredientMeal?>> get() = _ingredientsState
+    private val _ingredientsState = MutableLiveData<List<Ingredient?>>()
+    val ingredientsState: LiveData<List<Ingredient?>> get() = _ingredientsState
 
     private val _searchQuery = MutableLiveData<String>()
     val searchQuery: LiveData<String> get() = _searchQuery

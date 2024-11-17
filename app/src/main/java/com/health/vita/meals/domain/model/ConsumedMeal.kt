@@ -12,7 +12,7 @@ data class ConsumedMeal (
     var fats: Float = 0.0f,
     var proteins: Float = 0.0f,
 
-    var ingredientMeals: List<IngredientMeal> = emptyList(),
+    var ingredients: List<Ingredient> = emptyList(),
     var meal: Int = 0,
     var consumeDate: Timestamp = Timestamp.now()
     )
@@ -26,7 +26,7 @@ fun Meal.toConsumedMeal(): ConsumedMeal {
         carbs = this.carbs,
         fats = this.fats,
         proteins = this.proteins,
-        ingredientMeals = this.ingredientMeals,
+        ingredients = this.ingredients,
         meal = this.meal,
         consumeDate = Timestamp.now()
     )
