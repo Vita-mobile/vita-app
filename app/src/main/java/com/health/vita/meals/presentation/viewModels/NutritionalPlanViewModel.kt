@@ -12,7 +12,7 @@ import com.health.vita.meals.data.repository.IngredientRepository
 import com.health.vita.meals.data.repository.IngredientRepositoryImpl
 import com.health.vita.meals.data.repository.NutritionalPlanRepository
 import com.health.vita.meals.data.repository.NutritionalPlanRepositoryImpl
-import com.health.vita.meals.domain.model.Ingredient
+import com.health.vita.meals.domain.model.IngredientMeal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,13 +31,13 @@ class NutritionalPlanViewModel(
     private val _meals = MutableLiveData(3)
     val meals: LiveData<Int> get() = _meals
 
-    private val _preferences = MutableLiveData<List<Ingredient>>(emptyList())
-    val preferences: LiveData<List<Ingredient>> get() = _preferences
-    private val _restrictions = MutableLiveData<List<Ingredient>>(emptyList())
-    val restrictions: LiveData<List<Ingredient>> get() = _restrictions
+    private val _preferences = MutableLiveData<List<IngredientMeal>>(emptyList())
+    val preferences: LiveData<List<IngredientMeal>> get() = _preferences
+    private val _restrictions = MutableLiveData<List<IngredientMeal>>(emptyList())
+    val restrictions: LiveData<List<IngredientMeal>> get() = _restrictions
 
-    private val _ingredientsState = MutableLiveData<List<Ingredient?>>()
-    val ingredientsState: LiveData<List<Ingredient?>> get() = _ingredientsState
+    private val _ingredientsState = MutableLiveData<List<IngredientMeal?>>()
+    val ingredientsState: LiveData<List<IngredientMeal?>> get() = _ingredientsState
 
     private val _searchQuery = MutableLiveData<String>()
     val searchQuery: LiveData<String> get() = _searchQuery
@@ -53,15 +53,15 @@ class NutritionalPlanViewModel(
         _searchQuery.value = query
     }
 
-    fun addPreference(ingredientToAdd: Ingredient) {
+    fun addPreference(ingredientMealToAdd: IngredientMeal) {
         val currentPreferences = _preferences.value ?: listOf()
-        val updatedPreferences = currentPreferences + ingredientToAdd
+        val updatedPreferences = currentPreferences + ingredientMealToAdd
         _preferences.value = updatedPreferences
     }
 
-    fun addRestriction(ingredientToAdd: Ingredient) {
+    fun addRestriction(ingredientMealToAdd: IngredientMeal) {
         val currentRestrictions = _restrictions.value ?: listOf()
-        val updatedRestrictions = currentRestrictions + ingredientToAdd
+        val updatedRestrictions = currentRestrictions + ingredientMealToAdd
         _restrictions.value = updatedRestrictions
     }
 

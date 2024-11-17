@@ -22,6 +22,7 @@ import com.health.vita.main.presentation.HomeScreen
 import com.health.vita.main.presentation.LoadSimulationScreen
 import com.health.vita.main.presentation.SplashScreen
 import com.health.vita.main.presentation.WelcomeScreen
+import com.health.vita.meals.domain.model.Meal
 import com.health.vita.meals.presentation.AddedFoodScreen
 import com.health.vita.meals.presentation.DietSelectionScreen
 import com.health.vita.meals.presentation.DietsPreviewScreen
@@ -63,7 +64,7 @@ fun NavGraph(navController: NavHostController){
     val signupViewModel: SignupViewModel = viewModel()
     NavHost(
         navController = navController,
-        startDestination = Screen.MEAL_HOME,
+        startDestination = Screen.SPLASH_SCREEN,
         enterTransition = {
             slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn()
         },
@@ -176,8 +177,19 @@ fun NavGraph(navController: NavHostController){
         composable(Screen.NUTRITION_WELCOME) {
             NutritionWelcomeScreen(navController)
         }
-        composable(Screen.MEAL_DETAIL) {
-            MealDetailScreen(navController)
+        composable(
+            route = Screen.MEAL_DETAIL,
+            arguments = listOf(
+                navArgument("meal") { type = NavType.StringType },
+                navArgument("isFavorite") { type = NavType.BoolType }
+            )
+        ) { backStackEntry ->
+            val meal = backStackEntry.arguments?.getString("meal")
+                ?: throw IllegalArgumentException("meal argument is required")
+            val isFavorite = backStackEntry.arguments?.getBoolean("isFavorite")
+                ?: false
+
+            MealDetailScreen(navController = navController, meal = meal, isFavorite = isFavorite)
         }
 
         // Sports

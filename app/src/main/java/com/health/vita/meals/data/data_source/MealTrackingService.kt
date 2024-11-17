@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.toObjects
 import com.google.firebase.ktx.Firebase
 import com.health.vita.meals.domain.model.Meal
 import kotlinx.coroutines.tasks.await
@@ -90,16 +91,13 @@ class MealTrackingServiceImpl() : MealTrackingService {
             .collection("User")
             .document(s)
             .collection("MealsTracking")
-            .get()
+            .orderBy("consumeDate", Query.Direction.DESCENDING)
+            .limit(1).
+            get()
             .await()
-        val lastEatenMealDoc = mealTracking.documents.firstOrNull()?.
-        reference?.
-        collection("TrackMeals")?.
-        orderBy("date", Query.Direction.DESCENDING)?.
-        limit(1)?.
-        get()?.
-        await()
-        return lastEatenMealDoc?.documents?.firstOrNull()?.get("date") as? Timestamp
+
+        val document = mealTracking.documents.firstOrNull()
+        return document?.getTimestamp("consumeDate")
     }
 
 }
