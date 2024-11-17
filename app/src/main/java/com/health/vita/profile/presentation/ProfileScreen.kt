@@ -46,9 +46,14 @@ fun ProfileScreen(navController: NavController = rememberNavController(), profil
 
     val userState by profileViewModel.user.observeAsState()
 
+
+    val profileImage by profileViewModel.profileImageUrl.observeAsState()
+
+
     Log.e(">>> User", userState.toString())
 
     LaunchedEffect(true) {
+        profileViewModel.getProfileImage()
         profileViewModel.getCurrentUser()
     }
 
@@ -91,7 +96,7 @@ fun ProfileScreen(navController: NavController = rememberNavController(), profil
                     onClickIcon = {navController.navigate(ACCOUNT_SETTINGS)}
                 )
 
-                CircularPhoto(photo = R.drawable.male_image, "Profile Picture", 100)
+                CircularPhoto(photo = R.drawable.userdefault, contentDescription =  "Profile Picture", size =  100, url = profileImage)
 
                 Spacer(modifier = Modifier.height(16.dp))
 

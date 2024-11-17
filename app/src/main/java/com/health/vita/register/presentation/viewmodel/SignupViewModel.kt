@@ -258,7 +258,6 @@ class SignupViewModel(
 
                 var imageId = profileImageRepository.uploadUserProfileImage(Uri.parse(currentImage), isDefault)
 
-
                 profileImageRepository.updateUserProfileImageID(imageId)
 
                 withContext(Dispatchers.Main){

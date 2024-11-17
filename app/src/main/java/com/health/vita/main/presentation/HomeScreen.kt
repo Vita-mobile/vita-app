@@ -1,6 +1,7 @@
 package com.health.vita.main.presentation
 
 
+import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,8 +41,14 @@ fun HomeScreen(
     profileViewModel: ProfileViewModel = viewModel()
 ) {
     LaunchedEffect(true) {
+        profileViewModel.getProfileImage()
         profileViewModel.getCurrentUser()
     }
+
+
+    val profileImage by profileViewModel.profileImageUrl.observeAsState()
+
+
     val userState by profileViewModel.user.observeAsState()
     if (userState == null) {
         navController.navigate(LOGIN)
@@ -50,7 +57,7 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize(),
             content = { innerPadding ->
                 Column(modifier = Modifier.padding(innerPadding)) {
-                    ProfileCard(name = "${userState?.name}", onClick = {navController.navigate(PROFILE)}, onClickButton1 = {}, onClickButton2 = {navController.navigate(
+                    ProfileCard(name = "${userState?.name}", onClick = {navController.navigate(PROFILE)}, onClickButton1 = {}, url = profileImage , onClickButton2 = {navController.navigate(
                         ACCOUNT_SETTINGS)})
                     Column(
                         modifier = Modifier
