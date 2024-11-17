@@ -113,9 +113,6 @@ fun MealTrackingScreen(
     LaunchedEffect(true) {
 
         Log.d("Current user", "Current user: ${Firebase.auth.currentUser?.uid}")
-
-
-
         mealTrackingViewModel.getRegisterPlanDate()
 
     }

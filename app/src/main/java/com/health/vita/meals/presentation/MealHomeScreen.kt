@@ -92,7 +92,6 @@ fun MealHomeScreen(navController: NavController) {
 
     val lastRecordedMeal by mealsViewModel.lastRecordedMeal.observeAsState(0)
     val mealCount by mealsViewModel.mealCounts.observeAsState()
-    val isToday by mealsViewModel.lastEatenMeal.observeAsState()
     val backStackEntry = navController.currentBackStackEntryAsState()
     val userState by mealsViewModel.user.observeAsState()
     val kcal by mealsViewModel.kcal.observeAsState()
@@ -109,17 +108,15 @@ fun MealHomeScreen(navController: NavController) {
     val (storedValue, lastUpdated) = dataFlow.value
 
     LaunchedEffect(backStackEntry.value) {
-        mealsViewModel.getCurrentMeal()
         mealsViewModel.getLastEatenMeal()
+        mealsViewModel.getCurrentMeal()
     }
 
     LaunchedEffect(true) {
         mealsViewModel.getCurrentMeal()
         mealsViewModel.getLastEatenMeal()
     }
-    if (isToday == false) {
-        mealsViewModel.resetMealIndex()
-    }
+
 
     LaunchedEffect(Unit) {
         mealsViewModel.getCurrentUser()

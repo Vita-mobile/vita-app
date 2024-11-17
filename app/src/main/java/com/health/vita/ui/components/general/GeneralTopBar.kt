@@ -38,6 +38,14 @@ import com.health.vita.ui.theme.MediumGray
 import com.health.vita.ui.theme.TranslucentBlue
 import com.health.vita.ui.theme.VitaTheme
 
+
+@Preview(showBackground = true)
+@Composable
+fun GeneralTopBarPreview(){
+    GeneralTopBar(onClick = { /*TODO*/ }, hasStep = false, hasIcon = true)
+}
+
+
 @Composable
 fun GeneralTopBar(
     modifier: Modifier = Modifier,
@@ -48,7 +56,8 @@ fun GeneralTopBar(
     onClickIcon: () -> Unit = {},
     lightMode: Boolean = true,
     hasStep: Boolean = true,
-    hasIcon: Boolean = false
+    hasIcon: Boolean = false,
+    icon: Int = R.drawable.round_more_horiz_24
 ) {
 
     Row(modifier = modifier) {
@@ -121,7 +130,7 @@ fun GeneralTopBar(
                         onClick = onClickIcon
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.round_more_horiz_24),
+                            painter = painterResource(id = icon),
                             contentDescription = null,
                             modifier = Modifier.size(80.dp),
                             tint = if (lightMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.background

@@ -1,16 +1,12 @@
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Timestamp
-import com.health.vita.auth.data.repository.AuthRepository
 import com.health.vita.core.utils.states_management.UiHandler
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.domain.model.User
-import com.health.vita.meals.data.repository.DietsPreviewRepository
-import com.health.vita.meals.data.repository.DietsPreviewRepositoryImpl
-import com.health.vita.meals.data.repository.MealTrackingRepositoryImpl
 import com.health.vita.meals.data.repository.MealsRepository
 import com.health.vita.meals.data.repository.MealsRepositoryImpl
 import com.health.vita.meals.data.repository.NutritionalPlanRepository
@@ -35,6 +31,12 @@ class MealsViewModel(context: Context,
 
     private val _kcal = MutableLiveData(0)
     val kcal: LiveData<Int> get() = _kcal
+    private val _lastRecordedMeal = MutableLiveData<Int>()
+    val lastRecordedMeal: LiveData<Int> get() = _lastRecordedMeal
+    private val _mealCount = MutableLiveData<Int>()
+    val mealCounts: LiveData<Int> get() = _mealCount
+    private val _lastEatenMeal = MutableLiveData<Boolean>()
+
 
     fun getCurrentUser() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -45,38 +47,24 @@ class MealsViewModel(context: Context,
         }
     }
 
-    private val _lastRecordedMeal = MutableLiveData<Int>()
-    val lastRecordedMeal: LiveData<Int> get() = _lastRecordedMeal
-    private val _mealCount = MutableLiveData<Int>()
-    val mealCounts: LiveData<Int> get() = _mealCount
-    private val _lastEatenMeal = MutableLiveData<Boolean>()
-    val lastEatenMeal: LiveData<Boolean> get() = _lastEatenMeal
+
     init {
         viewModelScope.launch(Dispatchers.IO){
             withContext(Dispatchers.Main) {
                 _uiHandler.setLoadingState()
-                _mealCount.value = mealsRepository.getMealsCount()
+                getLastEatenMeal()
+                getCurrentMeal()
+                _mealCount.postValue(mealsRepository.getMealsCount())
                 _uiHandler.setSuccess()
             }
         }
     }
 
     fun getCurrentMeal() {
-        viewModelScope.launch(Dispatchers.IO){
-            mealsRepository.getLastMealIndex().collect { index ->
-                withContext(Dispatchers.Main){
-                    _lastRecordedMeal.value = index
-                }
-            }
-        }
-    }
-
-    fun incrementLastRecordedMeal() {
-        viewModelScope.launch(Dispatchers.IO){
-            mealsRepository.incrementMealIndex()
+        viewModelScope.launch(Dispatchers.IO) {
             mealsRepository.getLastMealIndex().collect { index ->
                 withContext(Dispatchers.Main) {
-                    _lastRecordedMeal.value = index
+                    _lastRecordedMeal.postValue(index)
                 }
             }
         }
@@ -86,33 +74,25 @@ class MealsViewModel(context: Context,
         viewModelScope.launch(Dispatchers.IO) {
             val date = mealsRepository.getLastEatenMealDate()
             val today = Calendar.getInstance()
-
             val lastEatenDate = Calendar.getInstance().apply {
                 time = date.toDate()
             }
-
-            if (lastEatenDate.get(Calendar.YEAR) < today.get(Calendar.YEAR)
-                || lastEatenDate.get(Calendar.DAY_OF_YEAR) < today.get(Calendar.DAY_OF_YEAR)) {
-                withContext(Dispatchers.Main) {
-                    _lastEatenMeal.value = false
-                }
-            } else {
-                withContext(Dispatchers.Main) {
-                    _lastEatenMeal.value = true
-                }
+            val lastEaten = lastEatenDate.get(Calendar.YEAR) >= today.get(Calendar.YEAR) &&
+                    lastEatenDate.get(Calendar.DAY_OF_YEAR) >= today.get(Calendar.DAY_OF_YEAR)
+            _lastEatenMeal.postValue(lastEaten)
+            if (!lastEaten) {
+                Log.e(">>>", "Fue reseteado")
+                resetMealIndex()
             }
         }
     }
 
-
-    fun resetMealIndex() {
+    private fun resetMealIndex() {
         viewModelScope.launch(Dispatchers.IO){
             mealsRepository.resetMealIndex()
             mealsRepository.getLastMealIndex().collect {
                 index ->
-                withContext(Dispatchers.Main){
-                    _lastRecordedMeal.value = index
-                }
+                    _lastRecordedMeal.postValue(index)
             }
         }
     }
