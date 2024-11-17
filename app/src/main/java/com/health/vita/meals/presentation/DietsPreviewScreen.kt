@@ -50,9 +50,15 @@ import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
 import com.health.vita.R
 import com.health.vita.core.utils.states_management.UiState
+import com.health.vita.meals.data.datastore.DataStoreKeys
+import com.health.vita.meals.data.datastore.getValueAndTimestamp
+import com.health.vita.meals.data.datastore.saveValueAndTimestamp
 import com.health.vita.meals.presentation.viewModels.DietsPreviewViewModelFactory
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.util.Calendar
 
 @Composable
 fun DietsPreviewScreen(
@@ -62,6 +68,10 @@ fun DietsPreviewScreen(
     val dietsPreviewViewModel: DietsPreviewViewModel = viewModel(
         factory = DietsPreviewViewModelFactory(LocalContext.current)
     )
+
+    val scope = rememberCoroutineScope()
+
+    var possibleRefetch = 3
 
     val uiState by dietsPreviewViewModel.uiState.observeAsState(UiState.Idle)
 
@@ -95,7 +105,39 @@ fun DietsPreviewScreen(
             hasConsumed = true
             navController.popBackStack()
         } else if (consumeMealState && hasConsumed) {
-            Toast.makeText(context, "Hubo un error al consumir la comida", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Hubo un error al consumir la comida", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
+    val dataFlow = getValueAndTimestamp(context, DataStoreKeys.IA_REFETCH).collectAsState(
+        initial = Pair(
+            0,
+            0L
+        )
+    )
+    val (storedValue, lastUpdated) = dataFlow.value
+
+    LaunchedEffect(storedValue, lastUpdated) {
+        val currentTime = System.currentTimeMillis()
+        val midnightToday = Calendar.getInstance().apply {
+            timeInMillis = currentTime
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+
+        if (lastUpdated != 0L) {
+            if (lastUpdated < midnightToday) {
+
+                possibleRefetch = 3
+                scope.launch(Dispatchers.IO) {
+                    saveValueAndTimestamp(context, 3, currentTime, DataStoreKeys.IA_REFETCH)
+                }
+            } else {
+                possibleRefetch = storedValue
+            }
         }
     }
 
@@ -173,7 +215,7 @@ fun DietsPreviewScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                when (uiState){
+                when (uiState) {
                     is UiState.Loading -> {
                         Box(
                             modifier = Modifier
@@ -184,6 +226,7 @@ fun DietsPreviewScreen(
                             CircularProgressIndicator()
                         }
                     }
+
                     is UiState.Success -> {
                         if (meals.isEmpty()) {
                             Text(
@@ -215,9 +258,22 @@ fun DietsPreviewScreen(
                                         .fillMaxHeight(),
                                     verticalArrangement = Arrangement.Center,
                                 ) {
-                                    if (selectedOption == "Mi plan") {
+
+                                    //Condition
+                                    if (selectedOption == "Mi plan" && possibleRefetch > 0) {
                                         Button(
-                                            onClick = { dietsPreviewViewModel.rechargeMealsIA(meal) },
+                                            onClick = {
+                                                dietsPreviewViewModel.rechargeMealsIA(meal)
+                                                possibleRefetch--
+                                                scope.launch(Dispatchers.IO) {
+                                                    saveValueAndTimestamp(
+                                                        context,
+                                                        possibleRefetch,
+                                                        System.currentTimeMillis(),
+                                                        DataStoreKeys.IA_REFETCH
+                                                    )
+                                                }
+                                            },
                                             modifier = Modifier
                                                 .size(72.dp)
                                                 .align(Alignment.CenterHorizontally)
@@ -290,14 +346,15 @@ fun DietsPreviewScreen(
                                     Spacer(modifier = Modifier.height(32.dp))
                                     PrimaryIconButton(
                                         text = "Consumir",
-                                        onClick = {showConfirmDialog = true},
+                                        onClick = { showConfirmDialog = true },
                                         arrow = true,
-                                        )
+                                    )
                                 }
                             }
 
                         }
                     }
+
                     is UiState.Error -> {
                         Text(
                             text = "Error al cargar las comidas",

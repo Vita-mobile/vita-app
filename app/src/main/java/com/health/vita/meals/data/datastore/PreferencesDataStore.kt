@@ -12,23 +12,42 @@ import kotlinx.coroutines.flow.map
 val Context.dataStore by preferencesDataStore(name = "persisted_data")
 
 object DataStoreKeys {
-    val VALUE_KEY = intPreferencesKey("WaterIntake")
-    val LAST_UPDATED_KEY = longPreferencesKey("WaterIntakeLastUpdated")
+    val HYDRATION = "HYDRATION"
+    val IA_REFETCH = "IA_REFETCH"
+    val HYDRATION_VALUE_KEY = intPreferencesKey("WaterIntake")
+    val IA_REFETCH_VALUE_KEY = intPreferencesKey("IaRefetch")
+    val HYDRATION_LAST_UPDATED_KEY = longPreferencesKey("WaterIntakeLastUpdated")
+    val IA_REFETCH_LAST_UPDATED_KEY = longPreferencesKey("IaRefetchLastUpdated")
 }
 
+<<<<<<< HEAD
 suspend fun saveValueAndTimestamp(context: Context, value: Int, timestamp: Long) {
+=======
+suspend fun saveValueAndTimestamp(context: Context, value: Int, timestamp: Long, valueKey: String ) {
+
+>>>>>>> develop
     context.dataStore.edit { preferences ->
+        val (valuePreferenceKey, lastUpdatedPreferenceKey) = when (valueKey) {
+            "HYDRATION" -> Pair(DataStoreKeys.HYDRATION_VALUE_KEY, DataStoreKeys.HYDRATION_LAST_UPDATED_KEY)
+            "IA_REFETCH" -> Pair(DataStoreKeys.IA_REFETCH_VALUE_KEY, DataStoreKeys.IA_REFETCH_LAST_UPDATED_KEY)
+            else -> throw IllegalArgumentException("Unknown valueKey: $valueKey")
+        }
         Log.e("VALUE SAVED", "$value")
         Log.e("TIMESTAMP SAVED", "$timestamp")
-        preferences[DataStoreKeys.VALUE_KEY] = value
-        preferences[DataStoreKeys.LAST_UPDATED_KEY] = timestamp
+        preferences[valuePreferenceKey] = value
+        preferences[lastUpdatedPreferenceKey] = timestamp
     }
 }
 
-fun getValueAndTimestamp(context: Context): Flow<Pair<Int, Long>> {
+fun getValueAndTimestamp(context: Context, valueKey: String): Flow<Pair<Int, Long>> {
     return context.dataStore.data.map { preferences ->
-        val value = preferences[DataStoreKeys.VALUE_KEY] ?: 0
-        val lastUpdated = preferences[DataStoreKeys.LAST_UPDATED_KEY] ?: 0L
+        val (valuePreferenceKey, lastUpdatedPreferenceKey) = when (valueKey) {
+            "HYDRATION" -> Pair(DataStoreKeys.HYDRATION_VALUE_KEY, DataStoreKeys.HYDRATION_LAST_UPDATED_KEY)
+            "IA_REFETCH" -> Pair(DataStoreKeys.IA_REFETCH_VALUE_KEY, DataStoreKeys.IA_REFETCH_LAST_UPDATED_KEY)
+            else -> throw IllegalArgumentException("Unknown valueKey: $valueKey")
+        }
+        val value = preferences[valuePreferenceKey] ?: 0
+        val lastUpdated = preferences[lastUpdatedPreferenceKey] ?: 0L
         Pair(value, lastUpdated)
     }
 }

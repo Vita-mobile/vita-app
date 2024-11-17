@@ -48,14 +48,13 @@ import com.health.vita.ui.theme.MintGreen
 @Composable
 fun DietSelectionScreen(
     navController: NavController = rememberNavController(),
-    ingredientViewModel: IngredientViewModel = viewModel(),
     nutritionalPlanViewModel: NutritionalPlanViewModel = viewModel()
 ) {
-    val ingredientState by ingredientViewModel.ingredientsState.observeAsState(listOf())
+    val ingredientState by nutritionalPlanViewModel.ingredientsState.observeAsState(listOf())
     val preferences by nutritionalPlanViewModel.preferences.observeAsState(listOf())
     val restrictions by nutritionalPlanViewModel.restrictions.observeAsState(listOf())
     val meals by nutritionalPlanViewModel.meals.observeAsState(3)
-    val searchQuery by ingredientViewModel.searchQuery.observeAsState("")
+    val searchQuery by nutritionalPlanViewModel.searchQuery.observeAsState("")
     val uiState by nutritionalPlanViewModel.uiState.observeAsState(UiState.Idle)
     var isSettingPreferences = false
     var ingredientPopUp by remember {
@@ -70,7 +69,7 @@ fun DietSelectionScreen(
     }
 
     LaunchedEffect(Unit) {
-        ingredientViewModel.getIngredients()
+        nutritionalPlanViewModel.getIngredients()
     }
 
     Scaffold(modifier = Modifier.fillMaxSize(), content = { innerPadding ->
@@ -228,7 +227,7 @@ fun DietSelectionScreen(
                     Column(modifier = Modifier) {
                         TextField(
                             value = searchQuery,
-                            onValueChange = { query -> ingredientViewModel.setSearchQuery(query) },
+                            onValueChange = { query -> nutritionalPlanViewModel.setSearchQuery(query) },
                             label = { Text("Buscar ingrediente") },
                             modifier = Modifier
                                 .fillMaxWidth()
