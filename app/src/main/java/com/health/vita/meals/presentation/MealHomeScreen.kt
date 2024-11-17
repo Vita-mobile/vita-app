@@ -2,6 +2,7 @@ package com.health.vita.meals.presentation
 
 import MealsViewModel
 import android.graphics.drawable.Icon
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -45,6 +46,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -55,6 +57,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -65,6 +68,9 @@ import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.meals.data.datastore.DataStoreKeys
 import com.health.vita.meals.data.datastore.getValueAndTimestamp
 import com.health.vita.meals.data.datastore.saveValueAndTimestamp
+import com.health.vita.meals.presentation.viewModels.DietsPreviewViewModelFactory
+import com.health.vita.meals.presentation.viewModels.MealsViewModelFactory
+import com.health.vita.profile.presentation.viewModel.ProfileViewModel
 import com.health.vita.ui.components.meals.MealsCarousel
 import com.health.vita.ui.theme.Aquamarine
 import com.health.vita.ui.theme.Cyan
@@ -75,44 +81,32 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
+
 @Composable
 fun MealHomeScreen(navController: NavController) {
 
     val context = LocalContext.current
 
-
-    val mealsViewModel = MealsViewModel(context)
-
-    val scope = rememberCoroutineScope()
-
+    val mealsViewModel: MealsViewModel = viewModel(
+        factory = MealsViewModelFactory(context)
+    )
 
     val lastRecordedMeal by mealsViewModel.lastRecordedMeal.observeAsState(0)
     val mealCount by mealsViewModel.mealCounts.observeAsState()
-
     val isToday by mealsViewModel.lastEatenMeal.observeAsState()
-    val uiState by mealsViewModel.uiState.observeAsState(UiState.Idle)
-
     val backStackEntry = navController.currentBackStackEntryAsState()
-
-    LaunchedEffect(Unit) {
-        mealsViewModel.getCurrentUser()
-    }
-
     val userState by mealsViewModel.user.observeAsState()
 
-    val weight = userState?.weight ?: 0f
-    val waterIntakeGoal = if (weight == 0f) 2000 else (35 * weight).toInt()
-
+    val uiState by mealsViewModel.uiState.observeAsState(UiState.Idle)
 
     var waterIntake by remember { mutableStateOf(0) }
     var sliderPosition by remember { mutableStateOf(0f) }
+    var boxWidth by remember { mutableStateOf(0) }
+    val scope = rememberCoroutineScope()
 
 
     val dataFlow = getValueAndTimestamp(context, DataStoreKeys.HYDRATION).collectAsState(initial = Pair(0, 0L))
     val (storedValue, lastUpdated) = dataFlow.value
-
-
-
 
     LaunchedEffect(backStackEntry.value) {
         mealsViewModel.getCurrentMeal()
@@ -127,6 +121,15 @@ fun MealHomeScreen(navController: NavController) {
         mealsViewModel.resetMealIndex()
     }
 
+    LaunchedEffect(Unit) {
+        mealsViewModel.getCurrentUser()
+    }
+
+
+    val weight = userState?.weight ?: 0f
+
+    val waterIntakeGoal = if (weight == 0f) 2000 else (35 * weight).toInt()
+
     LaunchedEffect(storedValue, lastUpdated) {
         val currentTime = System.currentTimeMillis()
         val midnightToday = Calendar.getInstance().apply {
@@ -137,18 +140,22 @@ fun MealHomeScreen(navController: NavController) {
             set(Calendar.MILLISECOND, 0)
         }.timeInMillis
 
-        if (lastUpdated < midnightToday) {
+        if (lastUpdated != 0L){
 
-            waterIntake = 0
-            scope.launch(Dispatchers.IO) {
-                saveValueAndTimestamp(context, 0, currentTime, DataStoreKeys.HYDRATION)
+            if (lastUpdated < midnightToday) {
+
+                waterIntake = 0
+                scope.launch(Dispatchers.IO) {
+                    saveValueAndTimestamp(context, 0, currentTime, DataStoreKeys.HYDRATION)
+                }
+            } else {
+
+                waterIntake = storedValue
             }
-        } else {
-
-            waterIntake = storedValue
         }
 
         sliderPosition = (waterIntake / waterIntakeGoal.toFloat()).coerceIn(0f, 1f)
+
     }
 
     Scaffold(
@@ -183,7 +190,7 @@ fun MealHomeScreen(navController: NavController) {
                                     color = Color(0xFF96B7FF),
                                     shape = RoundedCornerShape(8.dp)
                                 )
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .padding(horizontal = 18.dp, vertical = 8.dp)
                                 .wrapContentSize(align = Alignment.BottomStart)
 
                         ) {
@@ -245,20 +252,26 @@ fun MealHomeScreen(navController: NavController) {
                                     )
                                 }
 
-                                Box(
-                                    modifier = Modifier
-                                        .size(60.dp)
-                                        .offset(x = sliderPosition  * (LocalDensity.current.density * 100).dp)
-                                        .clip(RectangleShape)
-                                        .background( Color(0xFF0087D1),
-                                            RoundedCornerShape(14.dp)
-                                        )
-                                        .border(4.dp, Color.White, RoundedCornerShape(14.dp)),
-                                    contentAlignment = Alignment.Center
-                                ){
-                                    Box(modifier = Modifier.size(19.dp)
-                                        .background(color = LightBlue, RoundedCornerShape(4.dp)))
+                                if(boxWidth>0){
+
+                                    Box(
+                                        modifier = Modifier
+                                            .size(60.dp)
+                                            .offset(
+                                                x = sliderPosition.dp
+                                            )
+                                            .clip(RectangleShape)
+                                            .background( Color(0xFF0087D1),
+                                                RoundedCornerShape(14.dp)
+                                            )
+                                            .border(4.dp, Color.White, RoundedCornerShape(14.dp)),
+                                        contentAlignment = Alignment.Center
+                                    ){
+                                        Box(modifier = Modifier.size(19.dp)
+                                            .background(color = LightBlue, RoundedCornerShape(4.dp)))
+                                    }
                                 }
+
                             }
 
 

@@ -8,6 +8,8 @@ import com.health.vita.auth.data.repository.AuthRepository
 import com.health.vita.core.utils.states_management.UiHandler
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.domain.model.User
+import com.health.vita.meals.data.repository.DietsPreviewRepository
+import com.health.vita.meals.data.repository.DietsPreviewRepositoryImpl
 import com.health.vita.meals.data.repository.MealTrackingRepositoryImpl
 import com.health.vita.meals.data.repository.MealsRepository
 import com.health.vita.meals.data.repository.MealsRepositoryImpl
@@ -18,8 +20,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
 
-class MealsViewModel(context: Context, private val repository: MealsRepository = MealsRepositoryImpl(context),
- private val userRepository: UserRepository = UserRepositoryImpl()
+class MealsViewModel(context: Context,
+                     private val mealsRepository: MealsRepository = MealsRepositoryImpl(context),
+                     private val userRepository: UserRepository = UserRepositoryImpl()
 ) : ViewModel() {
     private val _uiHandler = UiHandler()
     val uiState: LiveData<UiState> get() = _uiHandler.uiState
@@ -46,7 +49,7 @@ class MealsViewModel(context: Context, private val repository: MealsRepository =
         viewModelScope.launch(Dispatchers.IO){
             withContext(Dispatchers.Main) {
                 _uiHandler.setLoadingState()
-                _mealCount.value = repository.getMealsCount()
+                _mealCount.value = mealsRepository.getMealsCount()
                 _uiHandler.setSuccess()
             }
         }
@@ -54,7 +57,7 @@ class MealsViewModel(context: Context, private val repository: MealsRepository =
 
     fun getCurrentMeal() {
         viewModelScope.launch(Dispatchers.IO){
-            repository.getLastMealIndex().collect { index ->
+            mealsRepository.getLastMealIndex().collect { index ->
                 withContext(Dispatchers.Main){
                     _lastRecordedMeal.value = index
                 }
@@ -64,8 +67,8 @@ class MealsViewModel(context: Context, private val repository: MealsRepository =
 
     fun incrementLastRecordedMeal() {
         viewModelScope.launch(Dispatchers.IO){
-            repository.incrementMealIndex()
-            repository.getLastMealIndex().collect { index ->
+            mealsRepository.incrementMealIndex()
+            mealsRepository.getLastMealIndex().collect { index ->
                 withContext(Dispatchers.Main) {
                     _lastRecordedMeal.value = index
                 }
@@ -75,7 +78,7 @@ class MealsViewModel(context: Context, private val repository: MealsRepository =
 
     fun getLastEatenMeal() {
         viewModelScope.launch(Dispatchers.IO) {
-            val date = repository.getLastEatenMealDate()
+            val date = mealsRepository.getLastEatenMealDate()
             val today = Calendar.getInstance()
 
             val lastEatenDate = Calendar.getInstance().apply {
@@ -98,8 +101,8 @@ class MealsViewModel(context: Context, private val repository: MealsRepository =
 
     fun resetMealIndex() {
         viewModelScope.launch(Dispatchers.IO){
-            repository.resetMealIndex()
-            repository.getLastMealIndex().collect {
+            mealsRepository.resetMealIndex()
+            mealsRepository.getLastMealIndex().collect {
                 index ->
                 withContext(Dispatchers.Main){
                     _lastRecordedMeal.value = index
