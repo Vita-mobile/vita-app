@@ -12,7 +12,7 @@ data class NutritionalPlan (
     var kcalGoal: Float = 0f,
     var meals: Int = 0,
     var registerPlanDate: Timestamp = Timestamp.now(),
-    var preferences: List<Ingredient> = emptyList(),
-    var restrictions: List<Ingredient> = emptyList(),
+    var preferences: List<IngredientMeal> = emptyList(),
+    var restrictions: List<IngredientMeal> = emptyList(),
 
-)
+    )

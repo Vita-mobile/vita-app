@@ -48,9 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.google.gson.Gson
 import com.health.vita.R
-import com.health.vita.meals.domain.model.Meal
 import com.health.vita.meals.presentation.viewModels.MealDetailViewModel
 import com.health.vita.meals.utils.MacronutrientType
 import com.health.vita.ui.components.general.GeneralTopBar
@@ -58,7 +56,6 @@ import com.health.vita.ui.theme.VitaTheme
 
 @Composable
 fun HeartToggle(fav: Boolean = false,
-                foodId: String = "",
                 onClick: (Boolean) -> Unit
 ) {
     var isFavorite by remember { mutableStateOf(fav) }
@@ -145,6 +142,8 @@ fun MealDetailScreen(
     val totalGrams by mealDetailViewModel.pesoTotal.observeAsState(0)
     val macroImage by mealDetailViewModel.macroDominantImage.observeAsState(com.health.vita.R.drawable.grasas)
     val mealObj by mealDetailViewModel.meal.observeAsState()
+    var isDialogOpen by remember { mutableStateOf(false) }
+
     LaunchedEffect(true){
         mealDetailViewModel.setMealFromJson(meal)
     }
@@ -156,8 +155,17 @@ fun MealDetailScreen(
                     GeneralTopBar(
                         onClick = { navController.navigateUp() },
                         text = "Nutrición",
-                        hasStep = false
+                        hasStep = false,
+                        hasIcon = true,
+                        icon = R.drawable.baseline_list_alt_24,
+                        onClickIcon = { isDialogOpen = true }
                     )
+                    if (isDialogOpen) {
+                        MealDescriptionDialog(
+                            description = mealObj?.description ?: "No hay descripción disponible.",
+                            onDismiss = { isDialogOpen = false }
+                        )
+                    }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
@@ -170,7 +178,7 @@ fun MealDetailScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.End
                             ) {
-                                HeartToggle(isFavorite, mealObj?.id.toString()){isFav ->
+                                HeartToggle(isFavorite  ){isFav ->
                                     mealDetailViewModel.toggleFavorite(isFav)
                                 }
 
@@ -238,7 +246,7 @@ fun MealDetailScreen(
                         }
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
                             mealObj?.let {
-                                items(it.ingredients) { ingredient ->
+                                items(it.ingredientMeals) { ingredient ->
                                     Ingredient(ingredient.name, ingredient.grams)
                                 }
                             }
@@ -331,4 +339,36 @@ fun MacronutrientDetails(
             }
         }
     }
+}
+
+@Composable
+fun MealDescriptionDialog(
+    description: String,
+    onDismiss: () -> Unit
+) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            Text(
+                text = "Cerrar",
+                modifier = Modifier
+                    .clickable { onDismiss() }
+                    .padding(8.dp),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+        },
+        title = {
+            Text(
+                text = "Descripción",
+                style = MaterialTheme.typography.titleMedium
+            )
+        },
+        text = {
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    )
 }
