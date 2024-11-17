@@ -32,6 +32,8 @@ class ProfileImageRepositoryImpl(
         var imageId = ""
 
         uri?.let {
+
+            Log.e("ProfileImageRepository", "Uploading image with URI: $it and is default: $isDefault")
             if (isDefault) {
                 imageId = uri.lastPathSegment ?: ""
                 imageStorageService.saveDefaultImage(imageId)
