@@ -74,7 +74,6 @@ fun HomeScreen(
                             content(MaterialTheme.colorScheme.background)
                         }
                         CardWithTitle("Alimentacion", R.drawable.main_mealcard, {navController.navigate(MEAL_HOME)}) {
-                            content(MaterialTheme.colorScheme.onSurface)
                         }
                         CardWithTitle("Entrenador IA", R.drawable.main_iacard) {
                             content(MaterialTheme.colorScheme.background)

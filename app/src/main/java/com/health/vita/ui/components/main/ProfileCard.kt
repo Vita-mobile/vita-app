@@ -1,5 +1,6 @@
 package com.health.vita.ui.components.main
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.firebase.Timestamp
@@ -29,15 +31,15 @@ fun ProfileCard(
     name: String = "John",
     date: Timestamp = Timestamp.now(),
     onClick: () -> Unit,
+    backgroundColor: Color = MaterialTheme.colorScheme.primary,
     onClickButton1:  () -> Unit,
-    onClickButton2:  () -> Unit
+    onClickButton2:  () -> Unit,
 
 ) {
     Column(){
         Row(
             Modifier
-
-                .background(MaterialTheme.colorScheme.primary)
+                .background(backgroundColor)
                 .fillMaxWidth()
                 .padding(top = 48.dp, bottom = 18.dp)
                 .clickable(onClick = onClick),
@@ -88,7 +90,7 @@ fun ProfileCard(
                 .height(30.dp)
                 .fillMaxWidth()
                 .background(
-                    color = MaterialTheme.colorScheme.primary,
+                    color = backgroundColor,
                     shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)
                 )
         )

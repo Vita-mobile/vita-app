@@ -21,8 +21,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -62,8 +64,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.R
+import com.health.vita.core.navigation.Screen.ACCOUNT_SETTINGS
 import com.health.vita.core.navigation.Screen.DIET_SELECTION
 import com.health.vita.core.navigation.Screen.HYDRATION
+import com.health.vita.core.navigation.Screen.MEAL_HOME
+import com.health.vita.core.navigation.Screen.MEAL_TRACKING
+import com.health.vita.core.navigation.Screen.PROFILE
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.meals.data.datastore.DataStoreKeys
 import com.health.vita.meals.data.datastore.getValueAndTimestamp
@@ -71,6 +77,8 @@ import com.health.vita.meals.data.datastore.saveValueAndTimestamp
 import com.health.vita.meals.presentation.viewModels.DietsPreviewViewModelFactory
 import com.health.vita.meals.presentation.viewModels.MealsViewModelFactory
 import com.health.vita.profile.presentation.viewModel.ProfileViewModel
+import com.health.vita.ui.components.main.CardWithTitle
+import com.health.vita.ui.components.main.ProfileCard
 import com.health.vita.ui.components.meals.MealsCarousel
 import com.health.vita.ui.theme.Aquamarine
 import com.health.vita.ui.theme.Cyan
@@ -161,11 +169,18 @@ fun MealHomeScreen(navController: NavController) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         content = { innerPadding ->
-            Column(modifier = Modifier.padding(innerPadding)) {
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    Column {
+            Column(modifier = Modifier.padding(innerPadding).verticalScroll(rememberScrollState())) {
 
-                        Box(modifier = Modifier.weight(0.1f))
+                ProfileCard(name = "${userState?.name}", onClick = {navController.navigate(
+                    PROFILE
+                )}, onClickButton1 = {}, onClickButton2 = {navController.navigate(
+                    ACCOUNT_SETTINGS
+                )} ,
+                    backgroundColor =  Color.Black)
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
 
                         Text(
                             text = "Hidratación",
@@ -174,7 +189,7 @@ fun MealHomeScreen(navController: NavController) {
                             )
                         )
 
-                        Box(modifier = Modifier.weight(0.05f))
+                        Spacer(modifier = Modifier.height(14.dp))
 
                         Box(
                             modifier = Modifier.fillMaxWidth()
@@ -215,7 +230,7 @@ fun MealHomeScreen(navController: NavController) {
 
                         }
 
-                        Box(modifier = Modifier.weight(0.05f))
+                        Spacer(modifier = Modifier.height(20.dp))
 
                         Column (modifier = Modifier.fillMaxWidth()
                             .height(130.dp)
@@ -252,6 +267,7 @@ fun MealHomeScreen(navController: NavController) {
                                     )
                                 }
 
+                                //Button
                                 if(boxWidth>0){
 
                                     Box(
@@ -291,6 +307,8 @@ fun MealHomeScreen(navController: NavController) {
 
                         }
 
+                        Spacer(modifier = Modifier.height(12.dp))
+
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -309,6 +327,9 @@ fun MealHomeScreen(navController: NavController) {
                                     .alpha(0.8f)
                                     .clickable { navController.navigate(DIET_SELECTION) })
                         }
+
+                        Box(modifier = Modifier.weight(0.01f))
+
                         when (uiState) {
                             is UiState.Error -> MealsCarousel(
                                 mealCount ?: 0,
@@ -339,9 +360,27 @@ fun MealHomeScreen(navController: NavController) {
                             )
                         }
 
-                        Box(modifier = Modifier.weight(1f))
+                        Spacer(modifier = Modifier.height(15.dp))
 
-                    }
+                        Column{
+
+                            Text(text = "Seguimiento", style = MaterialTheme.typography.titleMedium.copy(
+                                fontSize = 24.sp
+                            ))
+                            CardWithTitle("", R.drawable.tracking_image,
+                                hasTitle = false , onClick =  {navController.navigate(MEAL_TRACKING)}
+                            ) {
+
+                                Text(
+                                    text = "Proximamente",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                )
+                            }
+
+                        }
                 }
             }
         }
