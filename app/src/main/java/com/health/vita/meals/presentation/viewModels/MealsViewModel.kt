@@ -24,7 +24,7 @@ class MealsViewModel(context: Context,
                      private val nutritionalPlanRepository: NutritionalPlanRepository = NutritionalPlanRepositoryImpl(),
 ) : ViewModel() {
     private val _uiHandler = UiHandler()
-    val uiState: LiveData<UiState> get() = _uiHandler.uiState
+        val uiState: LiveData<UiState> get() = _uiHandler.uiState
 
     private val _user = MutableLiveData<User?>(User())
     val user: LiveData<User?> get() = _user
@@ -47,14 +47,13 @@ class MealsViewModel(context: Context,
         }
     }
 
-
-    init {
+    fun fetchMealsState(){
         viewModelScope.launch(Dispatchers.IO){
             withContext(Dispatchers.Main) {
                 _uiHandler.setLoadingState()
                 getLastEatenMeal()
                 getCurrentMeal()
-                _mealCount.postValue(mealsRepository.getMealsCount())
+                _mealCount.value = mealsRepository.getMealsCount()
                 _uiHandler.setSuccess()
             }
         }
@@ -64,7 +63,7 @@ class MealsViewModel(context: Context,
         viewModelScope.launch(Dispatchers.IO) {
             mealsRepository.getLastMealIndex().collect { index ->
                 withContext(Dispatchers.Main) {
-                    _lastRecordedMeal.postValue(index)
+                    _lastRecordedMeal.value = index
                 }
             }
         }
@@ -79,8 +78,10 @@ class MealsViewModel(context: Context,
             }
             val lastEaten = lastEatenDate.get(Calendar.YEAR) >= today.get(Calendar.YEAR) &&
                     lastEatenDate.get(Calendar.DAY_OF_YEAR) >= today.get(Calendar.DAY_OF_YEAR)
-            _lastEatenMeal.postValue(lastEaten)
-            if (!lastEaten) {
+            withContext(Dispatchers.Main){
+                _lastEatenMeal.value = lastEaten;
+            }
+            if (_lastEatenMeal.value == false) {
                 Log.e(">>>", "Fue reseteado")
                 resetMealIndex()
             }
@@ -89,11 +90,14 @@ class MealsViewModel(context: Context,
 
     private fun resetMealIndex() {
         viewModelScope.launch(Dispatchers.IO){
-            mealsRepository.resetMealIndex()
-            mealsRepository.getLastMealIndex().collect {
-                index ->
-                    _lastRecordedMeal.postValue(index)
+            withContext(Dispatchers.Main){
+                mealsRepository.resetMealIndex()
+                mealsRepository.getLastMealIndex().collect {
+                        index ->
+                    _lastRecordedMeal.value = index
+                }
             }
+
         }
     }
 

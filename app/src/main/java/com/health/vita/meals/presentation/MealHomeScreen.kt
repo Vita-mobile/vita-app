@@ -106,17 +106,7 @@ fun MealHomeScreen(navController: NavController) {
 
     val dataFlow = getValueAndTimestamp(context, DataStoreKeys.HYDRATION).collectAsState(initial = Pair(0, 0L))
     val (storedValue, lastUpdated) = dataFlow.value
-
-    LaunchedEffect(backStackEntry.value) {
-        mealsViewModel.getLastEatenMeal()
-        mealsViewModel.getCurrentMeal()
-    }
-
-    LaunchedEffect(true) {
-        mealsViewModel.getCurrentMeal()
-        mealsViewModel.getLastEatenMeal()
-    }
-
+    mealsViewModel.fetchMealsState()
 
     LaunchedEffect(Unit) {
         mealsViewModel.getCurrentUser()
@@ -168,7 +158,9 @@ fun MealHomeScreen(navController: NavController) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         content = { innerPadding ->
-            Column(modifier = Modifier.padding(innerPadding).verticalScroll(rememberScrollState())) {
+            Column(modifier = Modifier
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())) {
 
                 ProfileCard(name = "${userState?.name}", onClick = {navController.navigate(
                     PROFILE
@@ -191,7 +183,8 @@ fun MealHomeScreen(navController: NavController) {
                         Spacer(modifier = Modifier.height(14.dp))
 
                         Box(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .clickable {
                                     navController.navigate(HYDRATION)
                                 }
@@ -231,11 +224,13 @@ fun MealHomeScreen(navController: NavController) {
 
                         Spacer(modifier = Modifier.height(20.dp))
 
-                        Column (modifier = Modifier.fillMaxWidth()
+                        Column (modifier = Modifier
+                            .fillMaxWidth()
                             .height(130.dp)
-                            .background(MaterialTheme.colorScheme.primary,
+                            .background(
+                                MaterialTheme.colorScheme.primary,
                                 shape = RoundedCornerShape(20.dp),
-                                )
+                            )
                             .padding(horizontal = 18.dp),
                             verticalArrangement = Arrangement.SpaceAround){
 
@@ -247,7 +242,11 @@ fun MealHomeScreen(navController: NavController) {
                                     .height(60.dp)
                                     .background(
                                         brush = Brush.horizontalGradient(
-                                            colors = listOf(Color(0xFF4FC3F7), Color(0xFF81D4FA) , Color(0xFFA3E4ED))
+                                            colors = listOf(
+                                                Color(0xFF4FC3F7),
+                                                Color(0xFF81D4FA),
+                                                Color(0xFFA3E4ED)
+                                            )
                                         ),
                                         shape = RoundedCornerShape(16.dp)
                                     )
@@ -281,13 +280,15 @@ fun MealHomeScreen(navController: NavController) {
                                         modifier = Modifier
                                             .size(60.dp)
                                             .clip(RectangleShape)
-                                            .background( Color(0xFF0087D1),
+                                            .background(
+                                                Color(0xFF0087D1),
                                                 RoundedCornerShape(14.dp)
                                             )
                                             .border(4.dp, Color.White, RoundedCornerShape(14.dp)),
                                         contentAlignment = Alignment.Center
                                     ){
-                                        Box(modifier = Modifier.size(19.dp)
+                                        Box(modifier = Modifier
+                                            .size(19.dp)
                                             .background(color = LightBlue, RoundedCornerShape(4.dp)))
                                     }
 
@@ -379,7 +380,11 @@ fun MealHomeScreen(navController: NavController) {
                                 Box(
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .background(color = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f)) ,
+                                        .background(
+                                            color = MaterialTheme.colorScheme.surface.copy(
+                                                alpha = 0.2f
+                                            )
+                                        ) ,
                                     contentAlignment = Alignment.BottomStart
                                 ) {
                                     Text(
