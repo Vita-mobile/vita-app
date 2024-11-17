@@ -43,6 +43,7 @@ object Screen {
     const val ADDED_FOOD = "AddedFood"
     const val NUTRITION_WELCOME = "NutritionWelcome"
     const val MEAL_DETAIL = "MealDetail"
+    const val CREATE_MEAL = "CreateMeal"
 
     // Sports
     const val WORKOUT_HOME = "WorkoutHome"

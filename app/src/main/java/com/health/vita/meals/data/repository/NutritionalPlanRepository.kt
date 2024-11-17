@@ -1,22 +1,23 @@
 package com.health.vita.meals.data.repository
 
 import android.util.Log
+import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.auth
 import com.health.vita.core.utils.DatabaseNames
 import com.health.vita.meals.data.data_source.NutritionalPlanService
 import com.health.vita.meals.data.data_source.NutritionalPlanServiceImpl
 import com.health.vita.meals.domain.model.Ingredient
+import com.health.vita.meals.domain.model.IngredientMeal
 import com.health.vita.meals.domain.model.NutritionalPlan
 import com.health.vita.meals.utils.MacroPercentages
 import com.health.vita.profile.data.repository.UserRepository
 import com.health.vita.profile.data.repository.UserRepositoryImpl
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.time.LocalDate
 import java.util.UUID
 
 interface NutritionalPlanRepository {
-    suspend fun createNutritionalPlan(preferences: List<Ingredient>, restrictions: List<Ingredient>, meals: Int): Boolean
+    suspend fun createNutritionalPlan(preferences: List<IngredientMeal>, restrictions: List<IngredientMeal>, meals: Int): Boolean
+    suspend fun getRestrictions(): List<Ingredient>
 }
 
 class NutritionalPlanRepositoryImpl(
@@ -25,8 +26,8 @@ class NutritionalPlanRepositoryImpl(
 ) : NutritionalPlanRepository {
 
     override suspend fun createNutritionalPlan(
-        preferences: List<Ingredient>,
-        restrictions: List<Ingredient>,
+        preferences: List<IngredientMeal>,
+        restrictions: List<IngredientMeal>,
         meals: Int
     ) : Boolean {
 
@@ -97,6 +98,17 @@ class NutritionalPlanRepositoryImpl(
         }
 
 
+    }
+
+    override suspend fun getRestrictions(): List<Ingredient>{
+        return try {
+            Firebase.auth.currentUser?.let { user ->
+                nutritionalPlanService.getRestrictions(user.uid)
+            } ?: emptyList()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
     }
 
 }

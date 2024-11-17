@@ -12,7 +12,7 @@ data class ConsumedMeal (
     var fats: Float = 0.0f,
     var proteins: Float = 0.0f,
 
-    var ingredients: List<Ingredient> = emptyList(),
+    var ingredients: List<IngredientMeal> = emptyList(),
     var meal: Int = 0,
     var consumeDate: Timestamp = Timestamp.now()
     )

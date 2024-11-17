@@ -10,7 +10,7 @@ import com.health.vita.core.utils.states_management.UiHandler
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.meals.data.repository.NutritionalPlanRepository
 import com.health.vita.meals.data.repository.NutritionalPlanRepositoryImpl
-import com.health.vita.meals.domain.model.Ingredient
+import com.health.vita.meals.domain.model.IngredientMeal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -27,18 +27,18 @@ class NutritionalPlanViewModel(
     private val _meals = MutableLiveData(3)
     val meals: LiveData<Int> get() = _meals
 
-    private val _preferences = MutableLiveData<List<Ingredient>>(emptyList())
-    val preferences: LiveData<List<Ingredient>> get() = _preferences
-    private val _restrictions = MutableLiveData<List<Ingredient>>(emptyList())
-    val restrictions: LiveData<List<Ingredient>> get() = _restrictions
+    private val _preferences = MutableLiveData<List<IngredientMeal>>(emptyList())
+    val preferences: LiveData<List<IngredientMeal>> get() = _preferences
+    private val _restrictions = MutableLiveData<List<IngredientMeal>>(emptyList())
+    val restrictions: LiveData<List<IngredientMeal>> get() = _restrictions
 
-    fun addPreference(ingredientToAdd: Ingredient) {
+    fun addPreference(ingredientToAdd: IngredientMeal) {
         val currentPreferences = _preferences.value ?: listOf()
         val updatedPreferences = currentPreferences + ingredientToAdd
         _preferences.value = updatedPreferences
     }
 
-    fun addRestriction(ingredientToAdd: Ingredient) {
+    fun addRestriction(ingredientToAdd: IngredientMeal) {
         val currentRestrictions = _restrictions.value ?: listOf()
         val updatedRestrictions = currentRestrictions + ingredientToAdd
         _restrictions.value = updatedRestrictions
