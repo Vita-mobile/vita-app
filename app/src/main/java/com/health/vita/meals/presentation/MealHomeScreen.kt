@@ -1,13 +1,11 @@
 package com.health.vita.meals.presentation
 
 import MealsViewModel
-import android.graphics.drawable.Icon
 import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +20,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -35,6 +32,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,8 +45,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -56,9 +53,9 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.times
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -67,23 +64,17 @@ import com.health.vita.R
 import com.health.vita.core.navigation.Screen.ACCOUNT_SETTINGS
 import com.health.vita.core.navigation.Screen.DIET_SELECTION
 import com.health.vita.core.navigation.Screen.HYDRATION
-import com.health.vita.core.navigation.Screen.MEAL_HOME
 import com.health.vita.core.navigation.Screen.MEAL_TRACKING
 import com.health.vita.core.navigation.Screen.PROFILE
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.meals.data.datastore.DataStoreKeys
 import com.health.vita.meals.data.datastore.getValueAndTimestamp
 import com.health.vita.meals.data.datastore.saveValueAndTimestamp
-import com.health.vita.meals.presentation.viewModels.DietsPreviewViewModelFactory
 import com.health.vita.meals.presentation.viewModels.MealsViewModelFactory
-import com.health.vita.profile.presentation.viewModel.ProfileViewModel
 import com.health.vita.ui.components.main.CardWithTitle
 import com.health.vita.ui.components.main.ProfileCard
 import com.health.vita.ui.components.meals.MealsCarousel
-import com.health.vita.ui.theme.Aquamarine
-import com.health.vita.ui.theme.Cyan
 import com.health.vita.ui.theme.LightBlue
-import com.health.vita.ui.theme.LightTurquoise
 import com.health.vita.ui.theme.VitaTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -104,6 +95,7 @@ fun MealHomeScreen(navController: NavController) {
     val isToday by mealsViewModel.lastEatenMeal.observeAsState()
     val backStackEntry = navController.currentBackStackEntryAsState()
     val userState by mealsViewModel.user.observeAsState()
+    val kcal by mealsViewModel.kcal.observeAsState()
 
     val uiState by mealsViewModel.uiState.observeAsState(UiState.Idle)
 
@@ -131,6 +123,7 @@ fun MealHomeScreen(navController: NavController) {
 
     LaunchedEffect(Unit) {
         mealsViewModel.getCurrentUser()
+        mealsViewModel.obtainDailyCalories()
     }
 
 
@@ -162,9 +155,18 @@ fun MealHomeScreen(navController: NavController) {
             }
         }
 
+        Log.d("INGESTA AGUA",waterIntake.toString())
+
         sliderPosition = (waterIntake / waterIntakeGoal.toFloat()).coerceIn(0f, 1f)
 
+        Log.d("SLIDERPOSITION", sliderPosition.toString())
+
     }
+
+    //Calculate daily intake:
+
+    val buttonSize = 60.dp
+    val buttonSizePx = with(LocalDensity.current) { buttonSize.toPx() }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -251,8 +253,10 @@ fun MealHomeScreen(navController: NavController) {
                                             colors = listOf(Color(0xFF4FC3F7), Color(0xFF81D4FA) , Color(0xFFA3E4ED))
                                         ),
                                         shape = RoundedCornerShape(16.dp)
-                                    ),
-                                contentAlignment = Alignment.Center
+                                    )
+                                    .onGloballyPositioned { coordinates ->
+                                        boxWidth = coordinates.size.width
+                                    }
                             ) {
 
                                 //Line
@@ -268,14 +272,17 @@ fun MealHomeScreen(navController: NavController) {
                                 }
 
                                 //Button
-                                if(boxWidth>0){
+                                Box (
+                                    modifier = Modifier.offset {
+                                        val offsetX = (sliderPosition * (boxWidth - buttonSizePx)).toInt()
+                                        IntOffset(x = offsetX, y = 0)
+                                    }
+
+                                ){
 
                                     Box(
                                         modifier = Modifier
                                             .size(60.dp)
-                                            .offset(
-                                                x = sliderPosition.dp
-                                            )
                                             .clip(RectangleShape)
                                             .background( Color(0xFF0087D1),
                                                 RoundedCornerShape(14.dp)
@@ -286,13 +293,14 @@ fun MealHomeScreen(navController: NavController) {
                                         Box(modifier = Modifier.size(19.dp)
                                             .background(color = LightBlue, RoundedCornerShape(4.dp)))
                                     }
+
                                 }
+
 
                             }
 
-
                             val water = buildAnnotatedString {
-                                append("${(sliderPosition * waterIntakeGoal).toInt()} ")
+                                append("$waterIntake ")
                                 withStyle(style = SpanStyle(color = Color.White.copy(alpha = 0.9f))) {
                                     append("ML")
                                 }
@@ -371,13 +379,22 @@ fun MealHomeScreen(navController: NavController) {
                                 hasTitle = false , onClick =  {navController.navigate(MEAL_TRACKING)}
                             ) {
 
-                                Text(
-                                    text = "Proximamente",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurface,
+                                Box(
                                     modifier = Modifier
-                                        .padding(16.dp)
-                                )
+                                        .fillMaxSize()
+                                        .background(color = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f)) ,
+                                    contentAlignment = Alignment.BottomStart
+                                ) {
+                                    Text(
+                                        text = "$kcal Kcalorías",
+                                        style = MaterialTheme.typography.bodyMedium.copy(
+                                            fontSize = 20.sp
+                                        ),
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.padding(16.dp)
+                                    )
+                                }
+
                             }
 
                         }

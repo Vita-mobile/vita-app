@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.health.vita.meals.data.repository.MealsRepository
 
 import com.health.vita.meals.data.repository.MealsRepositoryImpl
+import com.health.vita.meals.data.repository.NutritionalPlanRepositoryImpl
 
 import com.health.vita.profile.data.repository.UserRepositoryImpl
 
@@ -18,8 +19,9 @@ class MealsViewModelFactory (
         if (modelClass.isAssignableFrom(MealsViewModel::class.java)) {
             return MealsViewModel(
                 context = context,
+                mealsRepository = MealsRepositoryImpl(context),
                 userRepository = UserRepositoryImpl(),
-                mealsRepository = MealsRepositoryImpl(context)
+                nutritionalPlanRepository = NutritionalPlanRepositoryImpl(),
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

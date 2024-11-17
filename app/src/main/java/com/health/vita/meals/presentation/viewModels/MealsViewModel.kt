@@ -13,6 +13,8 @@ import com.health.vita.meals.data.repository.DietsPreviewRepositoryImpl
 import com.health.vita.meals.data.repository.MealTrackingRepositoryImpl
 import com.health.vita.meals.data.repository.MealsRepository
 import com.health.vita.meals.data.repository.MealsRepositoryImpl
+import com.health.vita.meals.data.repository.NutritionalPlanRepository
+import com.health.vita.meals.data.repository.NutritionalPlanRepositoryImpl
 import com.health.vita.profile.data.repository.UserRepository
 import com.health.vita.profile.data.repository.UserRepositoryImpl
 import kotlinx.coroutines.Dispatchers
@@ -22,13 +24,17 @@ import java.util.Calendar
 
 class MealsViewModel(context: Context,
                      private val mealsRepository: MealsRepository = MealsRepositoryImpl(context),
-                     private val userRepository: UserRepository = UserRepositoryImpl()
+                     private val userRepository: UserRepository = UserRepositoryImpl(),
+                     private val nutritionalPlanRepository: NutritionalPlanRepository = NutritionalPlanRepositoryImpl(),
 ) : ViewModel() {
     private val _uiHandler = UiHandler()
     val uiState: LiveData<UiState> get() = _uiHandler.uiState
 
     private val _user = MutableLiveData<User?>(User())
     val user: LiveData<User?> get() = _user
+
+    private val _kcal = MutableLiveData(0)
+    val kcal: LiveData<Int> get() = _kcal
 
     fun getCurrentUser() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -108,6 +114,19 @@ class MealsViewModel(context: Context,
                     _lastRecordedMeal.value = index
                 }
             }
+        }
+    }
+
+    fun obtainDailyCalories(){
+
+        viewModelScope.launch (Dispatchers.IO){
+
+            val nutritionalPlan = nutritionalPlanRepository.getNutritionalPlan()
+
+            withContext(Dispatchers.Main){
+                _kcal.value = nutritionalPlan?.kcalGoal?.toInt()
+            }
+
         }
     }
 }

@@ -10,13 +10,11 @@ import com.health.vita.meals.domain.model.NutritionalPlan
 import com.health.vita.meals.utils.MacroPercentages
 import com.health.vita.profile.data.repository.UserRepository
 import com.health.vita.profile.data.repository.UserRepositoryImpl
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.time.LocalDate
 import java.util.UUID
 
 interface NutritionalPlanRepository {
     suspend fun createNutritionalPlan(preferences: List<Ingredient>, restrictions: List<Ingredient>, meals: Int): Boolean
+    suspend fun getNutritionalPlan(): NutritionalPlan?
 }
 
 class NutritionalPlanRepositoryImpl(
@@ -96,7 +94,17 @@ class NutritionalPlanRepositoryImpl(
             return false
         }
 
-
     }
+
+    override suspend fun getNutritionalPlan():NutritionalPlan? {
+
+        val user = userRepo.getCurrentUser()
+
+        val nutritionalPlan = nutritionalPlanService.getNutritionalPlan(user?.id?:"")
+
+        return nutritionalPlan
+    }
+
+
 
 }
