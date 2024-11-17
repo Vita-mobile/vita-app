@@ -69,13 +69,12 @@ fun HomeScreen(
                                 color = color,
                                 modifier = Modifier
                                     .padding(16.dp)
-                            )                        }
+                            )
+                        }
                         CardWithTitle("Entrenamientos", R.drawable.main_sportcard) {
                             content(MaterialTheme.colorScheme.background)
                         }
-                        CardWithTitle("Alimentacion", R.drawable.main_mealcard, {navController.navigate(MEAL_HOME)}) {
-                            content(MaterialTheme.colorScheme.onSurface)
-                        }
+                        CardWithTitle("Alimentacion", R.drawable.main_mealcard, {navController.navigate(MEAL_HOME)}) {}
                         CardWithTitle("Entrenador IA", R.drawable.main_iacard) {
                             content(MaterialTheme.colorScheme.background)
                         }

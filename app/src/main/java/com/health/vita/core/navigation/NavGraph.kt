@@ -7,8 +7,10 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.health.vita.auth.presentation.login.LoginScreen
 import com.health.vita.auth.presentation.ResetPasswordConfirmationScreen
 import com.health.vita.auth.presentation.ResetPasswordScreen
@@ -20,6 +22,7 @@ import com.health.vita.main.presentation.HomeScreen
 import com.health.vita.main.presentation.LoadSimulationScreen
 import com.health.vita.main.presentation.SplashScreen
 import com.health.vita.main.presentation.WelcomeScreen
+import com.health.vita.meals.domain.model.Meal
 import com.health.vita.meals.presentation.AddedFoodScreen
 import com.health.vita.meals.presentation.DietSelectionScreen
 import com.health.vita.meals.presentation.DietsPreviewScreen
@@ -160,8 +163,13 @@ fun NavGraph(navController: NavHostController){
         composable(Screen.HYDRATION) {
             HydrationScreen(navController)
         }
-        composable(Screen.DIETS_PREVIEW) {
-            DietsPreviewScreen(navController)
+        composable(
+            route = Screen.DIETS_PREVIEW,
+            arguments = listOf(navArgument("meal") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val meal = backStackEntry.arguments?.getInt("meal")
+                ?: throw IllegalArgumentException("meal argument is required")
+            DietsPreviewScreen(navController = navController, meal = meal)
         }
         composable(Screen.ADDED_FOOD) {
             AddedFoodScreen(navController)
@@ -169,8 +177,19 @@ fun NavGraph(navController: NavHostController){
         composable(Screen.NUTRITION_WELCOME) {
             NutritionWelcomeScreen(navController)
         }
-        composable(Screen.MEAL_DETAIL) {
-            MealDetailScreen(navController)
+        composable(
+            route = Screen.MEAL_DETAIL,
+            arguments = listOf(
+                navArgument("meal") { type = NavType.StringType },
+                navArgument("isFavorite") { type = NavType.BoolType }
+            )
+        ) { backStackEntry ->
+            val meal = backStackEntry.arguments?.getString("meal")
+                ?: throw IllegalArgumentException("meal argument is required")
+            val isFavorite = backStackEntry.arguments?.getBoolean("isFavorite")
+                ?: false
+
+            MealDetailScreen(navController = navController, meal = meal, isFavorite = isFavorite)
         }
 
         // Sports

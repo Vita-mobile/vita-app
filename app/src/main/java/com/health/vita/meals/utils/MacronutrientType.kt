@@ -1,4 +1,4 @@
-package com.health.vita.meals.presentation
+package com.health.vita.meals.utils
 
 enum class MacronutrientType {
 

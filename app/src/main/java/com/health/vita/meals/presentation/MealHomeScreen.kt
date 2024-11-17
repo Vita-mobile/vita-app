@@ -21,14 +21,12 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.health.vita.R
 import com.health.vita.core.navigation.Screen.DIET_SELECTION
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.ui.components.meals.MealsCarousel
@@ -40,16 +38,15 @@ fun MealHomeScreen(navController: NavController) {
     val mealsViewModel = MealsViewModel(context)
     val lastRecordedMeal by mealsViewModel.lastRecordedMeal.observeAsState(0)
     val mealCount by mealsViewModel.mealCounts.observeAsState()
-    val isToday by mealsViewModel.lastEatenMeal.observeAsState()
     val uiState by mealsViewModel.uiState.observeAsState(UiState.Idle)
 
-    LaunchedEffect(true) {
-        mealsViewModel.getCurrentMeal()
+    val backStackEntry = navController.currentBackStackEntryAsState()
+
+    LaunchedEffect(backStackEntry.value) {
         mealsViewModel.getLastEatenMeal()
+        mealsViewModel.getCurrentMeal()
     }
-    if (isToday == false) {
-        mealsViewModel.resetMealIndex()
-    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         content = { innerPadding ->

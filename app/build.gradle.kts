@@ -51,7 +51,6 @@ android {
 }
 
 dependencies {
-
     //Base dependencies
 
     implementation(libs.androidx.core.ktx)
@@ -64,6 +63,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.material)
     implementation(libs.firebase.common.ktx)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.core.android)
+    implementation(libs.androidx.room.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -77,6 +79,13 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth.ktx)
 
+    //Retrofit and Gson dependencies
+    implementation(libs.gson)
+    implementation(libs.retrofit2.retrofit)
+    implementation(libs.converter.gson)
+
+    implementation(libs.jetbrains.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
 
     //Domiciano github dependencies
 
@@ -84,9 +93,10 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.compose.runtime:runtime-livedata:1.6.8")
     implementation("io.coil-kt:coil-compose:2.7.0")
-    implementation("com.google.code.gson:gson:2.11.0")
+
+
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.5")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0")
+    implementation(libs.kotlinx.coroutines.play.services)
 
     //Transitions dependencies
     implementation("com.google.accompanist:accompanist-navigation-animation:0.32.0")
