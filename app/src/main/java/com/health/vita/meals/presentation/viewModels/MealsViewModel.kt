@@ -4,19 +4,37 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
+import com.health.vita.auth.data.repository.AuthRepository
 import com.health.vita.core.utils.states_management.UiHandler
 import com.health.vita.core.utils.states_management.UiState
+import com.health.vita.domain.model.User
 import com.health.vita.meals.data.repository.MealTrackingRepositoryImpl
 import com.health.vita.meals.data.repository.MealsRepository
 import com.health.vita.meals.data.repository.MealsRepositoryImpl
+import com.health.vita.profile.data.repository.UserRepository
+import com.health.vita.profile.data.repository.UserRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
 
-class MealsViewModel(context: Context, private val repository: MealsRepository = MealsRepositoryImpl(context)) : ViewModel() {
+class MealsViewModel(context: Context, private val repository: MealsRepository = MealsRepositoryImpl(context),
+ private val userRepository: UserRepository = UserRepositoryImpl()
+) : ViewModel() {
     private val _uiHandler = UiHandler()
     val uiState: LiveData<UiState> get() = _uiHandler.uiState
+
+    private val _user = MutableLiveData<User?>(User())
+    val user: LiveData<User?> get() = _user
+
+    fun getCurrentUser() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val me = userRepository.getCurrentUser()
+            withContext(Dispatchers.Main) {
+                _user.value = me
+            }
+        }
+    }
 
     private val _lastRecordedMeal = MutableLiveData<Int>()
     val lastRecordedMeal: LiveData<Int> get() = _lastRecordedMeal
@@ -54,7 +72,6 @@ class MealsViewModel(context: Context, private val repository: MealsRepository =
             }
         }
     }
-
 
     fun getLastEatenMeal() {
         viewModelScope.launch(Dispatchers.IO) {
