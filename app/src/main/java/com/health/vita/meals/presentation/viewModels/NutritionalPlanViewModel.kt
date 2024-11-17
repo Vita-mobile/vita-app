@@ -65,6 +65,19 @@ class NutritionalPlanViewModel(
         _restrictions.value = updatedRestrictions
     }
 
+    fun deletePreference(ingredientMealToDelete: IngredientMeal) {
+        val currentPreferences = _preferences.value ?: listOf()
+        val updatedPreferences = currentPreferences.filter { it != ingredientMealToDelete }
+        _preferences.value = updatedPreferences
+    }
+
+    fun deleteRestriction(ingredientMealToDelete: IngredientMeal) {
+        val currentRestrictions = _restrictions.value ?: listOf()
+        val updatedRestrictions = currentRestrictions.filter { it != ingredientMealToDelete }
+        _restrictions.value = updatedRestrictions
+    }
+
+
     fun setMeals(amount: Int) {
         _meals.value = amount
     }
