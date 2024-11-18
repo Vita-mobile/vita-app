@@ -10,16 +10,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.health.vita.R
 
 @Composable
 fun CircularPhoto(
     @DrawableRes photo: Int,
     contentDescription: String = "",
-    size: Int = 24
+    size: Int = 24,
+    url:String?=null,
+
 ){
     Image(
-        painter = painterResource(photo),
+        painter = url?.let { rememberAsyncImagePainter(it)}?: painterResource(photo),
         contentDescription = contentDescription,
         contentScale = ContentScale.Crop,            // crop the image if it's not a square
         modifier = Modifier
