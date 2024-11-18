@@ -67,7 +67,6 @@ fun NavGraph(navController: NavHostController){
     val profileViewModel: ProfileViewModel = viewModel()
     NavHost(
         navController = navController,
-
         startDestination = Screen.MEAL_HOME,
 
         enterTransition = {
