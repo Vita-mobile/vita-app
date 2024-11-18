@@ -37,10 +37,11 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 fun Ruler(
     color: Color = MaterialTheme.colorScheme.onPrimary,
     quantity: Int = 200,
-    onValueChange: (Int) -> Unit
+    onValueChange: (Int) -> Unit,
+    initialInt: Int = quantity/2
 ) {
-    var selectedValue by remember { mutableStateOf(quantity/2) }
-    val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = selectedValue)
+    var selectedValue by remember { mutableStateOf(initialInt) }
+    val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = selectedValue-5)
 
     LaunchedEffect(lazyListState) {
         snapshotFlow { lazyListState.firstVisibleItemIndex }.distinctUntilChanged()

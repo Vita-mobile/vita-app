@@ -10,6 +10,7 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,7 +30,8 @@ fun PrimaryIconButton(
     arrow: Boolean = true,
     color: Color = MaterialTheme.colorScheme.primary,
     blackContent: Boolean = false,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    isLoading: Boolean = false
 ) {
     Button(
         modifier = modifier,
@@ -40,17 +42,27 @@ fun PrimaryIconButton(
         onClick = onClick,
         enabled = enabled
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyMedium,
-            color = if (blackContent) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onPrimary
-        )
-        Icon(
-            if (arrow) Icons.AutoMirrored.Rounded.ArrowForward else Icons.Outlined.Lock,
-            modifier = Modifier
-                .size(24.dp),
-            tint = if (blackContent) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.background,
-            contentDescription = ""
-        )
+
+        if(isLoading){
+
+            CircularProgressIndicator(
+            color = if (blackContent) Color.Black else Color.White,
+            modifier = Modifier.size(24.dp)
+            )
+
+        } else {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (blackContent) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onPrimary
+            )
+            Icon(
+                if (arrow) Icons.AutoMirrored.Rounded.ArrowForward else Icons.Outlined.Lock,
+                modifier = Modifier
+                    .size(24.dp),
+                tint = if (blackContent) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.background,
+                contentDescription = ""
+            )
+        }
     }
 }

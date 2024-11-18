@@ -10,6 +10,7 @@ val TranslucentBlue = Color(0xFFDBEAFE)
 val DarkBlue = Color(0xFF2563EB)
 val Cyan = Color(0xFF26C8E0)
 val LightBlue = Color(0xFFA3E4ED)
+val WhiteVariant = Color(0xFFF3F3F4)
 
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF000000)
