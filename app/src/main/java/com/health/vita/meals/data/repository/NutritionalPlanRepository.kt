@@ -1,10 +1,13 @@
 package com.health.vita.meals.data.repository
 
 import android.util.Log
+import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.auth
 import com.health.vita.core.utils.DatabaseNames
 import com.health.vita.meals.data.data_source.NutritionalPlanService
 import com.health.vita.meals.data.data_source.NutritionalPlanServiceImpl
+import com.health.vita.meals.domain.model.Ingredient
 import com.health.vita.meals.domain.model.IngredientMeal
 import com.health.vita.meals.domain.model.NutritionalPlan
 import com.health.vita.meals.utils.MacroPercentages
@@ -22,6 +25,7 @@ interface NutritionalPlanRepository {
     suspend fun updateNutritionalPlan(
         updates: Map<String, Any?>
     ): Boolean
+    suspend fun getRestrictions(): List<Ingredient>
 
 }
 
@@ -181,5 +185,16 @@ class NutritionalPlanRepositoryImpl(
         return nutritionalPlan
     }
 
+
+    override suspend fun getRestrictions(): List<Ingredient>{
+        return try {
+            Firebase.auth.currentUser?.let { user ->
+                nutritionalPlanService.getRestrictions(user.uid)
+            } ?: emptyList()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
 
 }

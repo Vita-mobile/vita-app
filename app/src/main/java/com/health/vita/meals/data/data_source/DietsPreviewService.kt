@@ -14,6 +14,8 @@ interface DietsPreviewService {
     suspend fun getMealsIA(userId: String): List<Meal>
     suspend fun getFavorites(userId: String): List<Meal>
     suspend fun consumeMeal(userId: String, meal: Meal): Boolean
+    suspend fun addCreatedMeal(userId: String, meal: Meal): Boolean
+    suspend fun getCreations(userId:String): List<Meal>
 }
 
 class DietsPreviewServiceImpl : DietsPreviewService {
@@ -112,4 +114,39 @@ class DietsPreviewServiceImpl : DietsPreviewService {
             false
         }
     }
+
+    override suspend fun addCreatedMeal(userId: String, meal: Meal): Boolean {
+        return try {
+            val creationsCollection = Firebase.firestore
+                .collection("User")
+                .document(userId)
+                .collection("Creations")
+
+            val mealWithId = meal.copy(id = creationsCollection.document().id)
+            creationsCollection.document(mealWithId.id).set(mealWithId).await()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    override suspend fun getCreations(userId: String): List<Meal> {
+        return try {
+            val creationsCollection = Firebase.firestore
+                .collection("User")
+                .document(userId)
+                .collection("Creations")
+                .get()
+                .await()
+
+            creationsCollection.documents.mapNotNull { document ->
+                document.toObject(Meal::class.java)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
 }
