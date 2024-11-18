@@ -25,12 +25,7 @@ class UserServiceImpl:UserService{
 
     override suspend fun updateUserData(user: User): User? {
 
-        val  updateUser = Firebase.firestore.collection("User").document(user.id).set(user).await()
+        Firebase.firestore.collection("User").document(user.id).set(user).await()
         return getUserById(user.id)
     }
-
-
-
-
-
 }

@@ -13,9 +13,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -37,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.health.vita.core.navigation.Screen
 import com.health.vita.core.navigation.Screen.EDIT_HEIGHT_SELECTION
 import com.health.vita.core.navigation.Screen.EDIT_WEIGHT_SELECTION
 import com.health.vita.core.utils.states_management.UiState
@@ -46,7 +49,12 @@ import com.health.vita.profile.presentation.viewModel.ProfileViewModel
 import com.health.vita.ui.components.general.CustomPopup
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
+import com.health.vita.ui.theme.Cyan
+import com.health.vita.ui.theme.LightTurquoise2
 import com.health.vita.ui.theme.VitaTheme
+import kotlinx.coroutines.delay
+import com.health.vita.ui.theme.TranslucentBlue
+import com.health.vita.ui.theme.WhiteVariant
 
 @Composable
 fun ProfileEditionScreen(navController: NavController = rememberNavController(), profileViewModel: ProfileViewModel = viewModel()) {
@@ -67,9 +75,13 @@ fun ProfileEditionScreen(navController: NavController = rememberNavController(),
     var lastname by remember { mutableStateOf("")}
 
 
-    var emailTouched by remember { mutableStateOf(false) }
+    //var emailTouched by remember { mutableStateOf(false) }
 
-    var isEmailValid by remember { mutableStateOf(true) }
+    //var isEmailValid by remember { mutableStateOf(true) }
+
+    LaunchedEffect (true){
+        profileViewModel.getCurrentUser()
+    }
 
     LaunchedEffect(userState) {
         userState?.let {
@@ -79,20 +91,19 @@ fun ProfileEditionScreen(navController: NavController = rememberNavController(),
         }
     }
 
-    LaunchedEffect(true) {
-        profileViewModel.getCurrentUser()
-    }
-
     LaunchedEffect(uiState) {
         if (uiState is UiState.Success) {
             openDataUpdatePopup = true
+            delay(2200)
+            openDataUpdatePopup = false
+            profileViewModel.resetUiState()
         }
     }
 
-    fun isEmailFormatValid(email: String): Boolean {
+    /*fun isEmailFormatValid(email: String): Boolean {
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
         return email.matches(emailRegex.toRegex())
-    }
+    }*/
 
     Scaffold(
 
@@ -131,28 +142,28 @@ fun ProfileEditionScreen(navController: NavController = rememberNavController(),
 
                         Box(modifier = Modifier.weight(0.09f))
 
-                        ProfileTextField(value = email, label = "Dirección de correo", onValueChange = { newValue ->
+                        ProfileTextField(value = email, enable = false, label = "Dirección de correo", onValueChange = { newValue ->
                             email = newValue
-                            emailTouched = true
-                            isEmailValid = isEmailFormatValid(email)
+                            /*emailTouched = true
+                            isEmailValid = isEmailFormatValid(email)*/
                         })
 
-                        if (emailTouched && !isEmailFormatValid(email)) {
+                        /*if (emailTouched && !isEmailFormatValid(email)) {
                             Text(
                                 "El nuevo formato de correo no es válido. Intente de nuevo",
                                 color = Color.Red,
                                 style = MaterialTheme.typography.bodySmall,
                                 modifier = Modifier.padding(top = 4.dp)
                             )
-                        }
+                        }*/
 
                         Box(modifier = Modifier.weight(0.05f))
 
-                        ProfileTextField(value = name, label = "Nombre ", onValueChange = { name = it })
+                        ProfileTextField(value = name, label = "Nombre ", enable = true, onValueChange = { name = it })
 
                         Box(modifier = Modifier.weight(0.05f))
 
-                        ProfileTextField(value = lastname, label = "Apellido", onValueChange = { lastname = it })
+                        ProfileTextField(value = lastname, label = "Apellido", enable = true, onValueChange = { lastname = it })
 
 
                         Box(modifier = Modifier.weight(0.1f))
@@ -194,20 +205,27 @@ fun ProfileEditionScreen(navController: NavController = rememberNavController(),
                             text = "Guardar",
                             onClick = {
 
-                                val updatedUser = User(
-                                    id = userState?.id ?: "",
-                                    email = if (email.isEmpty()) userState?.email ?: "" else email,
-                                    name = if (name.isEmpty()) userState?.name ?: "" else name,
-                                    lastName = if (lastname.isEmpty()) userState?.lastName ?: "" else lastname
+                                val updatedUser = userState?.copy(
+                                    //email = if (email.isEmpty()) userState?.email ?: "" else email,
+                                    name = if (name.isEmpty()) userState?.name ?: "" else name.trim(),
+                                    lastName = if (lastname.isEmpty()) userState?.lastName ?: "" else lastname.trim()
+                                )?: User(
+                                    //email = email,
+                                    name = name,
+                                    lastName = lastname
                                 )
-                                if (isEmailFormatValid(updatedUser.email)) {
+
+
+                                //if (isEmailFormatValid(updatedUser.email) ) {
                                     profileViewModel.updatePersonalUserData(updatedUser)
-                                }
+                                // }
+
+
 
                             }
                             ,
                             arrow = true,
-                            enabled = isEmailFormatValid(email)
+                            //enabled = isEmailFormatValid(email)
                         )
 
                         Box(modifier = Modifier.weight(0.5f))
@@ -245,11 +263,7 @@ fun ProfileEditionScreen(navController: NavController = rememberNavController(),
 
                         Box(modifier = Modifier.weight(0.5f))
 
-
-
                     }
-
-
 
             }
 
@@ -258,11 +272,13 @@ fun ProfileEditionScreen(navController: NavController = rememberNavController(),
                 onDismiss = { openDataUpdatePopup = false },
                 title = "¡Operación exitosa!" ,
                 height = 0.3f,
-                onCancel = { openDataUpdatePopup  = false},
-                onConfirm = {
-
-                    openDataUpdatePopup = false
-
+                icon = {
+                    Icon(
+                        imageVector = Icons.Filled.CheckCircle,
+                        contentDescription = "Success",
+                        modifier = Modifier.size(70.dp),
+                        tint = MaterialTheme.colorScheme.tertiary
+                    )
                 },
                 content = {
 
@@ -290,7 +306,7 @@ fun ProfileEditionScreen(navController: NavController = rememberNavController(),
 
 
 @Composable
-fun ProfileTextField(value: String, label: String, onValueChange: (String) -> Unit) {
+fun ProfileTextField(value: String, enable: Boolean, label: String, onValueChange: (String) -> Unit) {
 
     var isFocused by remember { mutableStateOf(false) }
 
@@ -306,17 +322,20 @@ fun ProfileTextField(value: String, label: String, onValueChange: (String) -> Un
             value = value,
             onValueChange = onValueChange,
             shape = RoundedCornerShape(19.dp),
+            enabled = enable,
             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).
             border(
                 if(isFocused) BorderStroke(5.dp, MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f)) else BorderStroke(0.dp, Color.Transparent),
             shape = RoundedCornerShape(19.dp)),
             colors = TextFieldDefaults.colors(
 
-                focusedContainerColor = Color(0xFFF3F3F4),
-                unfocusedContainerColor = Color(0xFFF3F3F4),
-                focusedIndicatorColor = Color(0xFF26C8E0) ,
-                unfocusedIndicatorColor = Color.Transparent
-
+                focusedContainerColor = WhiteVariant,
+                unfocusedContainerColor = WhiteVariant,
+                focusedIndicatorColor = Cyan ,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledTextColor = Color.Gray,
+                disabledPlaceholderColor =  WhiteVariant,
+                disabledLabelColor = Color.Transparent
             ),
 
         )
