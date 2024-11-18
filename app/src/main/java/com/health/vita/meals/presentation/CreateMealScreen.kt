@@ -169,7 +169,8 @@ fun CreateMealScreen(
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
                             val filteredIngredients = ingredientsState.filter {
                                 it?.name!!.contains(searchQuery, ignoreCase = true)
@@ -185,33 +186,55 @@ fun CreateMealScreen(
                                     )
                                 }
                             } else {
-                                items(filteredIngredients.take(3)) { ingredient ->
-                                    val isAdded =
-                                        addedIngredientsState.any { it.first == ingredient }
+                                items(filteredIngredients.chunked(2)) { chunk ->
 
-                                    BorderLabelText(
-                                        text = ingredient?.name ?: "Ingrediente no disponible",
-                                        modifier = Modifier,
-                                        border = false,
-                                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                                        icon = Icons.Outlined.Add,
-                                        onIconClick = {
-                                            if (!isAdded) {
-                                                ingredient?.let {
-                                                    createMealViewModel.addIngredientToMeal(
-                                                        it,
-                                                        100
-                                                    )
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceEvenly,
+                                    ) {
+                                        chunk.forEach() { ingredient ->
+                                            val isAdded =
+                                                addedIngredientsState.any { it.first == ingredient }
+
+                                            BorderLabelText(
+                                                text = ingredient?.name
+                                                    ?: "Ingrediente no disponible",
+                                                modifier = Modifier,
+                                                border = false,
+                                                color = MaterialTheme.colorScheme.onBackground.copy(
+                                                    alpha = 0.8f
+                                                ),
+                                                icon = Icons.Outlined.Add,
+                                                onIconClick = {
+                                                    if (!isAdded) {
+                                                        ingredient?.let {
+                                                            createMealViewModel.addIngredientToMeal(
+                                                                it,
+                                                                100
+                                                            )
+                                                        }
+                                                    }
                                                 }
-                                            }
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dp))
+
                                         }
-                                    )
+                                    }
                                     Spacer(modifier = Modifier.height(8.dp))
+
                                 }
                             }
                         }
 
-
+                        if (addedIngredientsState.isEmpty()) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("No se han añadido ingredientes", textAlign = TextAlign.Center)
+                            }
+                        } else {
 
 
                             LazyColumn(
@@ -281,15 +304,7 @@ fun CreateMealScreen(
                                 }
                             }
 
-                        if (addedIngredientsState.isEmpty()) {
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                ,
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text("No se han añadido ingredientes", textAlign = TextAlign.Center)
-                            }
+
                         }
 
                         PrimaryIconButton(
