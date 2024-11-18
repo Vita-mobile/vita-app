@@ -35,7 +35,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.core.utils.states_management.UiState
-import com.health.vita.meals.presentation.viewModels.IngredientViewModel
 import com.health.vita.meals.presentation.viewModels.NutritionalPlanViewModel
 import com.health.vita.ui.components.general.CustomPopup
 import com.health.vita.ui.components.general.GeneralTopBar
