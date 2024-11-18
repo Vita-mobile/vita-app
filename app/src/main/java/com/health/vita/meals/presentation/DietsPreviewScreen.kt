@@ -189,6 +189,11 @@ fun DietsPreviewScreen(
         dietsPreviewViewModel.loadFavorites()
         dietsPreviewViewModel.loadCreations()
     }
+    LaunchedEffect(selectedOption) {
+        if (meals.isNotEmpty()) {
+            pagerState.scrollToPage(0)
+        }
+    }
 
     Scaffold(
         content = { innerPadding ->
@@ -252,7 +257,8 @@ fun DietsPreviewScreen(
                                 modifier = Modifier.align(Alignment.CenterHorizontally)
                             )
                         } else {
-                            selectedMeal = meals[pagerState.currentPage]
+                            val currentPage = pagerState.currentPage.coerceIn(0, meals.size - 1)
+                            selectedMeal = meals.getOrNull(currentPage)
                             if (selectedOption == "Creaciones") {
                                 Column(modifier = Modifier.fillMaxWidth().clickable { navController.navigate("CreateMeal") }, horizontalAlignment = Alignment.End){
                                     Image(painter = painterResource(id = R.drawable.baseline_add_24), contentDescription = "add meal", modifier = Modifier.size(56.dp))
