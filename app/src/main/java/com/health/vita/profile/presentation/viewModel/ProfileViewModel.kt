@@ -69,18 +69,18 @@ class ProfileViewModel(
 
             } catch (e: IOException) {
 
-                ErrorManager.postError(NetworkError("Error con la red.",cause = e))
                 withContext(Dispatchers.Main) {
+                    ErrorManager.postError(NetworkError("Error con la red.",cause = e))
                     uiHandler.setErrorState(NetworkError(cause = e))
                 }
             } catch (e: FirebaseException) {
-                ErrorManager.postError(FirebaseError("Error al momento de usar firebase.", e))
                 withContext(Dispatchers.Main) {
+                    ErrorManager.postError(FirebaseError("Error al momento de usar firebase.", e))
                     uiHandler.setErrorState(FirebaseError(cause = e))
                 }
             } catch (e: Exception) {
-                ErrorManager.postError(UnknownError("Error desconocido.", e))
                 withContext(Dispatchers.Main) {
+                    ErrorManager.postError(UnknownError("Error desconocido.", e))
                     uiHandler.setErrorState(UnknownError(cause = e))
                 }
             }

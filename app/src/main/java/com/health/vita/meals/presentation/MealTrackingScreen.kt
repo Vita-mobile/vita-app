@@ -133,7 +133,7 @@ fun MealTrackingScreen(
         if (listDates.isEmpty()) {
             return@LaunchedEffect
         }
-    
+
         Log.e("MealTrackingScreen", "Selected date index on launched effect: ${listDates[selectedDateIndex]}")
 
         mealTrackingViewModel.getMealsOfADate(listDates[selectedDateIndex])
