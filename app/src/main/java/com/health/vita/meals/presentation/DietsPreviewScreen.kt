@@ -253,7 +253,11 @@ fun DietsPreviewScreen(
                             )
                         } else {
                             selectedMeal = meals[pagerState.currentPage]
-
+                            if (selectedOption == "Creaciones") {
+                                Column(modifier = Modifier.fillMaxWidth().clickable { navController.navigate("CreateMeal") }, horizontalAlignment = Alignment.End){
+                                    Image(painter = painterResource(id = R.drawable.baseline_add_24), contentDescription = "add meal", modifier = Modifier.size(56.dp))
+                                }
+                            }
                             HorizontalPager(
                                 state = pagerState,
                                 modifier = Modifier
@@ -307,13 +311,6 @@ fun DietsPreviewScreen(
                                         }
                                     }
 
-                                    if (selectedOption == "Creaciones") {
-                                        PrimaryIconButton(
-                                            text = "Crear",
-                                            onClick = { navController.navigate("CreateMeal") },
-                                            arrow = true,
-                                        )
-                                    }
                                     Text(text = meal_.name, modifier = Modifier.padding(vertical = 10.dp))
                                     val mealJson = Gson().toJson(meal_)
                                     val isFavorite = favorites.contains(meal_)
