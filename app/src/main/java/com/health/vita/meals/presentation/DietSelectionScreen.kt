@@ -78,6 +78,9 @@ fun DietSelectionScreen(
     LaunchedEffect(Unit) {
         nutritionalPlanViewModel.getIngredients()
     }
+    LaunchedEffect(Unit) {
+        nutritionalPlanViewModel.getNutritionalPlan()
+    }
 
     Scaffold(modifier = Modifier.fillMaxSize(), content = { innerPadding ->
         Column(
