@@ -65,6 +65,7 @@ import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.VitaTheme
 import kotlinx.coroutines.Dispatchers
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
 import com.health.vita.meals.domain.model.Meal
 import com.health.vita.meals.utils.MacronutrientType
@@ -268,20 +269,30 @@ fun DietsPreviewScreen(
                     }
 
                     is UiState.Success -> {
+
                         if (meals.isEmpty()) {
+                            if(uiState == (UiState.Loading)){
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .fillMaxHeight(),
+                                    contentAlignment = Alignment.TopCenter
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            }else {
+
                             Text(
                                 text = "No se encontraron comidas",
                                 style = MaterialTheme.typography.bodyLarge,
                                 modifier = Modifier.align(Alignment.CenterHorizontally)
                             )
+                            }
+
                         } else {
                             val currentPage = pagerState.currentPage.coerceIn(0, meals.size - 1)
                             selectedMeal = meals.getOrNull(currentPage)
-                            if (selectedOption == "Creaciones") {
-                                Column(modifier = Modifier.fillMaxWidth().clickable { navController.navigate("CreateMeal") }, horizontalAlignment = Alignment.End){
-                                    Image(painter = painterResource(id = R.drawable.baseline_add_24), contentDescription = "add meal", modifier = Modifier.size(56.dp))
-                                }
-                            }
+
                             HorizontalPager(
                                 state = pagerState,
                                 modifier = Modifier
@@ -349,16 +360,48 @@ fun DietsPreviewScreen(
                                 }
                             }
 
+
+                        }
+                        if (selectedOption == "Creaciones") {
+                            Column(modifier = Modifier
+                                .fillMaxSize()
+                                .clickable { navController.navigate("CreateMeal") }, horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.Bottom){
+                                Image(painter = painterResource(id = R.drawable.baseline_add_24), contentDescription = "add meal", modifier = Modifier.size(56.dp))
+                            }
                         }
                     }
 
                     is UiState.Error -> {
+                        Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = "Error al cargar las comidas",
                             color = Color.Red,
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = {
+                                dietsPreviewViewModel.loadOrGenerateMealsIA(meal)
+                                dietsPreviewViewModel.loadFavorites()
+                                dietsPreviewViewModel.loadCreations()
+                            },
+                            modifier = Modifier
+                                .size(72.dp)
+                                .align(Alignment.CenterHorizontally)
+                                .border(1.dp, Color.LightGray, CircleShape),
+                            shape = CircleShape,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = MaterialTheme.colorScheme.primary
+                            )
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.outline_refresh_24),
+                                contentDescription = "Refresh",
+                                modifier = Modifier.size(54.dp)
+                            )
+                        }
                     }
 
                     is UiState.Idle -> {
