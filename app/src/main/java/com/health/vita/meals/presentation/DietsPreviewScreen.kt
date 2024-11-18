@@ -1,6 +1,7 @@
 package com.health.vita.meals.presentation
 
 import DietsPreviewViewModel
+import android.graphics.drawable.shapes.Shape
 import android.util.Log.e
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -67,6 +68,8 @@ import kotlinx.coroutines.Dispatchers
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.ui.draw.clip
 import com.health.vita.meals.domain.model.Meal
 import com.health.vita.meals.utils.MacronutrientType
 import kotlinx.coroutines.launch
@@ -314,49 +317,91 @@ fun DietsPreviewScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
 
-                                    if (selectedOption == "Mi plan" && possibleRefetch > 0) {
-                                        Button(
-                                            onClick = {
-                                                dietsPreviewViewModel.rechargeMealsIA(meal)
-                                                possibleRefetch--
-                                                scope.launch(Dispatchers.IO) {
-                                                    saveValueAndTimestamp(
-                                                        context,
-                                                        possibleRefetch,
-                                                        System.currentTimeMillis(),
-                                                        DataStoreKeys.IA_REFETCH
-                                                    )
-                                                }
-                                            },
-                                            modifier = Modifier
-                                                .size(72.dp)
-                                                .align(Alignment.CenterHorizontally)
-                                                .border(1.dp, Color.LightGray, CircleShape),
-                                            shape = CircleShape,
-                                            colors = ButtonDefaults.buttonColors(
-                                                containerColor = Color.Transparent,
-                                                contentColor = MaterialTheme.colorScheme.primary
-                                            )
-                                        ) {
-                                            Icon(
-                                                painter = painterResource(id = R.drawable.outline_refresh_24),
-                                                contentDescription = "Refresh",
-                                                modifier = Modifier.size(54.dp)
-                                            )
-                                        }
-                                    }
+
 
                                     Text(text = meal_.name, modifier = Modifier.padding(vertical = 10.dp))
                                     val mealJson = Gson().toJson(meal_)
                                     val isFavorite = favorites.contains(meal_)
-                                    MealCardComponent(meal_.ingredientMeals.sumOf { it.grams.toInt() }.toFloat(),meal_.proteins,meal_.carbs,meal_.fats, navController, mealJson, isFavorite)
-                                    PrimaryIconButton(
-                                        text = "Consumir",
-                                        onClick = { showConfirmDialog = true },
-                                        arrow = true,
-                                        color = MaterialTheme.colorScheme.onTertiary,
-                                        modifier = Modifier.padding(vertical = 10.dp)
-                                    )
+
+                                    Box (
+
+                                        Modifier.weight(1f)
+
+                                    ){
+
+                                        if (uiState is UiState.Loading) {
+                                            CircularProgressIndicator()
+                                        } else{
+
+                                            MealCardComponent(meal_.ingredientMeals.sumOf { it.grams.toInt() }.toFloat(),meal_.proteins,meal_.carbs,meal_.fats, navController, mealJson, isFavorite)
+
+                                        }
+
+
+                                    }
+
+
+
+                                    Row(
+
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 32.dp)
+                                            .fillMaxHeight(0.12f)
+                                            ,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ){
+
+
+                                        PrimaryIconButton(
+                                            text = "Consumir",
+                                            onClick = { showConfirmDialog = true },
+                                            arrow = true,
+                                            color = MaterialTheme.colorScheme.onTertiary,
+                                            modifier = Modifier.padding(vertical = 10.dp)
+                                        )
+
+
+                                        Spacer(modifier = Modifier.width(4.dp))
+
+
+                                        if (selectedOption == "Mi plan" && possibleRefetch > 0) {
+                                            Button(
+
+                                                onClick = {
+                                                    dietsPreviewViewModel.rechargeMealsIA(meal)
+                                                    possibleRefetch--
+                                                    scope.launch(Dispatchers.IO) {
+                                                        saveValueAndTimestamp(
+                                                            context,
+                                                            possibleRefetch,
+                                                            System.currentTimeMillis(),
+                                                            DataStoreKeys.IA_REFETCH
+                                                        )
+                                                    }
+                                                },
+                                                modifier = Modifier
+                                                    .clip(CircleShape)
+                                                    .wrapContentSize()
+                                                    .border(1.dp, Color.LightGray, CircleShape)
+                                                ,
+                                                shape = CircleShape,
+                                                colors = ButtonDefaults.buttonColors(
+                                                    containerColor = Color.Transparent,
+                                                    contentColor = MaterialTheme.colorScheme.primary
+                                                )
+                                            ) {
+                                                Icon(
+                                                    painter = painterResource(id = R.drawable.outline_refresh_24),
+                                                    contentDescription = "Refresh",
+                                                    modifier = Modifier.wrapContentSize()
+                                                )
+                                            }
+                                        }
+                                    }
+
+
                                 }
                             }
 
