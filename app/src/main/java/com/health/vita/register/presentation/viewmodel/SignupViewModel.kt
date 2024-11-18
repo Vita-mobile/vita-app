@@ -73,8 +73,7 @@ class SignupViewModel(
     private val _defaultImages = MutableLiveData<List<String>>()
     val defaultImages: LiveData<List<String>> get() = _defaultImages
 
-    private val _isProfileImageLoading = MutableLiveData<Boolean>(false)
-    val isProfileImageLoading: LiveData<Boolean> get() = _isProfileImageLoading
+
 
     private val uiHandler = UiHandler()
 
@@ -105,9 +104,7 @@ class SignupViewModel(
         _profileImage.value = uri
     }
 
-    fun setIsProfileImageLoading(boolean: Boolean) {
-        _isProfileImageLoading.value = boolean
-    }
+
 
     fun setActivityLevel(activityLevel: Int) {
         _activityLevel.value = activityLevel
@@ -208,11 +205,18 @@ class SignupViewModel(
                     physicalTarget = _goal.value ?: "",
                 )
 
+
+                Log.e("SIGN-UP VIEW MODEL", "entrando en el signup")
+
                 signUpRepository.signup(user, _password.value ?: "")
 
+                updateProfileImage()
+
+
                 withContext(Dispatchers.Main) {
-                    uiHandler.setSuccess()
+                   uiHandler.setSuccess()
                 }
+
 
             } catch (e: IOException) {
 
@@ -247,7 +251,6 @@ class SignupViewModel(
         val currentImage = _profileImage.value ?: return
         val isDefault = _isDefaultImage.value ?: true
 
-        _isProfileImageLoading.value = true
 
         viewModelScope.launch(Dispatchers.IO) {
 
@@ -255,19 +258,16 @@ class SignupViewModel(
 
                 var imageId = profileImageRepository.uploadUserProfileImage(Uri.parse(currentImage), isDefault)
 
-
                 profileImageRepository.updateUserProfileImageID(imageId)
 
                 withContext(Dispatchers.Main){
                     _profileImage.value =  imageId
-                    _isProfileImageLoading.value = false
                 }
 
 
             } catch (e: Exception) {
 
                 withContext(Dispatchers.Main) {
-                    _isProfileImageLoading.value = false
                     Log.e("SIGN-UP VIEW MODEL", e.message ?: "Error al cargar la imagen de perfil")
                     uiHandler.setErrorState(UnknownError("Error al cargar la imagen de perfil", e))
                     ErrorManager.postError(NetworkError(cause = e))

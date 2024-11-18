@@ -4,6 +4,7 @@ package com.health.vita.register.data.repository
 import android.net.Uri
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 
@@ -18,6 +19,7 @@ interface ProfileImageRepository {
     suspend fun uploadUserProfileImage(uri: Uri?, isDefault: Boolean): String
     suspend fun getDefaultProfileImages(): List<String>
     suspend fun updateUserProfileImageID(imageId: String?)
+    suspend fun getProfileImage(): String
 
 }
 
@@ -32,6 +34,8 @@ class ProfileImageRepositoryImpl(
         var imageId = ""
 
         uri?.let {
+
+            Log.e("ProfileImageRepository", "Uploading image with URI: $it and is default: $isDefault")
             if (isDefault) {
                 imageId = uri.lastPathSegment ?: ""
                 imageStorageService.saveDefaultImage(imageId)
@@ -44,6 +48,9 @@ class ProfileImageRepositoryImpl(
          return imageId
 
     }
+
+
+
 
     
     override suspend fun getDefaultProfileImages(): List<String> {
@@ -71,5 +78,24 @@ class ProfileImageRepositoryImpl(
             Log.e("ProfileImageRepository", "Usuario no autenticado")
 
         }
+    }
+
+    override suspend fun getProfileImage(): String {
+
+        Firebase.auth.currentUser?.uid?.let {
+
+            val imageId = Firebase.firestore.collection("User").document(it).get().await().getString("imageID")
+
+            Log.e("ProfileImageRepository", "Image ID: $imageId")
+
+            imageId?.let {
+
+                val isDefault = it.startsWith("default")
+
+                return imageStorageService.getUserImage(it, isDefault)
+
+            }?: throw Exception("No image ID found")
+        }?: throw Exception("No user found")
+
     }
 }
