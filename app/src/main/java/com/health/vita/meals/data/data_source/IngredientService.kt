@@ -15,9 +15,9 @@ class IngredientServiceImpl():IngredientService {
             .collection("Ingredient")
             .get()
             .await()
-        val ingredients = result.documents.map { doc ->
+        val ingredientMeals = result.documents.map { doc ->
             doc.toObject(Ingredient::class.java)
         }
-        return ingredients
+        return ingredientMeals
     }
 }

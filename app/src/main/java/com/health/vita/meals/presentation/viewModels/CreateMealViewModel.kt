@@ -35,7 +35,7 @@ class CreateMealViewModel (
     private val _addedIngredientsState = MutableLiveData<List<Pair<Ingredient, Int>>>()
     val addedIngredientsState: LiveData<List<Pair<Ingredient, Int>>> get() = _addedIngredientsState
 
-    private val _mealName = MutableLiveData<String>("") // Valor por defecto vacío
+    private val _mealName = MutableLiveData<String>("")
     val mealName: LiveData<String> get() = _mealName
 
     fun setMealName(name: String) {
@@ -137,7 +137,7 @@ class CreateMealViewModel (
                 carbs = totalCarbs,
                 fats = totalFats,
                 proteins = totalProteins,
-                ingredients = ingredientMeals
+                ingredientMeals = ingredientMeals
             )
 
             try {
@@ -159,6 +159,7 @@ class CreateMealViewModel (
                 e.printStackTrace()
                 withContext(Dispatchers.Main) {
                     _uiHandler.setErrorState(DatabaseError())
+                    _mealCreationSuccess.postValue(false)
                 }
             }
         }

@@ -1,39 +1,66 @@
 package com.health.vita.meals.presentation
 
 import DietsPreviewViewModel
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.health.vita.ui.components.general.GeneralTopBar
-import com.health.vita.ui.theme.VitaTheme
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.google.gson.Gson
 import com.health.vita.R
 import com.health.vita.core.utils.states_management.UiState
+import com.health.vita.meals.data.datastore.DataStoreKeys
+import com.health.vita.meals.data.datastore.getValueAndTimestamp
+import com.health.vita.meals.data.datastore.saveValueAndTimestamp
 import com.health.vita.meals.presentation.viewModels.DietsPreviewViewModelFactory
+import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.util.Calendar
 
 @Composable
 fun DietsPreviewScreen(
@@ -44,6 +71,10 @@ fun DietsPreviewScreen(
         factory = DietsPreviewViewModelFactory(LocalContext.current)
     )
 
+    val scope = rememberCoroutineScope()
+
+    var possibleRefetch = 3
+
     val uiState by dietsPreviewViewModel.uiState.observeAsState(UiState.Idle)
 
     var selectedOption by remember { mutableStateOf("Mi plan") }
@@ -52,10 +83,13 @@ fun DietsPreviewScreen(
 
     val favorites by dietsPreviewViewModel.favorites.observeAsState(emptyList())
 
+    val creations by dietsPreviewViewModel.creations.observeAsState(emptyList())
+
+
     val meals = when (selectedOption) {
         "Favoritas" -> favorites
         "Mi plan" -> mealsIA
-        "Crear" -> mealsIA
+        "Creaciones" -> creations
         else -> mealsIA
     }
 
@@ -76,7 +110,39 @@ fun DietsPreviewScreen(
             hasConsumed = true
             navController.popBackStack()
         } else if (consumeMealState && hasConsumed) {
-            Toast.makeText(context, "Hubo un error al consumir la comida", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Hubo un error al consumir la comida", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
+    val dataFlow = getValueAndTimestamp(context, DataStoreKeys.IA_REFETCH).collectAsState(
+        initial = Pair(
+            0,
+            0L
+        )
+    )
+    val (storedValue, lastUpdated) = dataFlow.value
+
+    LaunchedEffect(storedValue, lastUpdated) {
+        val currentTime = System.currentTimeMillis()
+        val midnightToday = Calendar.getInstance().apply {
+            timeInMillis = currentTime
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+
+        if (lastUpdated != 0L) {
+            if (lastUpdated < midnightToday) {
+
+                possibleRefetch = 3
+                scope.launch(Dispatchers.IO) {
+                    saveValueAndTimestamp(context, 3, currentTime, DataStoreKeys.IA_REFETCH)
+                }
+            } else {
+                possibleRefetch = storedValue
+            }
         }
     }
 
@@ -110,6 +176,7 @@ fun DietsPreviewScreen(
     LaunchedEffect(true) {
         dietsPreviewViewModel.loadOrGenerateMealsIA(meal)
         dietsPreviewViewModel.loadFavorites()
+        dietsPreviewViewModel.loadCreations()
     }
 
     Scaffold(
@@ -131,7 +198,7 @@ fun DietsPreviewScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    listOf("Favoritas", "Mi plan", "Crear").forEach { option ->
+                    listOf("Favoritas", "Mi plan", "Creaciones").forEach { option ->
                         Text(
                             text = option,
                             style = MaterialTheme.typography.bodyMedium,
@@ -143,7 +210,7 @@ fun DietsPreviewScreen(
                                         selectedMeal = when (option) {
                                             "Favoritas" -> favorites.firstOrNull()
                                             "Mi plan" -> mealsIA.firstOrNull()
-                                            else -> mealsIA.firstOrNull()
+                                            else -> creations.firstOrNull()
                                         }
                                     }
                                 )
@@ -154,7 +221,7 @@ fun DietsPreviewScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                when (uiState){
+                when (uiState) {
                     is UiState.Loading -> {
                         Box(
                             modifier = Modifier
@@ -165,6 +232,7 @@ fun DietsPreviewScreen(
                             CircularProgressIndicator()
                         }
                     }
+
                     is UiState.Success -> {
                         if (meals.isEmpty()) {
                             Text(
@@ -196,9 +264,22 @@ fun DietsPreviewScreen(
                                         .fillMaxHeight(),
                                     verticalArrangement = Arrangement.Center,
                                 ) {
-                                    if (selectedOption == "Mi plan") {
+
+                                    //Condition
+                                    if (selectedOption == "Mi plan" && possibleRefetch > 0) {
                                         Button(
-                                            onClick = { dietsPreviewViewModel.rechargeMealsIA(meal) },
+                                            onClick = {
+                                                dietsPreviewViewModel.rechargeMealsIA(meal)
+                                                possibleRefetch--
+                                                scope.launch(Dispatchers.IO) {
+                                                    saveValueAndTimestamp(
+                                                        context,
+                                                        possibleRefetch,
+                                                        System.currentTimeMillis(),
+                                                        DataStoreKeys.IA_REFETCH
+                                                    )
+                                                }
+                                            },
                                             modifier = Modifier
                                                 .size(72.dp)
                                                 .align(Alignment.CenterHorizontally)
@@ -216,6 +297,16 @@ fun DietsPreviewScreen(
                                             )
                                         }
                                     }
+
+                                    if (selectedOption == "Creaciones"){
+                                        PrimaryIconButton(
+                                            text = "Crear",
+                                            onClick = { navController.navigate("CreateMeal") },
+                                            arrow = true,
+                                        )
+                                    }
+
+
                                     Spacer(modifier = Modifier.height(32.dp))
                                     Text(
                                         text = meal_.name,
@@ -227,6 +318,22 @@ fun DietsPreviewScreen(
                                             }
                                             .wrapContentWidth(Alignment.CenterHorizontally)
                                     )
+
+                                    Spacer(modifier = Modifier.height(8.dp))
+
+                                    Text(
+                                        text = "Ver detalles",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier
+                                            .align(Alignment.CenterHorizontally)
+                                            .clickable {
+                                                val mealJson = Gson().toJson(meal_)
+                                                val isFavorite = favorites.contains(meal_)
+                                                navController.navigate("MealDetail/$mealJson/$isFavorite")
+                                            }
+                                    )
+
 
                                     Spacer(modifier = Modifier.height(32.dp))
 
@@ -255,14 +362,15 @@ fun DietsPreviewScreen(
                                     Spacer(modifier = Modifier.height(32.dp))
                                     PrimaryIconButton(
                                         text = "Consumir",
-                                        onClick = {showConfirmDialog = true},
+                                        onClick = { showConfirmDialog = true },
                                         arrow = true,
-                                        )
+                                    )
                                 }
                             }
 
                         }
                     }
+
                     is UiState.Error -> {
                         Text(
                             text = "Error al cargar las comidas",

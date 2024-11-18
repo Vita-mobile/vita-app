@@ -2,7 +2,6 @@ package com.health.vita.meals.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,8 +35,12 @@ import com.health.vita.meals.domain.model.Ingredient
 import com.health.vita.meals.presentation.viewModels.CreateMealViewModel
 import com.health.vita.ui.components.general.GeneralTopBar
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.TextButton
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import com.health.vita.core.utils.states_management.UiState
 
 
@@ -50,15 +53,30 @@ fun CreateMealScreen(
     var searchQuery by remember { mutableStateOf("") }
     val ingredientsState by createMealViewModel.ingredientsState.observeAsState(emptyList())
     val addedIngredientsState by createMealViewModel.addedIngredientsState.observeAsState(emptyList())
+    val mealCreationSuccess by createMealViewModel.mealCreationSuccess.observeAsState(false)
 
-    val filteredIngredients = ingredientsState.filter { it?.name!!.contains(searchQuery, ignoreCase = true) }
+    var showMealCreationDialog by remember { mutableStateOf(false) }
 
-    fun addIngredient(ingredient: Ingredient, grams: Int) {
-        createMealViewModel.addIngredientToMeal(ingredient, grams)
+    if (mealCreationSuccess && !showMealCreationDialog) {
+        showMealCreationDialog = true
     }
 
-    fun removeIngredient(ingredient: Ingredient) {
-        createMealViewModel.removeIngredientFromMeal(ingredient)
+    if (showMealCreationDialog) {
+        AlertDialog(
+            onDismissRequest = { showMealCreationDialog = false },
+            title = { Text("Comida creada") },
+            text = { Text("La comida se ha creado exitosamente.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showMealCreationDialog = false
+                        navController.popBackStack()
+                    }
+                ) {
+                    Text("Continuar")
+                }
+            }
+        )
     }
 
     Scaffold(
@@ -75,6 +93,15 @@ fun CreateMealScreen(
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
+
+                TextField(
+                    value = createMealViewModel.mealName.observeAsState("").value,
+                    onValueChange = { createMealViewModel.setMealName(it) },
+                    label = { Text("Nombre de la comida") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 TextField(
                     value = searchQuery,
@@ -100,24 +127,36 @@ fun CreateMealScreen(
                         LazyColumn(
                             modifier = Modifier.heightIn(max = 300.dp)
                         ) {
+                            val filteredIngredients = ingredientsState.filter {
+                                it?.name!!.contains(searchQuery, ignoreCase = true)
+                            }
+
                             if (filteredIngredients.isEmpty()) {
                                 item {
-                                    Text("No se encontraron ingredientes", modifier = Modifier.padding(16.dp))
+                                    Text(
+                                        "No se encontraron ingredientes",
+                                        modifier = Modifier.padding(16.dp),
+                                        textAlign = TextAlign.Center
+                                    )
                                 }
                             } else {
                                 items(filteredIngredients.take(3)) { ingredient ->
+                                    val isAdded = addedIngredientsState.any { it.first == ingredient }
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(vertical = 4.dp)
                                             .background(MaterialTheme.colorScheme.surface)
                                             .padding(8.dp)
-                                            .clickable {
-                                                ingredient?.let { addIngredient(it, 100) }
+                                            .clickable(enabled = !isAdded) {
+                                                if (!isAdded) {
+                                                    ingredient?.let { createMealViewModel.addIngredientToMeal(it, 100) }
+                                                }
                                             }
                                     ) {
                                         Text(
-                                            text = ingredient?.name ?: "Ingrediente no disponible"
+                                            text = ingredient?.name ?: "Ingrediente no disponible",
+                                            color = if (isAdded) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f) else MaterialTheme.colorScheme.onSurface
                                         )
                                     }
                                 }
@@ -147,7 +186,7 @@ fun CreateMealScreen(
                                         modifier = Modifier.weight(1f),
                                     )
                                     Button(
-                                        onClick = { removeIngredient(ingredient) },
+                                        onClick = { createMealViewModel.removeIngredientFromMeal(ingredient) },
                                         modifier = Modifier.padding(start = 8.dp)
                                     ) {
                                         Text("-")
@@ -156,7 +195,7 @@ fun CreateMealScreen(
                             }
 
                             if (addedIngredientsState.isEmpty()) {
-                                Text("No se han añadido ingredientes")
+                                Text("No se han añadido ingredientes", textAlign = TextAlign.Center)
                             }
 
                             Spacer(modifier = Modifier.height(24.dp))

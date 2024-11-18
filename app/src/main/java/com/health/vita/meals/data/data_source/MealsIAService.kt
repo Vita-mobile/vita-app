@@ -35,10 +35,12 @@ class MealsIAServiceImpl(): MealsIAService {
     override suspend fun getMeals(userId: String, mealsQuantity: Int): List<Meal> {
         return try {
             service.getMeals(userId, mealsQuantity)
+
         } catch (e: SocketTimeoutException) {
-            throw Exception("Ha tardado demasiado tiempo en responder")
+            throw Exception(e)
         } catch (e: Exception) {
-            throw Exception("Ha ocurrido un error en la solicitud")
+            throw Exception(e)
+
         }
     }
 

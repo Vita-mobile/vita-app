@@ -8,6 +8,8 @@ import com.health.vita.core.utils.error_management.NetworkError
 import com.health.vita.core.utils.error_management.UnknownError
 import com.health.vita.core.utils.states_management.UiHandler
 import com.health.vita.core.utils.states_management.UiState
+import com.health.vita.meals.data.repository.IngredientRepository
+import com.health.vita.meals.data.repository.IngredientRepositoryImpl
 import com.health.vita.meals.data.repository.NutritionalPlanRepository
 import com.health.vita.meals.data.repository.NutritionalPlanRepositoryImpl
 import com.health.vita.meals.domain.model.IngredientMeal
@@ -18,7 +20,9 @@ import java.io.IOException
 
 class NutritionalPlanViewModel(
 
-    private val nutritionalPlanRepository: NutritionalPlanRepository = NutritionalPlanRepositoryImpl()
+    private val nutritionalPlanRepository: NutritionalPlanRepository = NutritionalPlanRepositoryImpl(),
+    private val ingredientRepository: IngredientRepository = IngredientRepositoryImpl()
+
 
 ) : ViewModel() {
     private val _uiHandler = UiHandler()
@@ -32,15 +36,42 @@ class NutritionalPlanViewModel(
     private val _restrictions = MutableLiveData<List<IngredientMeal>>(emptyList())
     val restrictions: LiveData<List<IngredientMeal>> get() = _restrictions
 
-    fun addPreference(ingredientToAdd: IngredientMeal) {
+    private val _ingredientsState = MutableLiveData<List<IngredientMeal?>>()
+    val ingredientsState: LiveData<List<IngredientMeal?>> get() = _ingredientsState
+
+    private val _searchQuery = MutableLiveData<String>()
+    val searchQuery: LiveData<String> get() = _searchQuery
+
+    fun getIngredients() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val messages = ingredientRepository.getIngredients()
+
+            val ingredientMeals = messages.map { message ->
+                message?.let {
+                    IngredientMeal(
+                        name = it.name,
+                        id = it.id
+                    )
+                }
+            }
+
+            withContext(Dispatchers.Main) { _ingredientsState.value = ingredientMeals }
+        }
+    }
+
+    fun setSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
+
+    fun addPreference(ingredientMealToAdd: IngredientMeal) {
         val currentPreferences = _preferences.value ?: listOf()
-        val updatedPreferences = currentPreferences + ingredientToAdd
+        val updatedPreferences = currentPreferences + ingredientMealToAdd
         _preferences.value = updatedPreferences
     }
 
-    fun addRestriction(ingredientToAdd: IngredientMeal) {
+    fun addRestriction(ingredientMealToAdd: IngredientMeal) {
         val currentRestrictions = _restrictions.value ?: listOf()
-        val updatedRestrictions = currentRestrictions + ingredientToAdd
+        val updatedRestrictions = currentRestrictions + ingredientMealToAdd
         _restrictions.value = updatedRestrictions
     }
 

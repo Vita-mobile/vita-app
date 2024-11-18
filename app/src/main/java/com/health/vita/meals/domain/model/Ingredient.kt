@@ -1,6 +1,6 @@
 package com.health.vita.meals.domain.model
 
-class Ingredient (
+data class Ingredient (
     var calories: Int = 0,
     var carbs: Int = 0,
     var fats: Int = 0,
