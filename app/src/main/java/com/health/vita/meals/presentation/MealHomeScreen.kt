@@ -90,6 +90,8 @@ fun MealHomeScreen(navController: NavController) {
         factory = MealsViewModelFactory(context)
     )
 
+    val profileImage by mealsViewModel.profileImageUrl.observeAsState()
+
     val lastRecordedMeal by mealsViewModel.lastRecordedMeal.observeAsState(0)
     val mealCount by mealsViewModel.mealCounts.observeAsState()
     val backStackEntry = navController.currentBackStackEntryAsState()
@@ -109,6 +111,8 @@ fun MealHomeScreen(navController: NavController) {
     mealsViewModel.fetchMealsState()
 
     LaunchedEffect(Unit) {
+
+        mealsViewModel.getProfileImage()
         mealsViewModel.getCurrentUser()
         mealsViewModel.obtainDailyCalories()
     }
@@ -166,8 +170,8 @@ fun MealHomeScreen(navController: NavController) {
                     PROFILE
                 )}, onClickButton1 = {}, onClickButton2 = {navController.navigate(
                     ACCOUNT_SETTINGS
-                )} ,
-                    backgroundColor =  Color.Black)
+                )} , url= profileImage
+                    )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
