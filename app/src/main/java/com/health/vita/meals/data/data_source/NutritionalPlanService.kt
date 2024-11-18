@@ -11,6 +11,7 @@ import kotlinx.coroutines.tasks.await
 interface NutritionalPlanService {
     suspend fun createNutritionalPlan(nutritionalPlan: NutritionalPlan, userId: String): Boolean
     suspend fun getNutritionalPlan(userId: String): NutritionalPlan?
+    suspend fun editNutritionalPlan(updatedPlan: NutritionalPlan, userId: String): Boolean
 }
 
 class NutritionalPlanServiceImpl() : NutritionalPlanService{
@@ -51,6 +52,22 @@ class NutritionalPlanServiceImpl() : NutritionalPlanService{
 
     }
 
+    override suspend fun editNutritionalPlan(updatedPlan: NutritionalPlan, userId: String): Boolean {
+        return try {
+            Firebase.firestore
+                .collection("User")
+                .document(userId)
+                .collection("NutritionalPlan")
+                .document(updatedPlan.id)
+                .set(updatedPlan)
+                .await()
+
+            true
+        } catch (e: Exception) {
+            Log.e(">>>", "Error durante la actualización: ${e.message}")
+            false
+        }
+    }
 
 
 }
