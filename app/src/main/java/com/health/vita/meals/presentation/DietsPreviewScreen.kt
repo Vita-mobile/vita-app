@@ -1,6 +1,7 @@
 package com.health.vita.meals.presentation
 
 import DietsPreviewViewModel
+import android.graphics.drawable.shapes.Shape
 import android.util.Log.e
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -65,7 +66,13 @@ import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.VitaTheme
 import kotlinx.coroutines.Dispatchers
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.draw.clip
 import com.health.vita.meals.domain.model.Meal
 import com.health.vita.meals.utils.MacronutrientType
 import kotlinx.coroutines.launch
@@ -122,7 +129,8 @@ fun DietsPreviewScreen(
             hasConsumed = true
             showMealCreationDialog = true
         } else if (consumeMealState && hasConsumed) {
-            Toast.makeText(context, "Hubo un error al consumir la comida", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Hubo un error al consumir la comida", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
@@ -215,177 +223,282 @@ fun DietsPreviewScreen(
 
     Scaffold(
         content = { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(horizontal = 16.dp)
-            ) {
-                GeneralTopBar(
-                    text = "Mis comidas",
-                    onClick = { navController.popBackStack() },
-                    hasStep = false,
-                )
+            Box(modifier = Modifier.fillMaxSize()) {
 
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp)
                 ) {
-                    listOf("Favoritas", "Mi plan", "Creaciones").forEach { option ->
-                        Text(
-                            text = option,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier
-                                .selectable(
-                                    selected = selectedOption == option,
-                                    onClick = {
-                                        selectedOption = option
-                                        selectedMeal = when (option) {
-                                            "Favoritas" -> favorites.firstOrNull()
-                                            "Mi plan" -> mealsIA.firstOrNull()
-                                            else -> creations.firstOrNull()
+                    GeneralTopBar(
+                        text = "Mis comidas",
+                        onClick = { navController.popBackStack() },
+                        hasStep = false,
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        listOf("Favoritas", "Mi plan", "Creaciones").forEach { option ->
+                            Text(
+                                text = option,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier
+                                    .selectable(
+                                        selected = selectedOption == option,
+                                        onClick = {
+                                            selectedOption = option
+                                            selectedMeal = when (option) {
+                                                "Favoritas" -> favorites.firstOrNull()
+                                                "Mi plan" -> mealsIA.firstOrNull()
+                                                else -> creations.firstOrNull()
+                                            }
                                         }
-                                    }
-                                )
-                                .padding(8.dp)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                when (uiState) {
-                    is UiState.Loading -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(),
-                            contentAlignment = Alignment.TopCenter
-                        ) {
-                            CircularProgressIndicator()
+                                    )
+                                    .padding(8.dp)
+                            )
                         }
                     }
 
-                    is UiState.Success -> {
-                        if (meals.isEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    when (uiState) {
+                        is UiState.Loading -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(),
+                                contentAlignment = Alignment.TopCenter
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+
+                        is UiState.Success -> {
+
+                            if (meals.isEmpty()) {
+                                if (uiState == (UiState.Loading)) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .fillMaxHeight(),
+                                        contentAlignment = Alignment.TopCenter
+                                    ) {
+                                        CircularProgressIndicator()
+                                    }
+                                } else {
+
+                                    Text(
+                                        text = "No se encontraron comidas",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                                    )
+                                }
+
+                            } else {
+                                val currentPage = pagerState.currentPage.coerceIn(0, meals.size - 1)
+                                selectedMeal = meals.getOrNull(currentPage)
+
+                                HorizontalPager(
+                                    state = pagerState,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp),
+                                    contentPadding = PaddingValues(horizontal = 16.dp),
+                                    pageSize = PageSize.Fill,
+                                    pageSpacing = 8.dp,
+                                    userScrollEnabled = true,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    snapPosition = SnapPosition.Start
+                                ) { pageIndex ->
+                                    val meal_ = meals[pageIndex]
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+
+
+                                        Text(
+                                            text = meal_.name,
+                                            modifier = Modifier.padding(vertical = 10.dp)
+                                        )
+                                        val mealJson = Gson().toJson(meal_)
+                                        val isFavorite = favorites.contains(meal_)
+
+                                        Box(
+
+                                            Modifier.weight(1f)
+
+                                        ) {
+
+                                            if (uiState is UiState.Loading) {
+                                                CircularProgressIndicator()
+                                            } else {
+
+                                                MealCardComponent(
+                                                    meal_.ingredientMeals.sumOf { it.grams.toInt() }
+                                                        .toFloat(),
+                                                    meal_.proteins,
+                                                    meal_.carbs,
+                                                    meal_.fats,
+                                                    navController,
+                                                    mealJson,
+                                                    isFavorite
+                                                )
+
+                                            }
+
+
+                                        }
+
+
+
+                                        Row(
+
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 32.dp)
+                                                .fillMaxHeight(0.12f),
+                                            horizontalArrangement = Arrangement.SpaceEvenly,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+
+
+                                            PrimaryIconButton(
+                                                text = "Consumir",
+                                                onClick = { showConfirmDialog = true },
+                                                arrow = true,
+                                                color = MaterialTheme.colorScheme.onTertiary,
+                                                modifier = Modifier.padding(vertical = 10.dp)
+                                            )
+
+
+
+
+                                            if (selectedOption == "Mi plan" && possibleRefetch > 0) {
+                                                Spacer(modifier = Modifier.width(4.dp))
+
+                                                Button(
+
+                                                    onClick = {
+                                                        dietsPreviewViewModel.rechargeMealsIA(meal)
+                                                        possibleRefetch--
+                                                        scope.launch(Dispatchers.IO) {
+                                                            saveValueAndTimestamp(
+                                                                context,
+                                                                possibleRefetch,
+                                                                System.currentTimeMillis(),
+                                                                DataStoreKeys.IA_REFETCH
+                                                            )
+                                                        }
+                                                    },
+                                                    modifier = Modifier
+                                                        .clip(CircleShape)
+                                                        .wrapContentSize()
+                                                        .border(1.dp, Color.LightGray, CircleShape),
+                                                    shape = CircleShape,
+                                                    colors = ButtonDefaults.buttonColors(
+                                                        containerColor = Color.Transparent,
+                                                        contentColor = MaterialTheme.colorScheme.primary
+                                                    )
+                                                ) {
+                                                    Icon(
+                                                        painter = painterResource(id = R.drawable.outline_refresh_24),
+                                                        contentDescription = "Refresh",
+                                                        modifier = Modifier.wrapContentSize()
+                                                    )
+                                                }
+                                            }
+                                            if (selectedOption == "Creaciones") {
+                                                Button(
+                                                    onClick = { navController.navigate("CreateMeal") },
+                                                    modifier = Modifier
+                                                        .padding(16.dp)
+
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Outlined.Add,
+                                                        contentDescription = "Add"
+                                                    )
+                                                }
+                                            }
+                                        }
+
+
+                                    }
+                                }
+
+
+
+
+                            }
+
+                        }
+
+                        is UiState.Error -> {
+                            Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "No se encontraron comidas",
+                                text = "Error al cargar las comidas",
+                                color = Color.Red,
                                 style = MaterialTheme.typography.bodyLarge,
                                 modifier = Modifier.align(Alignment.CenterHorizontally)
                             )
-                        } else {
-                            val currentPage = pagerState.currentPage.coerceIn(0, meals.size - 1)
-                            selectedMeal = meals.getOrNull(currentPage)
-                            if (selectedOption == "Creaciones") {
-                                Column(modifier = Modifier.fillMaxWidth().clickable { navController.navigate("CreateMeal") }, horizontalAlignment = Alignment.End){
-                                    Image(painter = painterResource(id = R.drawable.baseline_add_24), contentDescription = "add meal", modifier = Modifier.size(56.dp))
-                                }
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Button(
+                                onClick = {
+                                    dietsPreviewViewModel.loadOrGenerateMealsIA(meal)
+                                    dietsPreviewViewModel.loadFavorites()
+                                    dietsPreviewViewModel.loadCreations()
+                                },
+                                modifier = Modifier
+                                    .size(72.dp)
+                                    .align(Alignment.CenterHorizontally)
+                                    .border(1.dp, Color.LightGray, CircleShape),
+                                shape = CircleShape,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.Transparent,
+                                    contentColor = MaterialTheme.colorScheme.primary
+                                )
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.outline_refresh_24),
+                                    contentDescription = "Refresh",
+                                    modifier = Modifier.size(54.dp)
+                                )
                             }
-                            HorizontalPager(
-                                state = pagerState,
+                        }
+
+                        is UiState.Idle -> {
+
+                            Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 16.dp),
-                                contentPadding = PaddingValues(horizontal = 16.dp),
-                                pageSize = PageSize.Fill,
-                                pageSpacing = 8.dp,
-                                userScrollEnabled = true,
-                                verticalAlignment = Alignment.CenterVertically,
-                                snapPosition = SnapPosition.Start
-                            ) { pageIndex ->
-                                val meal_ = meals[pageIndex]
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                    ,
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-
-                                    if (selectedOption == "Mi plan" && possibleRefetch > 0) {
-                                        Button(
-                                            onClick = {
-                                                dietsPreviewViewModel.rechargeMealsIA(meal)
-                                                possibleRefetch--
-                                                scope.launch(Dispatchers.IO) {
-                                                    saveValueAndTimestamp(
-                                                        context,
-                                                        possibleRefetch,
-                                                        System.currentTimeMillis(),
-                                                        DataStoreKeys.IA_REFETCH
-                                                    )
-                                                }
-                                            },
-                                            modifier = Modifier
-                                                .size(72.dp)
-                                                .align(Alignment.CenterHorizontally)
-                                                .border(1.dp, Color.LightGray, CircleShape),
-                                            shape = CircleShape,
-                                            colors = ButtonDefaults.buttonColors(
-                                                containerColor = Color.Transparent,
-                                                contentColor = MaterialTheme.colorScheme.primary
-                                            )
-                                        ) {
-                                            Icon(
-                                                painter = painterResource(id = R.drawable.outline_refresh_24),
-                                                contentDescription = "Refresh",
-                                                modifier = Modifier.size(54.dp)
-                                            )
-                                        }
-                                    }
-
-                                    Text(text = meal_.name, modifier = Modifier.padding(vertical = 10.dp))
-                                    val mealJson = Gson().toJson(meal_)
-                                    val isFavorite = favorites.contains(meal_)
-                                    MealCardComponent(meal_.ingredientMeals.sumOf { it.grams.toInt() }.toFloat(),meal_.proteins,meal_.carbs,meal_.fats, navController, mealJson, isFavorite)
-                                    PrimaryIconButton(
-                                        text = "Consumir",
-                                        onClick = { showConfirmDialog = true },
-                                        arrow = true,
-                                        color = MaterialTheme.colorScheme.onTertiary,
-                                        modifier = Modifier.padding(vertical = 10.dp)
-                                    )
-                                }
+                                    .fillMaxHeight(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
                             }
-
                         }
                     }
 
-                    is UiState.Error -> {
-                        Text(
-                            text = "Error al cargar las comidas",
-                            color = Color.Red,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        )
-                    }
-
-                    is UiState.Idle -> {
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
+                    LaunchedEffect(pagerState.currentPage) {
+                        if (meals.isNotEmpty()) {
+                            selectedMeal = meals[pagerState.currentPage]
                         }
                     }
-                }
 
-                LaunchedEffect(pagerState.currentPage) {
-                    if (meals.isNotEmpty()) {
-                        selectedMeal = meals[pagerState.currentPage]
-                    }
-                }
 
+                }
 
             }
         }
     )
 }
-
 
 
 @Preview(showBackground = true)
@@ -399,10 +512,10 @@ fun MealCardComponentPrev() {
 
 @Composable
 fun MealCardComponent(
-    totalWeight: Float =300f,
-    protein: Float =100f,
-    carb: Float=100f,
-    fat: Float=100f,
+    totalWeight: Float = 300f,
+    protein: Float = 100f,
+    carb: Float = 100f,
+    fat: Float = 100f,
     navController: NavController,
     mealJson: String,
     isFavorite: Boolean
@@ -418,52 +531,52 @@ fun MealCardComponent(
             .fillMaxWidth()
             .background(Color(0xFFe9fbf5), shape = RoundedCornerShape(1000.dp))
             .padding(start = 30.dp, end = 30.dp, top = 20.dp, bottom = 100.dp)
-            .clickable { navController.navigate("MealDetail/$mealJson/$isFavorite") }
-        ,
+            .clickable { navController.navigate("MealDetail/$mealJson/$isFavorite") },
         horizontalAlignment = Alignment.CenterHorizontally
     )
     {
-        Column(horizontalAlignment = Alignment.CenterHorizontally
-        ){
-
-        Row(
-            modifier = Modifier
-                .background(Color(0xFFbbf4df), shape = RoundedCornerShape(1000.dp))
-                .padding(40.dp)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val dominantImage = when {
-                protein >  carb && protein > fat -> com.health.vita.R.drawable.proteina
-                carb > protein && carb > fat -> com.health.vita.R.drawable.carbohidrato
-                else -> com.health.vita.R.drawable.grasas
+
+            Row(
+                modifier = Modifier
+                    .background(Color(0xFFbbf4df), shape = RoundedCornerShape(1000.dp))
+                    .padding(40.dp)
+            ) {
+                val dominantImage = when {
+                    protein > carb && protein > fat -> com.health.vita.R.drawable.proteina
+                    carb > protein && carb > fat -> com.health.vita.R.drawable.carbohidrato
+                    else -> com.health.vita.R.drawable.grasas
+                }
+                Image(painter = painterResource(id = dominantImage), contentDescription = "")
             }
-            Image(painter = painterResource(id = dominantImage), contentDescription = "")
-        }
-        Row(modifier = Modifier.padding(top = 30.dp)) {
-            MacronutrientDetails(
-                grams = protein,
-                totalGrams = totalWeight,
-                macronutrientType = MacronutrientType.PROTEIN,
-                proteinColor = 0xFFb60100
-            )
-        }
-        Row {
-            MacronutrientDetails(
-                grams = carb,
-                totalGrams = totalWeight,
-                macronutrientType = MacronutrientType.CARBOHYDRATE,
-                carbColor = 0xFF269ae1
+            Row(modifier = Modifier.padding(top = 30.dp)) {
+                MacronutrientDetails(
+                    grams = protein,
+                    totalGrams = totalWeight,
+                    macronutrientType = MacronutrientType.PROTEIN,
+                    proteinColor = 0xFFb60100
+                )
+            }
+            Row {
+                MacronutrientDetails(
+                    grams = carb,
+                    totalGrams = totalWeight,
+                    macronutrientType = MacronutrientType.CARBOHYDRATE,
+                    carbColor = 0xFF269ae1
 
-            )
-        }
+                )
+            }
 
-        Row {
-            MacronutrientDetails(
-                grams = fat,
-                totalGrams = totalWeight,
-                macronutrientType = MacronutrientType.FAT,
-                fatColor = 0xFFf9d458
-            )
-        }
+            Row {
+                MacronutrientDetails(
+                    grams = fat,
+                    totalGrams = totalWeight,
+                    macronutrientType = MacronutrientType.FAT,
+                    fatColor = 0xFFf9d458
+                )
+            }
 
         }
 
