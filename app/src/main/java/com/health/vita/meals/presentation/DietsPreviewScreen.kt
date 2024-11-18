@@ -1,7 +1,9 @@
 package com.health.vita.meals.presentation
 
 import DietsPreviewViewModel
+import android.util.Log.e
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapPosition
@@ -22,6 +24,7 @@ import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -45,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -58,9 +62,14 @@ import com.health.vita.meals.data.datastore.saveValueAndTimestamp
 import com.health.vita.meals.presentation.viewModels.DietsPreviewViewModelFactory
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.general.PrimaryIconButton
+import com.health.vita.ui.theme.VitaTheme
 import kotlinx.coroutines.Dispatchers
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.width
+import com.health.vita.meals.utils.MacronutrientType
 import kotlinx.coroutines.launch
 import java.util.Calendar
+
 
 @Composable
 fun DietsPreviewScreen(
@@ -388,4 +397,60 @@ fun DietsPreviewScreen(
             }
         }
     )
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun MealCardComponentPrev() {
+    MealCardComponent()
+}
+
+
+@Composable
+fun MealCardComponent() {
+    Column(
+        modifier = Modifier
+            .width(300.dp)
+            .border(
+                width = 2.dp,
+                color = Color(0xFF75ECC0),
+                shape = RoundedCornerShape(1000.dp)
+            )
+            .background(Color(0xFFe9fbf5))
+            .padding(start = 30.dp, end = 30.dp, top = 20.dp, bottom = 100.dp)
+            , horizontalAlignment = Alignment.CenterHorizontally
+    )
+    {
+            Row(modifier = Modifier.background(Color(0xFFbbf4df), shape = RoundedCornerShape(1000.dp)).padding(40.dp)){
+                Image(painter = painterResource(id = R.drawable.grasas), contentDescription ="")
+            }
+            Row(modifier = Modifier.padding(top = 30.dp)) {
+                MacronutrientDetails(
+                    grams = 1000f,
+                    totalGrams = 100f,
+                    macronutrientType = MacronutrientType.PROTEIN,
+                    proteinColor = 0xFFb60100
+                )
+            }
+            Row {
+                MacronutrientDetails(
+                    grams = 1000f,
+                    totalGrams = 100f,
+                    macronutrientType = MacronutrientType.FAT,
+                    fatColor = 0xFFf9d458
+                )
+            }
+            Row {
+                MacronutrientDetails(
+                    grams = 1000f,
+                    totalGrams = 100f,
+                    macronutrientType = MacronutrientType.CARBOHYDRATE,
+                    carbColor = 0xFF269ae1
+
+                )
+            }
+
+
+    }
 }
