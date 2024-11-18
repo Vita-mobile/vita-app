@@ -115,15 +115,33 @@ fun DietsPreviewScreen(
     val context = LocalContext.current
 
     var hasConsumed by remember { mutableStateOf(false) }
+    var showMealCreationDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(consumeMealState) {
         if (consumeMealState && !hasConsumed) {
             hasConsumed = true
-            navController.popBackStack()
+            showMealCreationDialog = true
         } else if (consumeMealState && hasConsumed) {
-            Toast.makeText(context, "Hubo un error al consumir la comida", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(context, "Hubo un error al consumir la comida", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    if (showMealCreationDialog) {
+        AlertDialog(
+            onDismissRequest = { showMealCreationDialog = false },
+            title = { Text("Comida consumida") },
+            text = { Text("¡Sigue así!.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showMealCreationDialog = false
+                        navController.popBackStack()
+                    }
+                ) {
+                    Text("Volver")
+                }
+            }
+        )
     }
 
     val dataFlow = getValueAndTimestamp(context, DataStoreKeys.IA_REFETCH).collectAsState(
