@@ -65,6 +65,8 @@ dependencies {
     implementation(libs.firebase.common.ktx)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore.core.android)
+    implementation(libs.firebase.storage.ktx)
+    implementation(libs.firebase.storage)
     implementation(libs.androidx.room.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -94,9 +96,10 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:1.6.8")
     implementation("io.coil-kt:coil-compose:2.7.0")
 
-
+    implementation("com.google.code.gson:gson:2.11.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.5")
     implementation(libs.kotlinx.coroutines.play.services)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0")
 
     //Transitions dependencies
     implementation("com.google.accompanist:accompanist-navigation-animation:0.32.0")

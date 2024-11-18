@@ -1,6 +1,8 @@
 package com.health.vita.meals.presentation
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,8 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Clear
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -70,6 +78,9 @@ fun DietSelectionScreen(
     LaunchedEffect(Unit) {
         nutritionalPlanViewModel.getIngredients()
     }
+    LaunchedEffect(Unit) {
+        nutritionalPlanViewModel.getNutritionalPlan()
+    }
 
     Scaffold(modifier = Modifier.fillMaxSize(), content = { innerPadding ->
         Column(
@@ -105,11 +116,14 @@ fun DietSelectionScreen(
                 modifier = Modifier.fillMaxWidth(.6f),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+
+
                 BorderLabelText(
                     text = "$meals",
                     border = false,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
                 )
+
                 Spacer(modifier = Modifier.width(32.dp))
                 DualIconCurvedButtons(
                     modifier = Modifier.height(48.dp),
@@ -120,16 +134,34 @@ fun DietSelectionScreen(
                     rightIconOnClick = { nutritionalPlanViewModel.setMeals(meals + 1) },
                 )
             }
-            Spacer(modifier = Modifier.weight(0.4f))
-            BorderLabelText(
-                text = "Cuéntanos sobre los alimentos que quieres evitar",
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp),
-                icon = Icons.Outlined.Add,
-                onIconClick = {
-                    ingredientPopUp = !ingredientPopUp
-                    isSettingPreferences = false
+            Spacer(modifier = Modifier.weight(1f))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(modifier = Modifier.weight(5f)) {
+                    BorderLabelText(
+                        text = "Cuéntanos sobre los alimentos que quieres evitar",
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp),
+                    )
                 }
-            )
+                IconButton(
+                    onClick = {
+                        ingredientPopUp = !ingredientPopUp
+                        isSettingPreferences = false
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .border(2.dp, MintGreen, CircleShape) // Borde de color MintGreen
+                        .clip(CircleShape) // Forma circular
+                ) {
+                    Icon(imageVector = Icons.Outlined.Add, contentDescription = "plus")
+                }
+
+            }
+
             Spacer(modifier = Modifier.weight(0.4f))
             if (restrictions.isEmpty()) {
                 Column(
@@ -158,6 +190,10 @@ fun DietSelectionScreen(
                                     text = item.name,
                                     border = false,
                                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                                    icon = Icons.Outlined.Clear,
+                                    onIconClick = {
+                                        nutritionalPlanViewModel.deleteRestriction(item)
+                                    }
                                 )
                             }
                         }
@@ -166,15 +202,31 @@ fun DietSelectionScreen(
                 }
             }
             Spacer(modifier = Modifier.weight(0.4f))
-            BorderLabelText(
-                text = "Cuéntanos sobre los alimentos a los que tienes fácil acceso",
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp),
-                icon = Icons.Outlined.Add,
-                onIconClick = {
-                    ingredientPopUp = !ingredientPopUp
-                    isSettingPreferences = true
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(modifier = Modifier.weight(5f)) {
+                    BorderLabelText(
+                        text = "Cuéntanos sobre los alimentos a los que tienes fácil acceso",
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp),
+                    )
                 }
-            )
+                IconButton(
+                    onClick = {
+                        ingredientPopUp = !ingredientPopUp
+                        isSettingPreferences = true
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .border(2.dp, MintGreen, CircleShape) // Borde de color MintGreen
+                        .clip(CircleShape) // Forma circular
+                ) {
+                    Icon(imageVector = Icons.Outlined.Add, contentDescription = "plus")
+                }
+            }
             Spacer(modifier = Modifier.weight(0.4f))
             if (preferences.isEmpty()) {
                 Column(
@@ -203,6 +255,10 @@ fun DietSelectionScreen(
                                     text = item.name,
                                     border = false,
                                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                                    icon = Icons.Outlined.Close,
+                                    onIconClick = {
+                                        nutritionalPlanViewModel.deletePreference(item)
+                                    }
                                 )
                             }
                         }
@@ -274,4 +330,3 @@ fun DietSelectionScreen(
         }
     })
 }
-

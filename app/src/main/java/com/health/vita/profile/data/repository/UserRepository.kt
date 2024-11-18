@@ -9,6 +9,8 @@ import com.health.vita.profile.data.data_source.UserServiceImpl
 
 interface UserRepository {
     suspend fun getCurrentUser():User?
+
+    suspend fun updateUserData(user: User):User?
 }
 
 class UserRepositoryImpl(
@@ -21,6 +23,13 @@ class UserRepositoryImpl(
             return null
         }
     }
+
+    override suspend fun updateUserData(user: User): User? {
+
+        return userService.updateUserData(user)
+    }
+
+
 
 
 }

@@ -1,11 +1,13 @@
 package com.health.vita.register.presentation.viewmodel
 
-
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.health.vita.auth.data.repository.AuthRepository
+import com.health.vita.auth.data.repository.AuthRepositoryImpl
 import com.health.vita.core.utils.error_management.DatabaseError
 import com.health.vita.core.utils.error_management.ErrorManager
 import com.health.vita.core.utils.error_management.NetworkError
@@ -13,6 +15,8 @@ import com.health.vita.core.utils.error_management.UnknownError
 import com.health.vita.core.utils.states_management.UiHandler
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.domain.model.User
+import com.health.vita.register.data.repository.ProfileImageRepository
+import com.health.vita.register.data.repository.ProfileImageRepositoryImpl
 import com.health.vita.register.data.repository.SignUpRepository
 import com.health.vita.register.data.repository.SignUpRepositoryImpl
 import kotlinx.coroutines.Dispatchers
@@ -20,9 +24,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.sql.SQLException
+import java.util.UUID
 
 class SignupViewModel(
-    private val signUpRepository: SignUpRepository = SignUpRepositoryImpl()
+    private val signUpRepository: SignUpRepository = SignUpRepositoryImpl(),
+    private val profileImageRepository: ProfileImageRepository = ProfileImageRepositoryImpl(),
+    private val authRepositoryImpl: AuthRepository = AuthRepositoryImpl()
 ) : ViewModel() {
 
     private val _name = MutableLiveData("")
@@ -37,8 +44,12 @@ class SignupViewModel(
     private val _email = MutableLiveData("")
     val email: LiveData<String> get() = _email
 
-    private val _photoUri = MutableLiveData("")
-    val photoUri: LiveData<String> get() = _photoUri
+    //user profile image
+    private var _profileImage = MutableLiveData<String?>()
+    val profileImage: LiveData<String?> get() = _profileImage
+
+    private val _isDefaultImage = MutableLiveData<Boolean>()
+    val isDefaultImage: LiveData<Boolean> get() = _isDefaultImage
 
     private val _age = MutableLiveData(18)
     val age: LiveData<Int> get() = _age
@@ -57,6 +68,13 @@ class SignupViewModel(
 
     private val _goal = MutableLiveData("")
     val goal: LiveData<String> get() = _goal
+
+
+    private val _defaultImages = MutableLiveData<List<String>>()
+    val defaultImages: LiveData<List<String>> get() = _defaultImages
+
+    private val _isProfileImageLoading = MutableLiveData<Boolean>(false)
+    val isProfileImageLoading: LiveData<Boolean> get() = _isProfileImageLoading
 
     private val uiHandler = UiHandler()
 
@@ -83,8 +101,12 @@ class SignupViewModel(
         _email.value = email
     }
 
-    fun setPhotoUri(uri: String) {
-        _photoUri.value = uri
+    fun setProfileImage(uri: String?) {
+        _profileImage.value = uri
+    }
+
+    fun setIsProfileImageLoading(boolean: Boolean) {
+        _isProfileImageLoading.value = boolean
     }
 
     fun setActivityLevel(activityLevel: Int) {
@@ -111,6 +133,29 @@ class SignupViewModel(
         _gender.value = gender
     }
 
+    fun loadDefaultImages() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val images = profileImageRepository.getDefaultProfileImages()
+
+                withContext(Dispatchers.Main) {
+                    _defaultImages.value = images
+                }
+
+            } catch (e: SQLException) {
+
+                withContext(Dispatchers.Main) {
+                    Log.e("SIGN-UP VIEW  MODEL", e.message ?: "Error desconocido")
+                    uiHandler.setErrorState(DatabaseError("Error en la base de datos", e))
+                    ErrorManager.postError(NetworkError(cause = e))
+                }
+
+            }
+        }
+
+    }
+
     fun isRepeatedEmail(email: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -126,6 +171,16 @@ class SignupViewModel(
                 }
             }
         }
+    }
+
+    fun selectDefaultImage(imageUrl: String?) {
+        _profileImage.value = imageUrl
+        _isDefaultImage.value = true
+    }
+
+    fun selectUploadedImage(uri: Uri?) {
+        _profileImage.value = uri?.toString()
+        _isDefaultImage.value = false
     }
 
 
@@ -144,8 +199,8 @@ class SignupViewModel(
                     name = _name.value ?: "",
                     lastName = _lastName.value ?: "",
                     email = _email.value ?: "",
-                    //photoUri = _photoUri.value ?: "",
                     age = _age.value ?: 0,
+                    imageID = _profileImage.value,
                     weight = (_weight.value ?: 0f),
                     height = (_height.value ?: 0f),
                     physicalLevel = _activityLevel.value ?: 0,
@@ -167,7 +222,6 @@ class SignupViewModel(
                     ErrorManager.postError(NetworkError(cause = e))
                 }
 
-
             } catch (e: SQLException) {
 
                 withContext(Dispatchers.Main) {
@@ -187,5 +241,40 @@ class SignupViewModel(
             }
         }
     }
+
+    fun updateProfileImage() {
+
+        val currentImage = _profileImage.value ?: return
+        val isDefault = _isDefaultImage.value ?: true
+
+        _isProfileImageLoading.value = true
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            try {
+
+                var imageId = profileImageRepository.uploadUserProfileImage(Uri.parse(currentImage), isDefault)
+
+
+                profileImageRepository.updateUserProfileImageID(imageId)
+
+                withContext(Dispatchers.Main){
+                    _profileImage.value =  imageId
+                    _isProfileImageLoading.value = false
+                }
+
+
+            } catch (e: Exception) {
+
+                withContext(Dispatchers.Main) {
+                    _isProfileImageLoading.value = false
+                    Log.e("SIGN-UP VIEW MODEL", e.message ?: "Error al cargar la imagen de perfil")
+                    uiHandler.setErrorState(UnknownError("Error al cargar la imagen de perfil", e))
+                    ErrorManager.postError(NetworkError(cause = e))
+                }
+            }
+        }
+    }
+
 
 }

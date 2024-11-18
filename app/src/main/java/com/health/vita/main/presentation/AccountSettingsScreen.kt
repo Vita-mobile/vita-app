@@ -42,6 +42,7 @@ import com.google.firebase.auth.auth
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen
 import com.health.vita.core.navigation.Screen.PROFILE
+import com.health.vita.core.navigation.Screen.PROFILE_EDITION
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.main.presentation.viewmodels.LogOutViewModel
 import com.health.vita.ui.components.general.CustomPopup
@@ -119,7 +120,7 @@ fun AccountSettingsScreen(
                         text = "Información personal",
                         onClick = {
                             option = "Información personal"
-                            navController.navigate(PROFILE)
+                            navController.navigate(PROFILE_EDITION)
                         }
                     )
 
@@ -202,12 +203,12 @@ fun SettingsOption(iconId: Int, text: String, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
+            .clickable { onClick() }
             .background(
                 color = MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(16.dp)
             )
-            .padding(16.dp)
-            .clickable { onClick() },
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

@@ -1,10 +1,12 @@
 package com.health.vita.meals.data.repository
 
+import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.health.vita.meals.data.data_source.DietsPreviewService
 import com.health.vita.meals.data.data_source.DietsPreviewServiceImpl
 import com.health.vita.meals.data.data_source.MealsIAService
+import com.health.vita.meals.data.data_source.MealsIAServiceRetrofit
 import com.health.vita.meals.data.data_source.MealsIAServiceImpl
 import com.health.vita.meals.domain.model.IngredientMeal
 import com.health.vita.meals.domain.model.Meal

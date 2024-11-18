@@ -66,9 +66,12 @@ class MealTrackingViewModel(
             }
 
         }
+
+
     }
 
     fun getRegisterPlanDate() {
+
         viewModelScope.launch(Dispatchers.IO) {
 
             withContext(Dispatchers.Main) {

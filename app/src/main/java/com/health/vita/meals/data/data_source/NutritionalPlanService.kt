@@ -1,17 +1,21 @@
 package com.health.vita.meals.data.data_source
 
 import android.util.Log
+import androidx.compose.runtime.snapshots.Snapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.health.vita.meals.domain.model.Ingredient
 import com.health.vita.meals.domain.model.IngredientMeal
+import com.health.vita.domain.model.User
 import com.health.vita.meals.domain.model.NutritionalPlan
 import kotlinx.coroutines.tasks.await
 
 interface NutritionalPlanService {
     suspend fun createNutritionalPlan(nutritionalPlan: NutritionalPlan, userId: String): Boolean
     suspend fun getRestrictions(userId: String): List<Ingredient>
+    suspend fun getNutritionalPlan(userId: String): NutritionalPlan?
+    suspend fun editNutritionalPlan(updatedPlan: NutritionalPlan, userId: String): Boolean
 }
 
 class NutritionalPlanServiceImpl() : NutritionalPlanService{
@@ -31,6 +35,44 @@ class NutritionalPlanServiceImpl() : NutritionalPlanService{
         }
 
     }
+
+    override suspend fun getNutritionalPlan( userId: String): NutritionalPlan?{
+
+        val nutritionalPlanSnapshot = Firebase.firestore.collection("User")
+            .document(userId)
+            .collection("NutritionalPlan")
+            .limit(1)
+            .get()
+            .await()
+
+        return if (nutritionalPlanSnapshot.documents.isNotEmpty()) {
+            val document = nutritionalPlanSnapshot.documents[0]
+            val nutritionalPlan = document.toObject(NutritionalPlan::class.java)
+            nutritionalPlan?.id = document.id
+            nutritionalPlan
+        } else {
+            null
+        }
+
+    }
+
+    override suspend fun editNutritionalPlan(updatedPlan: NutritionalPlan, userId: String): Boolean {
+        return try {
+            Firebase.firestore
+                .collection("User")
+                .document(userId)
+                .collection("NutritionalPlan")
+                .document(updatedPlan.id)
+                .set(updatedPlan)
+                .await()
+
+            true
+        } catch (e: Exception) {
+            Log.e(">>>", "Error durante la actualización: ${e.message}")
+            false
+        }
+    }
+
 
     override suspend fun getRestrictions(userId: String): List<Ingredient> {
         return try {

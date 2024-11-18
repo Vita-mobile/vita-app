@@ -22,4 +22,5 @@ class AuthServiceImpl : AuthService {
     override fun logout() {
         Firebase.auth.signOut()
     }
+
 }

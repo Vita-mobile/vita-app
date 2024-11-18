@@ -62,7 +62,7 @@ fun FitnessLevelSelectionScreen(
 
                 Spacer(modifier = Modifier.height(35.dp))
 
-                Column() {
+                Column {
 
                     Text(
                         text = "¿Cómo calificarías tu nivel de estado físico?",

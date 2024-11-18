@@ -60,6 +60,7 @@ import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.components.meals.WaterIntakeTracker
 import com.health.vita.ui.theme.Cyan
 import com.health.vita.ui.theme.MintGreen
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -318,5 +319,8 @@ fun HydrationScreen(
                 }
             )
         }
-    })
+
+    }
+    )
+
 }
