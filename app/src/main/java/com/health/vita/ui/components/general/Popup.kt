@@ -8,6 +8,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -21,8 +22,9 @@ fun CustomPopup(
     properties: DialogProperties = DialogProperties(),
     height : Float = 0.5f,
     width  : Float = 1f,
-    onConfirm: () -> Unit = {},
-    onCancel: () -> Unit = {}
+    onConfirm: (() -> Unit)? = null,
+    onCancel: (() -> Unit)? = null,
+    icon: (@Composable () -> Unit)? = null
 
 ) {
     if (showDialog) {
@@ -41,6 +43,15 @@ fun CustomPopup(
                     modifier = Modifier.padding(12.dp),
                     verticalArrangement = Arrangement.Center
                 ) {
+
+                    icon?.let {
+                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                            it()
+                        }
+                    }
+
+                    Box(modifier = Modifier.weight(0.8f))
+
                     // Pop up title
                     Text(
                         text = title,
@@ -59,19 +70,27 @@ fun CustomPopup(
                         modifier = Modifier.fillMaxWidth()
                     ) {
 
-                        Button( onClick = onCancel) {
+                        if (onCancel!=null){
+
+                            Button( onClick = onCancel) {
 
                             Text(text = "Cancelar")
 
+                            }
                         }
+
 
                         Spacer(modifier = Modifier.width(8.dp))
 
-                        Button( onClick = onConfirm) {
+                        if (onConfirm!=null){
 
-                            Text(text = "Confirmar")
+                            Button( onClick = onConfirm) {
 
+                                Text(text = "Confirmar")
+
+                            }
                         }
+
 
 
                     }

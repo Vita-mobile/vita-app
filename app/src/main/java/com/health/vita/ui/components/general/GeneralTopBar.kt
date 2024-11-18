@@ -49,7 +49,7 @@ fun GeneralTopBarPreview(){
 @Composable
 fun GeneralTopBar(
     modifier: Modifier = Modifier,
-    text: String = "Placeholder",
+    text: String = "",
     step: Int = 1,
     total: Int = 1,
     onClick: () -> Unit,
