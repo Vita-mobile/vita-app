@@ -1,20 +1,24 @@
 package com.health.vita.register.data.repository
 
 
+import android.net.Uri
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.health.vita.domain.model.User
 import com.health.vita.register.data.data_source.AuthService
 import com.health.vita.register.data.data_source.AuthServiceImpl
+import java.util.UUID
 
 
 interface SignUpRepository {
 
     suspend fun signup(user: User, password: String)
 
+
     suspend fun isRepeatedEmail(email: String): Boolean
 
 }
+
 
 class SignUpRepositoryImpl(
 
@@ -40,6 +44,17 @@ class SignUpRepositoryImpl(
     override suspend fun isRepeatedEmail(email: String): Boolean {
         return authService.isRepeatedEmail(email)
     }
+
+    /**override suspend fun saveImage(uri: Uri?) {
+
+        uri?.let {
+            val imageID = UUID.randomUUID().toString()
+            user.imageID = imageID
+            chatService.uploadImage(it, imageID)
+        }
+    }**/
+
+
 
 
 }

@@ -2,7 +2,9 @@ package com.health.vita.meals.data.data_source
 
 import android.util.Log
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.toObjects
 import com.google.firebase.ktx.Firebase
 import com.health.vita.meals.domain.model.Meal
 import kotlinx.coroutines.tasks.await
@@ -16,6 +18,7 @@ interface MealTrackingService {
     suspend fun getNutritionalPlanCreationDate(id: String): Long
 
     suspend fun getMealsOfADate(id: String, date: LocalDate): List<Meal>
+    suspend fun geatLastEatenMealDate(s: String): Timestamp?
 
 }
 
@@ -83,4 +86,19 @@ class MealTrackingServiceImpl() : MealTrackingService {
     Log.d("Meals tracking service", "Meals found: $meals")
     return meals
 }
+
+    override suspend fun geatLastEatenMealDate(s: String): Timestamp? {
+        val mealTracking = Firebase.firestore
+            .collection("User")
+            .document(s)
+            .collection("MealsTracking")
+            .orderBy("consumeDate", Query.Direction.DESCENDING)
+            .limit(1).
+            get()
+            .await()
+
+        val document = mealTracking.documents.firstOrNull()
+        return document?.getTimestamp("consumeDate")
+    }
+
 }

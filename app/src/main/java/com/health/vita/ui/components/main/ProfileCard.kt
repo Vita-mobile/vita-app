@@ -26,13 +26,15 @@ val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale("es"))
 
 @Composable
 fun ProfileCard(
+
     name: String = "John",
     date: Timestamp = Timestamp.now(),
     onClick: () -> Unit,
     onClickButton1:  () -> Unit,
-    onClickButton2:  () -> Unit
+    url: String?=null,
+    onClickButton2:  () -> Unit,
 
-) {
+    ) {
     Column(){
         Row(
             Modifier
@@ -51,7 +53,7 @@ fun ProfileCard(
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                CircularPhoto(photo = R.drawable.male_image, "profile picture", 78)
+                CircularPhoto(photo = R.drawable.userdefault, "profile picture", 78,  url     )
                 Column(Modifier.padding(horizontal = 12.dp)) {
                     Text(
                         text = name,

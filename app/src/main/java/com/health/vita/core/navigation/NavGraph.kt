@@ -7,8 +7,10 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.health.vita.auth.presentation.login.LoginScreen
 import com.health.vita.auth.presentation.ResetPasswordConfirmationScreen
 import com.health.vita.auth.presentation.ResetPasswordScreen
@@ -21,6 +23,7 @@ import com.health.vita.main.presentation.LoadSimulationScreen
 import com.health.vita.main.presentation.SplashScreen
 import com.health.vita.main.presentation.WelcomeScreen
 import com.health.vita.meals.presentation.AddedFoodScreen
+import com.health.vita.meals.presentation.CreateMealScreen
 import com.health.vita.meals.presentation.DietSelectionScreen
 import com.health.vita.meals.presentation.DietsPreviewScreen
 import com.health.vita.meals.presentation.HydrationScreen
@@ -28,6 +31,7 @@ import com.health.vita.meals.presentation.MealDetailScreen
 import com.health.vita.meals.presentation.MealHomeScreen
 import com.health.vita.meals.presentation.MealTrackingScreen
 import com.health.vita.meals.presentation.NutritionWelcomeScreen
+import com.health.vita.profile.presentation.EditHeightScreen
 import com.health.vita.profile.presentation.EditWeightScreen
 import com.health.vita.register.presentation.AgeSelectionScreen
 import com.health.vita.register.presentation.FitnessGoalSelectionScreen
@@ -36,6 +40,7 @@ import com.health.vita.register.presentation.HeightSelectionScreen
 import com.health.vita.profile.presentation.NotificationsScreen
 import com.health.vita.profile.presentation.ProfileEditionScreen
 import com.health.vita.profile.presentation.ProfileScreen
+import com.health.vita.profile.presentation.viewModel.ProfileViewModel
 import com.health.vita.register.presentation.SexSelectionScreen
 import com.health.vita.register.presentation.WeightSelectionScreen
 import com.health.vita.sports.presentation.DayWorkoutScreen
@@ -59,9 +64,11 @@ import com.health.vita.sports.presentation.WorkoutPreviewScreen
 @Composable
 fun NavGraph(navController: NavHostController){
     val signupViewModel: SignupViewModel = viewModel()
+    val profileViewModel: ProfileViewModel = viewModel()
     NavHost(
         navController = navController,
-        startDestination = Screen.MEAL_TRACKING,
+        startDestination = Screen.MEAL_HOME,
+
         enterTransition = {
             slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn()
         },
@@ -110,7 +117,7 @@ fun NavGraph(navController: NavHostController){
             SignUpScreen(navController, signupViewModel)
         }
         composable(Screen.SELECT_AVATAR) {
-            SelectAvatarScreen(navController)
+            SelectAvatarScreen(navController, signupViewModel)
         }
         composable(Screen.AGE_SELECTION) {
             AgeSelectionScreen(navController, signupViewModel)
@@ -139,13 +146,13 @@ fun NavGraph(navController: NavHostController){
             NotificationsScreen(navController)
         }
         composable(Screen.PROFILE_EDITION) {
-            ProfileEditionScreen(navController)
+            ProfileEditionScreen(navController,profileViewModel)
         }
         composable(Screen.EDIT_WEIGHT_SELECTION) {
-            EditWeightScreen(navController)
+            EditWeightScreen(navController,profileViewModel)
         }
         composable(Screen.EDIT_HEIGHT_SELECTION) {
-            EditWeightScreen(navController)
+            EditHeightScreen(navController,profileViewModel)
         }
         // Meals
         composable(Screen.MEAL_HOME) {
@@ -160,8 +167,13 @@ fun NavGraph(navController: NavHostController){
         composable(Screen.HYDRATION) {
             HydrationScreen(navController)
         }
-        composable(Screen.DIETS_PREVIEW) {
-            DietsPreviewScreen(navController)
+        composable(
+            route = Screen.DIETS_PREVIEW,
+            arguments = listOf(navArgument("meal") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val meal = backStackEntry.arguments?.getInt("meal")
+                ?: throw IllegalArgumentException("meal argument is required")
+            DietsPreviewScreen(navController = navController, meal = meal)
         }
         composable(Screen.ADDED_FOOD) {
             AddedFoodScreen(navController)
@@ -169,8 +181,22 @@ fun NavGraph(navController: NavHostController){
         composable(Screen.NUTRITION_WELCOME) {
             NutritionWelcomeScreen(navController)
         }
-        composable(Screen.MEAL_DETAIL) {
-            MealDetailScreen(navController)
+        composable(
+            route = Screen.MEAL_DETAIL,
+            arguments = listOf(
+                navArgument("meal") { type = NavType.StringType },
+                navArgument("isFavorite") { type = NavType.BoolType }
+            )
+        ) { backStackEntry ->
+            val meal = backStackEntry.arguments?.getString("meal")
+                ?: throw IllegalArgumentException("meal argument is required")
+            val isFavorite = backStackEntry.arguments?.getBoolean("isFavorite")
+                ?: false
+
+            MealDetailScreen(navController = navController, meal = meal, isFavorite = isFavorite)
+        }
+        composable(Screen.CREATE_MEAL) {
+            CreateMealScreen(navController)
         }
 
         // Sports
