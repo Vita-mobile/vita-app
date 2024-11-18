@@ -30,7 +30,7 @@ class MealsIAServiceImpl(): MealsIAService {
         .writeTimeout(60, TimeUnit.SECONDS)
         .build()
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://192.168.18.76:5000/")
+        .baseUrl("https://vita-app-88d5537bb869.herokuapp.com/")
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()

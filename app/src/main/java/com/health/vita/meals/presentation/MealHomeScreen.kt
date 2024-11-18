@@ -94,7 +94,6 @@ fun MealHomeScreen(navController: NavController) {
 
     val lastRecordedMeal by mealsViewModel.lastRecordedMeal.observeAsState(0)
     val mealCount by mealsViewModel.mealCounts.observeAsState()
-    val backStackEntry = navController.currentBackStackEntryAsState()
     val userState by mealsViewModel.user.observeAsState()
     val kcal by mealsViewModel.kcal.observeAsState()
 

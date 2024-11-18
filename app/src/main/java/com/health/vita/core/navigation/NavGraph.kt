@@ -22,8 +22,8 @@ import com.health.vita.main.presentation.HomeScreen
 import com.health.vita.main.presentation.LoadSimulationScreen
 import com.health.vita.main.presentation.SplashScreen
 import com.health.vita.main.presentation.WelcomeScreen
-import com.health.vita.meals.domain.model.Meal
 import com.health.vita.meals.presentation.AddedFoodScreen
+import com.health.vita.meals.presentation.CreateMealScreen
 import com.health.vita.meals.presentation.DietSelectionScreen
 import com.health.vita.meals.presentation.DietsPreviewScreen
 import com.health.vita.meals.presentation.HydrationScreen
@@ -67,7 +67,7 @@ fun NavGraph(navController: NavHostController){
     val profileViewModel: ProfileViewModel = viewModel()
     NavHost(
         navController = navController,
-        startDestination = Screen.SPLASH_SCREEN,
+        startDestination = Screen.MEAL_HOME,
         enterTransition = {
             slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn()
         },
@@ -193,6 +193,9 @@ fun NavGraph(navController: NavHostController){
                 ?: false
 
             MealDetailScreen(navController = navController, meal = meal, isFavorite = isFavorite)
+        }
+        composable(Screen.CREATE_MEAL) {
+            CreateMealScreen(navController)
         }
 
         // Sports

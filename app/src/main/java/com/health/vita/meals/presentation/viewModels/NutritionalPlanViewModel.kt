@@ -49,7 +49,17 @@ class NutritionalPlanViewModel(
     fun getIngredients() {
         viewModelScope.launch(Dispatchers.IO) {
             val ingredients = ingredientRepository.getIngredients()
-            withContext(Dispatchers.Main) { _ingredientsState.value = ingredients }
+
+            val ingredientMeals = ingredients.map { ingredient ->
+                ingredient?.let {
+                    IngredientMeal(
+                        name = it.name,
+                        id = it.id
+                    )
+                }
+            }
+
+            withContext(Dispatchers.Main) { _ingredientsState.value = ingredientMeals }
         }
     }
 
