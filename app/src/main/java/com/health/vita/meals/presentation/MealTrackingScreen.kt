@@ -59,6 +59,9 @@ fun MealTrackingScreen(
 
     val mealsFetch by mealTrackingViewModel.mealsOfADate.observeAsState(emptyList())
 
+
+
+
     // Observe the days since the user registered the nutritional plan
     val daysSinceRegisterNutritionalPlan by mealTrackingViewModel.daysSinceRegisterNutritionalPlan.observeAsState(
         0
@@ -81,35 +84,6 @@ fun MealTrackingScreen(
     var isRenderedDatesLazyRow by remember { mutableStateOf(false) }
 
 
-    // Lista de comidas
-    val meals = listOf(
-        MealSummaryData(
-            mealName = "Tamal valluno",
-            calories = 300f,
-            carbs = 45f,
-            protein = 10f,
-            fats = 5f,
-            totalGrams = 60f
-        ),
-        MealSummaryData(
-            mealName = "Pollo picao",
-            calories = 350f,
-            carbs = 20f,
-            protein = 25f,
-            fats = 5f,
-            totalGrams = 50f
-        ),
-        MealSummaryData(
-            mealName = "Maduro con queso",
-            calories = 400f,
-            carbs = 15f,
-            protein = 15f,
-            fats = 30f,
-            totalGrams = 60f
-        )
-    )
-
-
     LaunchedEffect(true) {
 
         Log.d("Current user", "Current user: ${Firebase.auth.currentUser?.uid}")
@@ -119,6 +93,7 @@ fun MealTrackingScreen(
 
     LaunchedEffect(daysSinceRegisterNutritionalPlan) {
 
+        Log.e("MealTrackingScreen", "Days since register nutritional plan: $daysSinceRegisterNutritionalPlan")
         if (daysSinceRegisterNutritionalPlan == 0) {
             return@LaunchedEffect
         }
@@ -151,11 +126,17 @@ fun MealTrackingScreen(
         listState.animateScrollToItem(selectedDateIndex)
     }
 
-    LaunchedEffect(selectedDateIndex) {
+    LaunchedEffect(selectedDateIndex, listDates) {
+
+        Log.e("MealTrackingScreen", "Selected date index on launched effect: $selectedDateIndex")
 
         if (listDates.isEmpty()) {
             return@LaunchedEffect
         }
+    
+        Log.e("MealTrackingScreen", "Selected date index on launched effect: ${listDates[selectedDateIndex]}")
+
+        Log.e("MealTrackingScreen", "Selected date index on launched effect: ${listDates[selectedDateIndex]}")
 
         mealTrackingViewModel.getMealsOfADate(listDates[selectedDateIndex])
 
@@ -208,6 +189,8 @@ fun MealTrackingScreen(
                                 isSelected = index == selectedDateIndex,
                                 date = date,
                                 onClick = {
+
+                                    Log.e("MealTrackingScreen", "Selected date index: $index")
                                     selectedDateIndex = index
                                 }
                             )

@@ -38,6 +38,8 @@ class MealTrackingViewModel(
 
 
     fun getMealsOfADate( date: LocalDate){
+
+        Log.e("MealTrackingViewModel", "Getting meals of date $date")
         viewModelScope.launch(Dispatchers.IO) {
 
             withContext(Dispatchers.Main) {
@@ -47,6 +49,8 @@ class MealTrackingViewModel(
             try {
 
                 val meals = mealTrackingRepository.getMealsOfADate(date)
+
+                Log.e("MealTrackingViewModel", "Meals of date $date : $meals")
 
                 withContext(Dispatchers.Main) {
                     _mealsOfADate.value = meals
