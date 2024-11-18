@@ -136,6 +136,8 @@ fun MealTrackingScreen(
     
         Log.e("MealTrackingScreen", "Selected date index on launched effect: ${listDates[selectedDateIndex]}")
 
+        Log.e("MealTrackingScreen", "Selected date index on launched effect: ${listDates[selectedDateIndex]}")
+
         mealTrackingViewModel.getMealsOfADate(listDates[selectedDateIndex])
 
     }
