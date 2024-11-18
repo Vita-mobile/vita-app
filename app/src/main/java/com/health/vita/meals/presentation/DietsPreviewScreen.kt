@@ -407,7 +407,12 @@ fun MealCardComponent(
                 .background(Color(0xFFbbf4df), shape = RoundedCornerShape(1000.dp))
                 .padding(40.dp)
         ) {
-            Image(painter = painterResource(id = R.drawable.grasas), contentDescription = "")
+            val dominantImage = when {
+                protein >  carb && protein > fat -> com.health.vita.R.drawable.proteina
+                carb > protein && carb > fat -> com.health.vita.R.drawable.carbohidrato
+                else -> com.health.vita.R.drawable.grasas
+            }
+            Image(painter = painterResource(id = dominantImage), contentDescription = "")
         }
         Row(modifier = Modifier.padding(top = 30.dp)) {
             MacronutrientDetails(
