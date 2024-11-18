@@ -20,9 +20,7 @@ object DataStoreKeys {
     val IA_REFETCH_LAST_UPDATED_KEY = longPreferencesKey("IaRefetchLastUpdated")
 }
 
-
 suspend fun saveValueAndTimestamp(context: Context, value: Int, timestamp: Long, valueKey: String ) {
-
     context.dataStore.edit { preferences ->
         val (valuePreferenceKey, lastUpdatedPreferenceKey) = when (valueKey) {
             "HYDRATION" -> Pair(DataStoreKeys.HYDRATION_VALUE_KEY, DataStoreKeys.HYDRATION_LAST_UPDATED_KEY)

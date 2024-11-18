@@ -43,6 +43,7 @@ import com.health.vita.ui.theme.White
 @Preview
 @Composable
 fun ProfileScreen(navController: NavController = rememberNavController(), profileViewModel: ProfileViewModel = viewModel()) {
+
     val userState by profileViewModel.user.observeAsState()
 
     Log.e(">>> User", userState.toString())
