@@ -67,7 +67,8 @@ fun NavGraph(navController: NavHostController){
     val profileViewModel: ProfileViewModel = viewModel()
     NavHost(
         navController = navController,
-        startDestination = Screen.CREATE_MEAL,
+        startDestination = Screen.MEAL_HOME,
+
         enterTransition = {
             slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn()
         },
