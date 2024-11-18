@@ -30,6 +30,9 @@ class DietsPreviewViewModel(
     private val _favorites = MutableLiveData<List<Meal>>(emptyList())
     val favorites: LiveData<List<Meal>> get() = _favorites
 
+    private val _creations = MutableLiveData<List<Meal>>(emptyList())
+    val creations: LiveData<List<Meal>> get() = _creations
+
     private val _consumeMealState = MutableLiveData<Boolean>()
     val consumeMealState: LiveData<Boolean> = _consumeMealState
 
@@ -93,6 +96,31 @@ class DietsPreviewViewModel(
                     _uiHandler.setErrorState(DatabaseError())
             }
         }
+        }
+    }
+
+
+    fun loadCreations() {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            withContext(Dispatchers.Main) {
+                _uiHandler.setLoadingState()
+            }
+
+            try {
+                val creationsList: List<Meal> = dietsPreviewRepository.getCreations()
+                _creations.postValue(creationsList)
+
+                withContext(Dispatchers.Main) {
+                    _uiHandler.setSuccess()
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    _uiHandler.setErrorState(DatabaseError())
+                }
+            }
         }
     }
 

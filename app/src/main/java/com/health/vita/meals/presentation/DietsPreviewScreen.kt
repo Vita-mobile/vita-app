@@ -92,10 +92,13 @@ fun DietsPreviewScreen(
 
     val favorites by dietsPreviewViewModel.favorites.observeAsState(emptyList())
 
+    val creations by dietsPreviewViewModel.creations.observeAsState(emptyList())
+
+
     val meals = when (selectedOption) {
         "Favoritas" -> favorites
         "Mi plan" -> mealsIA
-        "Crear" -> mealsIA
+        "Creaciones" -> creations
         else -> mealsIA
     }
 
@@ -182,6 +185,7 @@ fun DietsPreviewScreen(
     LaunchedEffect(true) {
         dietsPreviewViewModel.loadOrGenerateMealsIA(meal)
         dietsPreviewViewModel.loadFavorites()
+        dietsPreviewViewModel.loadCreations()
     }
 
     Scaffold(
@@ -203,7 +207,7 @@ fun DietsPreviewScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    listOf("Favoritas", "Mi plan", "Crear").forEach { option ->
+                    listOf("Favoritas", "Mi plan", "Creaciones").forEach { option ->
                         Text(
                             text = option,
                             style = MaterialTheme.typography.bodyMedium,
@@ -215,7 +219,7 @@ fun DietsPreviewScreen(
                                         selectedMeal = when (option) {
                                             "Favoritas" -> favorites.firstOrNull()
                                             "Mi plan" -> mealsIA.firstOrNull()
-                                            else -> mealsIA.firstOrNull()
+                                            else -> creations.firstOrNull()
                                         }
                                     }
                                 )
@@ -302,6 +306,16 @@ fun DietsPreviewScreen(
                                             )
                                         }
                                     }
+
+                                    if (selectedOption == "Creaciones"){
+                                        PrimaryIconButton(
+                                            text = "Crear",
+                                            onClick = { navController.navigate("CreateMeal") },
+                                            arrow = true,
+                                        )
+                                    }
+
+
                                     Spacer(modifier = Modifier.height(32.dp))
                                     Text(
                                         text = meal_.name,

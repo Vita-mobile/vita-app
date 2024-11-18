@@ -73,21 +73,24 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
 
     val defaultAvatars by signupViewModel.defaultImages.observeAsState(emptyList())
 
-    val selectedAvatar by signupViewModel.profileImage.observeAsState()
 
     val listState = rememberLazyListState()
     val uiState by signupViewModel.uiState.observeAsState(UiState.Idle)
 
     var isLoading by remember { mutableStateOf(true) }
 
+    //Use to store the selected image from gallery
     var selectedUri:Uri? by remember { mutableStateOf(null) }
+
+    //Use to store the selected image from default images
+    val selectedAvatar by signupViewModel.profileImage.observeAsState()
 
     var infoSignup by remember {
 
         mutableStateOf("")
     }
 
-
+    //Use to display gallery images selector and storages the selected image
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -246,12 +249,12 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
 
                             if(selectedUri!=null) {
 
-                                Image(
-                                    painter = rememberAsyncImagePainter(selectedUri),
-                                    contentDescription = "selected image",
-                                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)),
-                                    contentScale = ContentScale.Crop
-                                )
+                                    Image(
+                                        painter = rememberAsyncImagePainter(selectedUri),
+                                        contentDescription = "selected image",
+                                        modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)),
+                                        contentScale = ContentScale.Crop
+                                    )
 
                             } else {
 
@@ -296,13 +299,14 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
 
                 PrimaryIconButton(
                     text = "Comenzar",
-                    color = if (selectedAvatar != null) Color.Black else Color.Gray,
+                    color = if (selectedAvatar != null || selectedUri!= null) Color.Black else Color.Gray,
                     onClick = {
 
                         signupViewModel.registerOperation()
 
+
                     },
-                    enabled = selectedAvatar != null,
+                    enabled = selectedAvatar != null || selectedUri != null,
                 )
 
                 Box(modifier = Modifier.weight(0.2f))
@@ -333,11 +337,8 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
 
                         infoSignup = "Registro exitoso"
 
-                        if (selectedAvatar != null) {
-                            signupViewModel.updateProfileImage()
+                        navController.navigate(Screen.HOME)
 
-                            navController.navigate(Screen.HOME)
-                        }
 
                     }
 

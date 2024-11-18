@@ -13,6 +13,7 @@ interface ImageStorageService {
     suspend fun getDefaultImageUris(): List<String>
     suspend fun saveDefaultImage(imageId: String)
     suspend fun updateUserImageId(userId:String, imageId: String?)
+    suspend fun getUserImage(imageId:String,isDefault:Boolean): String
 }
 
 class ImageStorageServiceImpl : ImageStorageService {
@@ -47,5 +48,15 @@ class ImageStorageServiceImpl : ImageStorageService {
     override suspend fun updateUserImageId(userId:String, imageId: String?) {
 
         Firebase.firestore.collection("User").document(userId).update("imageID", imageId).await()
+    }
+
+    override suspend fun getUserImage(imageId: String, isDefault:Boolean): String {
+
+
+        if (isDefault) {
+            return Firebase.storage.reference.child(imageId).downloadUrl.await().toString()
+        } else {
+            return Firebase.storage.reference.child("profile_images").child(imageId).downloadUrl.await().toString()
+        }
     }
 }

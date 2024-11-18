@@ -6,9 +6,9 @@ import com.google.firebase.auth.auth
 import com.health.vita.meals.data.data_source.DietsPreviewService
 import com.health.vita.meals.data.data_source.DietsPreviewServiceImpl
 import com.health.vita.meals.data.data_source.MealsIAService
+import com.health.vita.meals.data.data_source.MealsIAServiceRetrofit
 import com.health.vita.meals.data.data_source.MealsIAServiceImpl
-import com.health.vita.meals.data.data_source.MealsService
-import com.health.vita.meals.data.data_source.MealsServiceImpl
+import com.health.vita.meals.domain.model.IngredientMeal
 import com.health.vita.meals.domain.model.Meal
 
 interface DietsPreviewRepository{
@@ -18,6 +18,8 @@ interface DietsPreviewRepository{
     suspend fun getMealsIA(meal: Int): List<Meal>
     suspend fun getFavorites(): List<Meal>
     suspend fun consumeMeal(meal: Meal): Boolean
+    suspend fun createMeal(meal: Meal): Boolean
+    suspend fun getCreations(): List<Meal>
 }
 
 class DietsPreviewRepositoryImpl(
@@ -74,6 +76,28 @@ class DietsPreviewRepositoryImpl(
         } catch (e: Exception) {
             e.printStackTrace()
             false
+        }
+    }
+
+    override suspend fun createMeal(meal: Meal): Boolean {
+        return try {
+            Firebase.auth.currentUser?.let { user ->
+                dietsPreviewService.addCreatedMeal(user.uid, meal)
+            } ?: false
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    override suspend fun getCreations(): List<Meal> {
+        return try {
+            Firebase.auth.currentUser?.let { user ->
+                dietsPreviewService.getCreations(user.uid)
+            } ?: emptyList()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
         }
     }
 
