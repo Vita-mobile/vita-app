@@ -282,14 +282,17 @@ fun Ingredient(
 fun MacronutrientDetails(
     grams: Float,
     totalGrams: Float,
-    macronutrientType: MacronutrientType
+    macronutrientType: MacronutrientType,
+    proteinColor: Long = 0xFF8DCD92,
+    carbColor: Long = 0xFFF8D558,
+    fatColor: Long = 0xFFF47551
 ) {
     val percentage = if (totalGrams > 0) grams / totalGrams else 0f
 
     val color = when (macronutrientType) {
-        MacronutrientType.PROTEIN -> Color(0xFF8DCD92)
-        MacronutrientType.CARBOHYDRATE -> Color(0xFFF8D558)
-        MacronutrientType.FAT -> Color(0xFFF47551)
+        MacronutrientType.PROTEIN -> Color(proteinColor)
+        MacronutrientType.CARBOHYDRATE -> Color(carbColor)
+        MacronutrientType.FAT -> Color(fatColor)
     }
 
     val icon = when (macronutrientType) {
