@@ -2,6 +2,7 @@ package com.health.vita.register.data.repository
 
 
 import android.net.Uri
+import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.health.vita.domain.model.User
@@ -34,10 +35,12 @@ class SignUpRepositoryImpl(
         //2. Get UID from firebase auth module
         val uid = Firebase.auth.currentUser?.uid
         //3. Create user on Firestore
+        Log.e("SignUpRepositoryImpl", "uid: $uid")
         uid?.let {
             user.id = it
             userRepository.createUser(user)
-        }
+
+        }?: throw Exception("UID is null")
 
     }
 

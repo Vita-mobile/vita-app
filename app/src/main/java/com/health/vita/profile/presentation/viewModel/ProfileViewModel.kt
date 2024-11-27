@@ -61,10 +61,16 @@ class ProfileViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             try {
 
+                withContext(Dispatchers.Main) {
+                    uiHandler.setLoadingState()
+                }
                 Log.e("ProfileViewModel", "Getting profile image")
                 val image = imageRepository.getProfileImage()
                 withContext(Dispatchers.Main) {
+
+
                     _profileImageUrl.value = image
+                    uiHandler.setSuccess()
                 }
 
             } catch (e: IOException) {
@@ -79,8 +85,9 @@ class ProfileViewModel(
                     uiHandler.setErrorState(FirebaseError(cause = e))
                 }
             } catch (e: Exception) {
+                Log.e("ProfileViewModel", e.stackTraceToString())
                 withContext(Dispatchers.Main) {
-                    ErrorManager.postError(UnknownError("Error desconocido.", e))
+                    ErrorManager.postError(UnknownError("Error desconocido en getProfileImage.", e))
                     uiHandler.setErrorState(UnknownError(cause = e))
                 }
             }
@@ -89,12 +96,37 @@ class ProfileViewModel(
 
     fun getCurrentUser() {
         viewModelScope.launch(Dispatchers.IO) {
-            val me = userRepository.getCurrentUser()
+
             withContext(Dispatchers.Main) {
-                _user.value = me
-                _weight.value = me?.weight ?: 0f
-                _height.value = me?.height ?: 0f
+                uiHandler.setLoadingState()
             }
+
+
+            try {
+                val me = userRepository.getCurrentUser()
+                withContext(Dispatchers.Main) {
+                    Log.e("ProfileViewModel", "Seteando el usuario$me")
+                    _user.value = me
+                    _weight.value = me?.weight ?: 0f
+                    _height.value = me?.height ?: 0f
+
+                    uiHandler.setSuccess()
+                }
+
+            } catch (e: Exception) {
+
+                Log.e("ProfileViewModel", e.message ?: "Error desconocido en getCurrentUser")
+                Log.e("ProfileViewModel", e.stackTraceToString())
+                withContext(Dispatchers.Main) {
+                    uiHandler.setErrorState(
+                        UnknownError(
+                            "Error al actualizar datos del usuario",
+                            e
+                        )
+                    )
+                }
+            }
+
         }
     }
 
