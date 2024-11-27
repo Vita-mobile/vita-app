@@ -1,5 +1,6 @@
 package com.health.vita.meals.presentation
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -21,8 +22,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -55,8 +58,9 @@ import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.theme.VitaTheme
 
 @Composable
-fun HeartToggle(fav: Boolean = false,
-                onClick: (Boolean) -> Unit
+fun HeartToggle(
+    fav: Boolean = false,
+    onClick: (Boolean) -> Unit
 ) {
     var isFavorite by remember { mutableStateOf(fav) }
     val color by animateColorAsState(if (isFavorite) Color.Red else Color.Gray)
@@ -98,36 +102,38 @@ fun HeartToggle(fav: Boolean = false,
 @Composable
 fun MealDetailPrev() {
     VitaTheme {
-        MealDetailScreen(meal = "{\n" +
-                "  \"id\": \"12345\",\n" +
-                "  \"name\": \"Grilled Chicken Salad\",\n" +
-                "  \"description\": \"A healthy salad with grilled chicken, fresh vegetables, and a light dressing.\",\n" +
-                "  \"calories\": 350.5,\n" +
-                "  \"carbs\": 20.0,\n" +
-                "  \"fats\": 10.5,\n" +
-                "  \"proteins\": 30.0,\n" +
-                "  \"ingredients\": [\n" +
-                "    {\n" +
-                "      \"id\": \"1\",\n" +
-                "      \"name\": \"Chicken Breast\",\n" +
-                "      \"quantity\": 200,\n" +
-                "      \"unit\": \"grams\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"id\": \"2\",\n" +
-                "      \"name\": \"Lettuce\",\n" +
-                "      \"quantity\": 100,\n" +
-                "      \"unit\": \"grams\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"id\": \"3\",\n" +
-                "      \"name\": \"Tomatoes\",\n" +
-                "      \"quantity\": 50,\n" +
-                "      \"unit\": \"grams\"\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"meal\": 1\n" +
-                "}\n", isFavorite = true)
+        MealDetailScreen(
+            meal = "{\n" +
+                    "  \"id\": \"12345\",\n" +
+                    "  \"name\": \"Grilled Chicken Salad\",\n" +
+                    "  \"description\": \"A healthy salad with grilled chicken, fresh vegetables, and a light dressing.\",\n" +
+                    "  \"calories\": 350.5,\n" +
+                    "  \"carbs\": 20.0,\n" +
+                    "  \"fats\": 10.5,\n" +
+                    "  \"proteins\": 30.0,\n" +
+                    "  \"ingredients\": [\n" +
+                    "    {\n" +
+                    "      \"id\": \"1\",\n" +
+                    "      \"name\": \"Chicken Breast\",\n" +
+                    "      \"quantity\": 200,\n" +
+                    "      \"unit\": \"grams\"\n" +
+                    "    },\n" +
+                    "    {\n" +
+                    "      \"id\": \"2\",\n" +
+                    "      \"name\": \"Lettuce\",\n" +
+                    "      \"quantity\": 100,\n" +
+                    "      \"unit\": \"grams\"\n" +
+                    "    },\n" +
+                    "    {\n" +
+                    "      \"id\": \"3\",\n" +
+                    "      \"name\": \"Tomatoes\",\n" +
+                    "      \"quantity\": 50,\n" +
+                    "      \"unit\": \"grams\"\n" +
+                    "    }\n" +
+                    "  ],\n" +
+                    "  \"meal\": 1\n" +
+                    "}\n", isFavorite = true
+        )
     }
 }
 
@@ -142,30 +148,20 @@ fun MealDetailScreen(
     val totalGrams by mealDetailViewModel.pesoTotal.observeAsState(0)
     val macroImage by mealDetailViewModel.macroDominantImage.observeAsState(com.health.vita.R.drawable.grasas)
     val mealObj by mealDetailViewModel.meal.observeAsState()
-    var isDialogOpen by remember { mutableStateOf(false) }
 
-    LaunchedEffect(true){
+    LaunchedEffect(true) {
         mealDetailViewModel.setMealFromJson(meal)
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         content = { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {
-                Column(modifier = Modifier.padding(bottom =40.dp, start = 16.dp, end = 16.dp)) {
+                Column(modifier = Modifier.padding(bottom = 40.dp, start = 16.dp, end = 16.dp)) {
                     GeneralTopBar(
                         onClick = { navController.navigateUp() },
                         text = "Nutrición",
-                        hasStep = false,
-                        hasIcon = true,
-                        icon = R.drawable.baseline_list_alt_24,
-                        onClickIcon = { isDialogOpen = true }
+                        hasStep = false
                     )
-                    if (isDialogOpen) {
-                        MealDescriptionDialog(
-                            description = mealObj?.description ?: "No hay descripción disponible.",
-                            onDismiss = { isDialogOpen = false }
-                        )
-                    }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
@@ -178,7 +174,7 @@ fun MealDetailScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.End
                             ) {
-                                HeartToggle(isFavorite  ){isFav ->
+                                HeartToggle(isFavorite) { isFav ->
                                     mealDetailViewModel.toggleFavorite(isFav)
                                 }
 
@@ -186,10 +182,15 @@ fun MealDetailScreen(
                             Image(
                                 painter = painterResource(id = macroImage),
                                 contentDescription = "",
-                                modifier = Modifier.fillMaxWidth().height(200.dp)
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp)
                             )
                         }
                     }
+                    Column(Modifier.verticalScroll(rememberScrollState())){
+
+
                     Column {
                         Row(
                             modifier = Modifier
@@ -198,10 +199,13 @@ fun MealDetailScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = mealObj?.name?:"Meal",
+                                text = mealObj?.name ?: "Meal",
                                 style = MaterialTheme.typography.titleSmall
                             )
-                            Text(text = "${totalGrams}g", style = MaterialTheme.typography.titleSmall) // Hacer vm que me obtenga los gramosx
+                            Text(
+                                text = "${totalGrams}g",
+                                style = MaterialTheme.typography.titleSmall
+                            )
                         }
                         Row(
                             modifier = Modifier
@@ -215,7 +219,7 @@ fun MealDetailScreen(
                                 modifier = Modifier.graphicsLayer(alpha = 0.5f)
                             )
                             Text(
-                                text = "${mealObj?.calories?.toInt()?:0}cal",
+                                text = "${mealObj?.calories?.toInt() ?: 0}cal",
                                 style = MaterialTheme.typography.bodyLarge,
                                 modifier = Modifier.graphicsLayer(alpha = 0.5f)
                             )
@@ -223,34 +227,68 @@ fun MealDetailScreen(
                     }
                     Column {
                         MacronutrientDetails(
-                            grams = mealObj?.proteins?:0f,
+                            grams = mealObj?.proteins ?: 0f,
                             totalGrams = totalGrams.toFloat(),
                             macronutrientType = MacronutrientType.PROTEIN
                         )
                         MacronutrientDetails(
-                            grams = mealObj?.carbs?:0f,
+                            grams = mealObj?.carbs ?: 0f,
                             totalGrams = totalGrams.toFloat(),
                             macronutrientType = MacronutrientType.CARBOHYDRATE
                         )
                         MacronutrientDetails(
-                            grams = mealObj?.fats?:0f,
-                            totalGrams = totalGrams.toFloat() ?:0f,
+                            grams = mealObj?.fats ?: 0f,
+                            totalGrams = totalGrams.toFloat() ?: 0f,
                             macronutrientType = MacronutrientType.FAT
                         )
 
 
                     }
                     Column {
-                        Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), horizontalArrangement = Arrangement.Center) {
-                            Text(text = "Ingredientes", style = MaterialTheme.typography.titleSmall)
-                        }
-                        LazyColumn(modifier = Modifier.fillMaxSize()) {
-                            mealObj?.let {
-                                items(it.ingredientMeals) { ingredient ->
-                                    Ingredient(ingredient.name, ingredient.grams)
+                        if (!mealObj?.description.equals("")) {
+                            Log.e(">>>", mealObj?.description?:"No hay")
+                            Column(       modifier = Modifier
+                                .fillMaxWidth()){
+                                Row(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = "Descripción",
+                                        style = MaterialTheme.typography.titleSmall
+                                    )
                                 }
+                                Column(
+                                    Modifier
+                                        .fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = mealObj?.description
+                                            ?: "No hay descripción para esta comida"
+                                    )
+                                }
+
                             }
                         }
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(text = "Ingredientes", style = MaterialTheme.typography.titleSmall)
+                        }
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            mealObj?.ingredientMeals?.forEach { ingredient ->
+                                Ingredient(ingredient.name, ingredient.grams)
+                            }
+                        }
+                    }
                     }
                 }
 
@@ -264,7 +302,7 @@ fun Ingredient(
     name: String,
     weight: Float
 ) {
-    Column(modifier = Modifier.padding(vertical = 6.dp)){
+    Column(modifier = Modifier.padding(vertical = 6.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(text = name, style = MaterialTheme.typography.bodyLarge)
             Text(text = "${weight.toInt()}g", style = MaterialTheme.typography.bodyLarge)
@@ -342,36 +380,4 @@ fun MacronutrientDetails(
             }
         }
     }
-}
-
-@Composable
-fun MealDescriptionDialog(
-    description: String,
-    onDismiss: () -> Unit
-) {
-    androidx.compose.material3.AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            Text(
-                text = "Cerrar",
-                modifier = Modifier
-                    .clickable { onDismiss() }
-                    .padding(8.dp),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-        },
-        title = {
-            Text(
-                text = "Descripción",
-                style = MaterialTheme.typography.titleMedium
-            )
-        },
-        text = {
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
-    )
 }
