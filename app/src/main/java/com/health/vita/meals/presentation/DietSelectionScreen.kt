@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.health.vita.core.navigation.Screen.MEAL_HOME
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.meals.presentation.viewModels.NutritionalPlanViewModel
 import com.health.vita.ui.components.general.CustomPopup
@@ -50,6 +52,7 @@ import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.components.meals.BorderLabelText
 import com.health.vita.ui.components.meals.DualIconCurvedButtons
 import com.health.vita.ui.theme.MintGreen
+import kotlinx.coroutines.delay
 
 @Preview
 @Composable
@@ -73,6 +76,16 @@ fun DietSelectionScreen(
         is UiState.Error -> "Pailas, manito"
         is UiState.Loading -> "Cargando..."
         is UiState.Success -> "Creado, ve!"
+    }
+
+    LaunchedEffect(uiState) {
+        when (uiState){
+            UiState.Success -> {
+                delay(1000L)
+                navController.navigate(MEAL_HOME)
+            }
+            else -> {}
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -270,7 +283,9 @@ fun DietSelectionScreen(
             PrimaryIconButton(
                 text = primaryIconButtonText,
                 color = MintGreen,
-                onClick = { nutritionalPlanViewModel.createNutritionalPlan() })
+                onClick = {
+                    nutritionalPlanViewModel.createNutritionalPlan()
+                })
             CustomPopup(
                 showDialog = ingredientPopUp,
                 onDismiss = { /*TODO*/ },
@@ -284,6 +299,10 @@ fun DietSelectionScreen(
                             value = searchQuery,
                             onValueChange = { query -> nutritionalPlanViewModel.setSearchQuery(query) },
                             label = { Text("Buscar ingrediente") },
+                            colors = TextFieldDefaults.colors(
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedContainerColor = Color.Transparent
+                            ),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(8.dp)
