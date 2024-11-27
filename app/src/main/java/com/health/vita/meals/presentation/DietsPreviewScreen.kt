@@ -73,6 +73,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import com.health.vita.meals.domain.model.Meal
 import com.health.vita.meals.utils.MacronutrientType
 import kotlinx.coroutines.launch
@@ -87,9 +88,14 @@ fun DietsPreviewScreen(
     val dietsPreviewViewModel: DietsPreviewViewModel = viewModel(
         factory = DietsPreviewViewModelFactory(LocalContext.current)
     )
-
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val scope = rememberCoroutineScope()
-
+    var dynamicHeighFraction = 0f
+    if(screenWidth<=427.dp){
+        dynamicHeighFraction = 0.89f
+    }else if(screenWidth<=1024.dp){
+        dynamicHeighFraction = 0.80f
+    }
     var possibleRefetch = 3
 
     val uiState by dietsPreviewViewModel.uiState.observeAsState(UiState.Idle)
@@ -280,6 +286,62 @@ fun DietsPreviewScreen(
                         is UiState.Success -> {
 
                             if (meals.isEmpty()) {
+                                if (selectedOption == "Creaciones") {
+                                    if (meals.isEmpty()) {
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(32.dp),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Outlined.Add,
+                                                contentDescription = "No meals",
+                                                modifier = Modifier
+                                                    .size(100.dp)
+                                                    .background(
+                                                        color = MaterialTheme.colorScheme.primaryContainer.copy(
+                                                            alpha = 0.2f
+                                                        ),
+                                                        shape = CircleShape
+                                                    )
+                                                    .padding(16.dp),
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+
+                                            Spacer(modifier = Modifier.height(16.dp))
+
+                                            Text(
+                                                text = when (selectedOption) {
+                                                    "Creaciones" -> "Aún no tienes comidas creadas"
+                                                    "Favoritas" -> "No tienes comidas favoritas"
+                                                    else -> "No se encontraron comidas"
+                                                },
+                                                style = MaterialTheme.typography.titleMedium,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+
+                                            Spacer(modifier = Modifier.height(16.dp))
+
+                                            Button(
+                                                onClick = {
+                                                    if (selectedOption == "Creaciones") {
+                                                        navController.navigate("CreateMeal")
+                                                    }
+                                                },
+                                                modifier = Modifier.fillMaxWidth(0.7f)
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.Add,
+                                                    contentDescription = "Agregar"
+                                                )
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                Text("Agregar Comida")
+                                            }
+                                        }
+                                    }
+                                }
                                 if (uiState == (UiState.Loading)) {
                                     Box(
                                         modifier = Modifier
@@ -290,151 +352,114 @@ fun DietsPreviewScreen(
                                         CircularProgressIndicator()
                                     }
                                 } else {
-
-                                    Text(
-                                        text = "No se encontraron comidas",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                                    )
+                                    if (!selectedOption.equals("Creaciones")) {
+                                        Text(
+                                            text = "No se encontraron comidas",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                                        )
+                                    }
                                 }
 
                             } else {
                                 val currentPage = pagerState.currentPage.coerceIn(0, meals.size - 1)
                                 selectedMeal = meals.getOrNull(currentPage)
 
-                                HorizontalPager(
-                                    state = pagerState,
+                                Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(horizontal = 16.dp),
-                                    contentPadding = PaddingValues(horizontal = 16.dp),
-                                    pageSize = PageSize.Fill,
-                                    pageSpacing = 8.dp,
-                                    userScrollEnabled = true,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    snapPosition = SnapPosition.Start
-                                ) { pageIndex ->
-                                    val meal_ = meals[pageIndex]
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth(),
-                                        verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-
-
-                                        Text(
-                                            text = meal_.name,
-                                            modifier = Modifier.padding(vertical = 10.dp)
-                                        )
+                                        .fillMaxHeight(dynamicHeighFraction)
+                                ) {
+                                    HorizontalPager(
+                                        state = pagerState,
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentPadding = PaddingValues(horizontal = 16.dp),
+                                        pageSpacing = 8.dp
+                                    ) { pageIndex ->
+                                        val meal_ = meals[pageIndex]
                                         val mealJson = Gson().toJson(meal_)
                                         val isFavorite = favorites.contains(meal_)
 
-                                        Box(
-
-                                            Modifier.weight(1f)
-
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            modifier = Modifier.fillMaxSize()
                                         ) {
-
-                                            if (uiState is UiState.Loading) {
-                                                CircularProgressIndicator()
-                                            } else {
-
-                                                MealCardComponent(
-                                                    meal_.ingredientMeals.sumOf { it.grams.toInt() }
-                                                        .toFloat(),
-                                                    meal_.proteins,
-                                                    meal_.carbs,
-                                                    meal_.fats,
-                                                    navController,
-                                                    mealJson,
-                                                    isFavorite
-                                                )
-
-                                            }
-
-
-                                        }
-
-
-
-                                        Row(
-
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(horizontal = 32.dp)
-                                                .fillMaxHeight(0.12f),
-                                            horizontalArrangement = Arrangement.SpaceEvenly,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-
-
-                                            PrimaryIconButton(
-                                                text = "Consumir",
-                                                onClick = { showConfirmDialog = true },
-                                                arrow = true,
-                                                color = MaterialTheme.colorScheme.onTertiary,
+                                            Text(
+                                                text = meal_.name,
                                                 modifier = Modifier.padding(vertical = 10.dp)
                                             )
-
-
-
-
-                                            if (selectedOption == "Mi plan" && possibleRefetch > 0) {
-                                                Spacer(modifier = Modifier.width(4.dp))
-
-                                                Button(
-
-                                                    onClick = {
-                                                        dietsPreviewViewModel.rechargeMealsIA(meal)
-                                                        possibleRefetch--
-                                                        scope.launch(Dispatchers.IO) {
-                                                            saveValueAndTimestamp(
-                                                                context,
-                                                                possibleRefetch,
-                                                                System.currentTimeMillis(),
-                                                                DataStoreKeys.IA_REFETCH
-                                                            )
-                                                        }
-                                                    },
-                                                    modifier = Modifier
-                                                        .clip(CircleShape)
-                                                        .wrapContentSize()
-                                                        .border(1.dp, Color.LightGray, CircleShape),
-                                                    shape = CircleShape,
-                                                    colors = ButtonDefaults.buttonColors(
-                                                        containerColor = Color.Transparent,
-                                                        contentColor = MaterialTheme.colorScheme.primary
-                                                    )
-                                                ) {
-                                                    Icon(
-                                                        painter = painterResource(id = R.drawable.outline_refresh_24),
-                                                        contentDescription = "Refresh",
-                                                        modifier = Modifier.wrapContentSize()
-                                                    )
-                                                }
-                                            }
-                                            if (selectedOption == "Creaciones") {
-                                                Button(
-                                                    onClick = { navController.navigate("CreateMeal") },
-                                                    modifier = Modifier
-                                                        .padding(16.dp)
-
-                                                ) {
-                                                    Icon(
-                                                        imageVector = Icons.Outlined.Add,
-                                                        contentDescription = "Add"
-                                                    )
-                                                }
-                                            }
+                                            MealCardComponent(
+                                                meal_.ingredientMeals.sumOf { it.grams.toInt() }.toFloat(),
+                                                meal_.proteins,
+                                                meal_.carbs,
+                                                meal_.fats,
+                                                navController,
+                                                mealJson,
+                                                isFavorite
+                                            )
                                         }
-
-
                                     }
                                 }
 
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 32.dp),
+                                    horizontalArrangement = Arrangement.SpaceEvenly,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    PrimaryIconButton(
+                                        text = "Consumir",
+                                        onClick = { showConfirmDialog = true },
+                                        arrow = true,
+                                        color = MaterialTheme.colorScheme.onTertiary,
+                                        modifier = Modifier.padding(vertical = 10.dp)
+                                    )
 
+                                    // Conditional buttons based on selected option
+                                    if (selectedOption == "Mi plan" && possibleRefetch > 0) {
+                                        Button(
+                                            onClick = {
+                                                dietsPreviewViewModel.rechargeMealsIA(meal)
+                                                possibleRefetch--
+                                                scope.launch(Dispatchers.IO) {
+                                                    saveValueAndTimestamp(
+                                                        context,
+                                                        possibleRefetch,
+                                                        System.currentTimeMillis(),
+                                                        DataStoreKeys.IA_REFETCH
+                                                    )
+                                                }
+                                            },
+                                            modifier = Modifier
+                                                .clip(CircleShape)
+                                                .border(1.dp, Color.LightGray, CircleShape),
+                                            shape = CircleShape,
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = Color.Transparent,
+                                                contentColor = MaterialTheme.colorScheme.primary
+                                            )
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.outline_refresh_24),
+                                                contentDescription = "Refresh"
+                                            )
+                                        }
+                                    }
 
+                                    if (selectedOption == "Creaciones") {
+                                        Button(
+                                            onClick = { navController.navigate("CreateMeal") },
+                                            modifier = Modifier.padding(16.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Outlined.Add,
+                                                contentDescription = "Add"
+                                            )
+                                        }
+                                    }
+                                }
 
                             }
 
