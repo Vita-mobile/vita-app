@@ -42,7 +42,7 @@ class MealDetailViewModel(
     private fun calculateMacroDominant(meal: Meal) {
         val protein = meal.proteins
         val carbs = meal.carbs
-        val fats = meal.carbs
+        val fats = meal.fats
 
         val dominantImage = when {
             protein > carbs && protein > fats -> com.health.vita.R.drawable.proteina
