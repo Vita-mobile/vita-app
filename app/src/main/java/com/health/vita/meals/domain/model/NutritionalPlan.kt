@@ -14,5 +14,6 @@ data class NutritionalPlan (
     var registerPlanDate: Timestamp = Timestamp.now(),
     var preferences: List<IngredientMeal> = emptyList(),
     var restrictions: List<IngredientMeal> = emptyList(),
+    var mealsCount: Int = 0,
 
     )

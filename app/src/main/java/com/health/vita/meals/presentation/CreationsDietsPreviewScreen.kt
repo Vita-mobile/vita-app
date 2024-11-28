@@ -80,7 +80,7 @@ fun CreationsDietsPreviewScreen(
     meal: Int
 ) {
     val dietsPreviewViewModel: CreationsDietsPreviewViewModel = viewModel(
-        factory = DietsPreviewViewModelFactory(LocalContext.current)
+        factory = DietsPreviewViewModelFactory()
     )
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     var dynamicHeighFraction = 0f

@@ -16,10 +16,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "storeData")
-
 interface MealsRepository {
-    fun getLastMealIndex(): Flow<Int>
+    suspend fun getLastMealIndex(): Int
     suspend fun incrementMealIndex()
     suspend fun getMealsCount(): Int
     suspend fun resetMealIndex()
@@ -27,27 +25,18 @@ interface MealsRepository {
 }
 
 class MealsRepositoryImpl(
-    private val context: Context,
     val mealsService: MealsService = MealsServiceImpl(),
     val mealsRepository: MealTrackingRepositoryImpl = MealTrackingRepositoryImpl(),
 
 
 ) : MealsRepository {
 
-    companion object {
-        val LAST_MEAL_INDEX = intPreferencesKey("last_meal_index")
+    override suspend fun getLastMealIndex():Int{
+        return mealsService.getLastMealIndex(Firebase.auth.currentUser?.uid ?: "")
     }
 
-    override fun getLastMealIndex(): Flow<Int> = context.dataStore.data
-        .map { preferences ->
-            preferences[LAST_MEAL_INDEX] ?: 0
-        }
-
     override suspend fun incrementMealIndex() {
-        context.dataStore.edit { preferences ->
-            val currentIndex = preferences[LAST_MEAL_INDEX] ?: 0
-            preferences[LAST_MEAL_INDEX] = currentIndex + 1
-        }
+        return mealsService.incrementMealIndex(Firebase.auth.currentUser?.uid ?: "")
     }
 
     override suspend fun getMealsCount(): Int {
@@ -55,7 +44,7 @@ class MealsRepositoryImpl(
     }
 
     override suspend fun resetMealIndex() {
-        context.dataStore.edit { preferences -> preferences[LAST_MEAL_INDEX] = 0 }
+        mealsService.resetMealIndex(Firebase.auth.currentUser?.uid ?: "")
     }
 
     override suspend fun getLastEatenMealDate(): Timestamp {

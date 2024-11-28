@@ -20,7 +20,6 @@ interface NutritionalPlanService {
 
 class NutritionalPlanServiceImpl() : NutritionalPlanService{
     override suspend fun createNutritionalPlan(nutritionalPlan: NutritionalPlan, userId: String): Boolean {
-
         try {
             Firebase.firestore.collection("User")
                 .document(userId)

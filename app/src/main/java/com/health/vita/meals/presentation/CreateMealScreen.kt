@@ -72,7 +72,7 @@ fun CreateMealScreen(
 ) {
 
     val createMealViewModel: CreateMealViewModel = viewModel(
-        factory = DietsPreviewViewModelFactory(LocalContext.current)
+        factory = DietsPreviewViewModelFactory()
     )
 
 

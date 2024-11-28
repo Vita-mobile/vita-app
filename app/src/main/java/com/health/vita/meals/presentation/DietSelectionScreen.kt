@@ -314,7 +314,7 @@ fun DietSelectionScreen(
                             ) == true && it !in preferences && it !in restrictions
                         }
                         Spacer(modifier = Modifier.height(8.dp))
-                        LazyColumn(modifier = Modifier) {
+                        LazyColumn(modifier = Modifier.height(168.dp)) {
                             items(filteredIngredients.chunked(2)) { itemGroup ->
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),

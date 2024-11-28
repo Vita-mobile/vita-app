@@ -16,9 +16,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class IADietsPreviewViewModel(
-    context: Context,
     private val dietsPreviewRepository: DietsPreviewRepository = DietsPreviewRepositoryImpl(),
-    private val mealsRepository: MealsRepository = MealsRepositoryImpl(context)
+    private val mealsRepository: MealsRepository = MealsRepositoryImpl()
 ) : ViewModel() {
 
     private val _uiHandler = UiHandler()

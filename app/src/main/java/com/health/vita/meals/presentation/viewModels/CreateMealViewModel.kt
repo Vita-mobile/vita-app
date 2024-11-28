@@ -24,8 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class CreateMealViewModel (
-    context: Context,
-    private val mealsRepository: MealsRepository = MealsRepositoryImpl(context),
+    private val mealsRepository: MealsRepository = MealsRepositoryImpl(),
     private val nutritionalPlanRepository: NutritionalPlanRepository = NutritionalPlanRepositoryImpl(),
     private val ingredientRepository: IngredientRepository = IngredientRepositoryImpl(),
     private val dietsPreviewRepository: DietsPreviewRepository = DietsPreviewRepositoryImpl()

@@ -28,15 +28,15 @@ import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.Calendar
 
-class MealsViewModel(context: Context,
-                     private val mealsRepository: MealsRepository = MealsRepositoryImpl(context),
-                     private val userRepository: UserRepository = UserRepositoryImpl(),
-                     private val nutritionalPlanRepository: NutritionalPlanRepository = NutritionalPlanRepositoryImpl(),
-                     private val imageRepository: ProfileImageRepository = ProfileImageRepositoryImpl()
+class MealsViewModel(
+    private val mealsRepository: MealsRepository = MealsRepositoryImpl(),
+    private val userRepository: UserRepository = UserRepositoryImpl(),
+    private val nutritionalPlanRepository: NutritionalPlanRepository = NutritionalPlanRepositoryImpl(),
+    private val imageRepository: ProfileImageRepository = ProfileImageRepositoryImpl()
 
 ) : ViewModel() {
     private val _uiHandler = UiHandler()
-        val uiState: LiveData<UiState> get() = _uiHandler.uiState
+    val uiState: LiveData<UiState> get() = _uiHandler.uiState
 
     private val _user = MutableLiveData<User?>(User())
     val user: LiveData<User?> get() = _user
@@ -55,7 +55,6 @@ class MealsViewModel(context: Context,
     fun getProfileImage() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-
                 Log.e("ProfileViewModel", "Getting profile image")
                 val image = imageRepository.getProfileImage()
                 withContext(Dispatchers.Main) {
@@ -65,7 +64,7 @@ class MealsViewModel(context: Context,
             } catch (e: IOException) {
 
                 withContext(Dispatchers.Main) {
-                    ErrorManager.postError(NetworkError("Error con la red.",cause = e))
+                    ErrorManager.postError(NetworkError("Error con la red.", cause = e))
                     _uiHandler.setErrorState(NetworkError(cause = e))
                 }
             } catch (e: FirebaseException) {
@@ -92,8 +91,8 @@ class MealsViewModel(context: Context,
         }
     }
 
-    fun fetchMealsState(){
-        viewModelScope.launch(Dispatchers.IO){
+    fun fetchMealsState() {
+        viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
                 _uiHandler.setLoadingState()
                 getLastEatenMeal()
@@ -106,13 +105,12 @@ class MealsViewModel(context: Context,
 
     fun getCurrentMeal() {
         viewModelScope.launch(Dispatchers.IO) {
-            mealsRepository.getLastMealIndex().collect { index ->
-                withContext(Dispatchers.Main) {
-                    _lastRecordedMeal.value = index
-                }
+            withContext(Dispatchers.Main) {
+                _lastRecordedMeal.value = mealsRepository.getLastMealIndex()
             }
         }
     }
+
 
     fun getLastEatenMeal() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -123,7 +121,7 @@ class MealsViewModel(context: Context,
             }
             val lastEaten = lastEatenDate.get(Calendar.YEAR) >= today.get(Calendar.YEAR) &&
                     lastEatenDate.get(Calendar.DAY_OF_YEAR) >= today.get(Calendar.DAY_OF_YEAR)
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 _lastEatenMeal.value = lastEaten;
             }
             if (_lastEatenMeal.value == false) {
@@ -134,25 +132,22 @@ class MealsViewModel(context: Context,
     }
 
     private fun resetMealIndex() {
-        viewModelScope.launch(Dispatchers.IO){
-            withContext(Dispatchers.Main){
+        viewModelScope.launch(Dispatchers.IO) {
+            withContext(Dispatchers.Main) {
                 mealsRepository.resetMealIndex()
-                mealsRepository.getLastMealIndex().collect {
-                        index ->
-                    _lastRecordedMeal.value = index
-                }
+                _lastRecordedMeal.value = mealsRepository.getLastMealIndex()
             }
 
         }
     }
 
-    fun obtainDailyCalories(){
+    fun obtainDailyCalories() {
 
-        viewModelScope.launch (Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
 
             val nutritionalPlan = nutritionalPlanRepository.getNutritionalPlan()
 
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 _kcal.value = nutritionalPlan?.kcalGoal?.toInt() ?: 0
             }
 
