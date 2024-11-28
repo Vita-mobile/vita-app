@@ -574,7 +574,7 @@ fun MealCardComponent(
                     carb > protein && carb > fat -> com.health.vita.R.drawable.carbohidrato
                     else -> com.health.vita.R.drawable.grasas
                 }
-                Image(painter = painterResource(id = dominantImage), contentDescription = "")
+                Image(painter = painterResource(id = dominantImage), contentDescription = "", modifier = Modifier.size(100.dp))
             }
             Row(modifier = Modifier.padding(top = 30.dp)) {
                 MacronutrientDetails(
