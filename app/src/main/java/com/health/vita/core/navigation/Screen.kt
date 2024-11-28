@@ -39,11 +39,15 @@ object Screen {
     const val DIET_SELECTION = "DietSelection"
     const val MEAL_TRACKING = "MealTracking"
     const val HYDRATION = "Hydration"
-    const val DIETS_PREVIEW = "DietsPreview/{meal}"
+
+    const val IA_DIETS_PREVIEW = "IADietsPreview/{meal}"
+    const val FAVORITES_DIETS_PREVIEW = "FavoritesDietsPreview/{meal}"
+    const val CREATIONS_DIETS_PREVIEW = "CreationsDietsPreview/{meal}"
+
     const val ADDED_FOOD = "AddedFood"
     const val NUTRITION_WELCOME = "NutritionWelcome"
     const val MEAL_DETAIL = "MealDetail/{meal}/{isFavorite}"
-    const val CREATE_MEAL = "CreateMeal"
+    const val CREATE_MEAL = "CreateMeal/{meal}"
 
     // Sports
     const val WORKOUT_HOME = "WorkoutHome"
