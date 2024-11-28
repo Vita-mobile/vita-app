@@ -15,7 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class DietsPreviewViewModel(
+class IADietsPreviewViewModel(
     context: Context,
     private val dietsPreviewRepository: DietsPreviewRepository = DietsPreviewRepositoryImpl(),
     private val mealsRepository: MealsRepository = MealsRepositoryImpl(context)
@@ -30,9 +30,6 @@ class DietsPreviewViewModel(
     private val _favorites = MutableLiveData<List<Meal>>(emptyList())
     val favorites: LiveData<List<Meal>> get() = _favorites
 
-    private val _creations = MutableLiveData<List<Meal>>(emptyList())
-    val creations: LiveData<List<Meal>> get() = _creations
-
     private val _consumeMealState = MutableLiveData<Boolean>()
     val consumeMealState: LiveData<Boolean> = _consumeMealState
 
@@ -45,6 +42,8 @@ class DietsPreviewViewModel(
 
                 try {
                     val mealsList: List<Meal> = dietsPreviewRepository.getMealsIA(meal)
+                    val favoritesList: List<Meal> = dietsPreviewRepository.getFavorites()
+                    _favorites.postValue(favoritesList)
 
                     if (mealsList.isEmpty()) {
                         val mealsQuantity: Int = mealsRepository.getMealsCount()
@@ -72,55 +71,6 @@ class DietsPreviewViewModel(
                         _uiHandler.setErrorState(DatabaseError())
                     }
                 }
-        }
-    }
-
-    fun loadFavorites() {
-        viewModelScope.launch(Dispatchers.IO) {
-
-        withContext(Dispatchers.Main) {
-            _uiHandler.setLoadingState()
-        }
-
-        try {
-            val favoritesList: List<Meal> = dietsPreviewRepository.getFavorites()
-            _favorites.postValue(favoritesList)
-
-            withContext(Dispatchers.Main) {
-                _uiHandler.setSuccess()
-            }
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-                withContext(Dispatchers.Main) {
-                    _uiHandler.setErrorState(DatabaseError())
-            }
-        }
-        }
-    }
-
-
-    fun loadCreations() {
-        viewModelScope.launch(Dispatchers.IO) {
-
-            withContext(Dispatchers.Main) {
-                _uiHandler.setLoadingState()
-            }
-
-            try {
-                val creationsList: List<Meal> = dietsPreviewRepository.getCreations()
-                _creations.postValue(creationsList)
-
-                withContext(Dispatchers.Main) {
-                    _uiHandler.setSuccess()
-                }
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-                withContext(Dispatchers.Main) {
-                    _uiHandler.setErrorState(DatabaseError())
-                }
-            }
         }
     }
 

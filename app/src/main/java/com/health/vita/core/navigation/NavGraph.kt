@@ -24,9 +24,11 @@ import com.health.vita.main.presentation.SplashScreen
 import com.health.vita.main.presentation.WelcomeScreen
 import com.health.vita.meals.presentation.AddedFoodScreen
 import com.health.vita.meals.presentation.CreateMealScreen
+import com.health.vita.meals.presentation.CreationsDietsPreviewScreen
 import com.health.vita.meals.presentation.DietSelectionScreen
-import com.health.vita.meals.presentation.DietsPreviewScreen
+import com.health.vita.meals.presentation.FavoritesDietsPreviewScreen
 import com.health.vita.meals.presentation.HydrationScreen
+import com.health.vita.meals.presentation.IADietsPreviewScreen
 import com.health.vita.meals.presentation.MealDetailScreen
 import com.health.vita.meals.presentation.MealHomeScreen
 import com.health.vita.meals.presentation.MealTrackingScreen
@@ -167,14 +169,36 @@ fun NavGraph(navController: NavHostController){
         composable(Screen.HYDRATION) {
             HydrationScreen(navController)
         }
+
+
         composable(
-            route = Screen.DIETS_PREVIEW,
+            route = Screen.IA_DIETS_PREVIEW,
             arguments = listOf(navArgument("meal") { type = NavType.IntType })
         ) { backStackEntry ->
             val meal = backStackEntry.arguments?.getInt("meal")
                 ?: throw IllegalArgumentException("meal argument is required")
-            DietsPreviewScreen(navController = navController, meal = meal)
+            IADietsPreviewScreen(navController = navController, meal = meal)
         }
+
+        composable(
+            route = Screen.FAVORITES_DIETS_PREVIEW,
+            arguments = listOf(navArgument("meal") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val meal = backStackEntry.arguments?.getInt("meal")
+                ?: throw IllegalArgumentException("meal argument is required")
+            FavoritesDietsPreviewScreen(navController = navController, meal = meal)
+        }
+
+        composable(
+            route = Screen.CREATIONS_DIETS_PREVIEW,
+            arguments = listOf(navArgument("meal") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val meal = backStackEntry.arguments?.getInt("meal")
+                ?: throw IllegalArgumentException("meal argument is required")
+            CreationsDietsPreviewScreen(navController = navController, meal = meal)
+        }
+
+
         composable(Screen.ADDED_FOOD) {
             AddedFoodScreen(navController)
         }
@@ -195,8 +219,14 @@ fun NavGraph(navController: NavHostController){
 
             MealDetailScreen(navController = navController, meal = meal, isFavorite = isFavorite)
         }
-        composable(Screen.CREATE_MEAL) {
-            CreateMealScreen(navController)
+
+        composable(
+            route = Screen.CREATE_MEAL,
+            arguments = listOf(navArgument("meal") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val meal = backStackEntry.arguments?.getInt("meal")
+                ?: throw IllegalArgumentException("meal argument is required")
+            CreateMealScreen(navController = navController, meal = meal)
         }
 
         // Sports

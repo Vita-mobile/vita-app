@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.health.vita.auth.data.repository.AuthRepository
 import com.health.vita.auth.data.repository.AuthRepositoryImpl
 import com.health.vita.core.utils.error_management.DatabaseError
@@ -20,11 +22,14 @@ import com.health.vita.register.data.repository.ProfileImageRepositoryImpl
 import com.health.vita.register.data.repository.SignUpRepository
 import com.health.vita.register.data.repository.SignUpRepositoryImpl
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.sql.SQLException
 import java.util.UUID
+import kotlin.coroutines.resume
 
 class SignupViewModel(
     private val signUpRepository: SignUpRepository = SignUpRepositoryImpl(),
@@ -181,7 +186,7 @@ class SignupViewModel(
     }
 
 
-    fun registerOperation() {
+    fun registerOperation(onComplete: () -> Unit) {
 
         viewModelScope.launch(Dispatchers.IO) {
 
@@ -206,15 +211,19 @@ class SignupViewModel(
                 )
 
 
-                Log.e("SIGN-UP VIEW MODEL", "entrando en el signup")
+                Log.e("SIGN-UP VIEW MODEL", "Singup viewmodel")
 
                 signUpRepository.signup(user, _password.value ?: "")
 
+                Log.e("SIGN-UP VIEW MODEL", "Despues del proceso del sign up")
                 updateProfileImage()
+
+
 
 
                 withContext(Dispatchers.Main) {
                    uiHandler.setSuccess()
+                    onComplete()
                 }
 
 
@@ -275,6 +284,12 @@ class SignupViewModel(
             }
         }
     }
+
+
+
+
+
+
 
 
 }

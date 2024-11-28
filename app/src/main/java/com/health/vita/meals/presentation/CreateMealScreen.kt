@@ -1,5 +1,6 @@
 package com.health.vita.meals.presentation
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -50,12 +51,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.health.vita.core.utils.states_management.UiState
+import com.health.vita.meals.presentation.viewModels.DietsPreviewViewModelFactory
 import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.components.meals.BorderLabelText
 import com.health.vita.ui.theme.LightGray
@@ -63,34 +67,85 @@ import com.health.vita.ui.theme.LightGray
 
 @Composable
 fun CreateMealScreen(
+    meal: Int,
     navController: NavController = rememberNavController(),
-    createMealViewModel: CreateMealViewModel = viewModel()
 ) {
+
+    val createMealViewModel: CreateMealViewModel = viewModel(
+        factory = DietsPreviewViewModelFactory(LocalContext.current)
+    )
+
+
     val uiState by createMealViewModel.uiState.observeAsState(UiState.Idle)
     var searchQuery by remember { mutableStateOf("") }
     val ingredientsState by createMealViewModel.ingredientsState.observeAsState(emptyList())
     val addedIngredientsState by createMealViewModel.addedIngredientsState.observeAsState(emptyList())
     val mealCreationSuccess by createMealViewModel.mealCreationSuccess.observeAsState(false)
-
+    val lastCreatedMeal by createMealViewModel.lastCreatedMeal.observeAsState(null)
+    val consumeMealState by createMealViewModel.consumeMealState.observeAsState(false)
+    var hasConsumed by remember { mutableStateOf(false) }
     var showMealCreationDialog by remember { mutableStateOf(false) }
+    var showMealConsumeDialog by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
 
     if (mealCreationSuccess && !showMealCreationDialog) {
         showMealCreationDialog = true
     }
 
     if (showMealCreationDialog) {
+        createMealViewModel.resetMealCreationSuccess()
         AlertDialog(
-            onDismissRequest = { showMealCreationDialog = false },
+            onDismissRequest = {
+                showMealCreationDialog = false
+        },
             title = { Text("Comida creada") },
             text = { Text("La comida se ha creado exitosamente.") },
             confirmButton = {
                 TextButton(
                     onClick = {
                         showMealCreationDialog = false
-                        navController.popBackStack()
                     }
                 ) {
                     Text("Continuar")
+                }
+
+                TextButton(
+                    onClick = {
+                        showMealCreationDialog = false
+                        lastCreatedMeal?.let { createMealViewModel.consumeMeal(it) }
+                    }
+                ) {
+                    Text("Consumir")
+                }
+            }
+        )
+    }
+
+
+    LaunchedEffect(consumeMealState) {
+        if (consumeMealState && !hasConsumed) {
+            hasConsumed = true
+            showMealConsumeDialog = true
+        } else if (consumeMealState && hasConsumed) {
+            Toast.makeText(context, "Hubo un error al consumir la comida", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
+    if (showMealConsumeDialog) {
+        AlertDialog(
+            onDismissRequest = { showMealConsumeDialog = false },
+            title = { Text("Comida consumida") },
+            text = { Text("¡Sigue así!.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showMealConsumeDialog = false
+                        navController.navigate("MealHome")
+                    }
+                ) {
+                    Text("Volver")
                 }
             }
         )

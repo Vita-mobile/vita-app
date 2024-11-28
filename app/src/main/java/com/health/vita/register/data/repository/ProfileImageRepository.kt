@@ -49,10 +49,6 @@ class ProfileImageRepositoryImpl(
 
     }
 
-
-
-
-    
     override suspend fun getDefaultProfileImages(): List<String> {
 
         val defaultPaths = imageStorageService.getDefaultImageUris()
