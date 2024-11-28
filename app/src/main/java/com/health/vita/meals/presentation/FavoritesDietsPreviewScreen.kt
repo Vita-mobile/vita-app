@@ -184,7 +184,7 @@ fun FavoritesDietsPreviewScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    DietsOptions(meal = meal, navController = navController)
+                    DietsOptions(meal = meal, navController = navController, dietType = "Favoritas")
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -208,7 +208,7 @@ fun FavoritesDietsPreviewScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = "No hay comidas disponibles",
+                                        text = "No tienes favoritas",
                                         style = MaterialTheme.typography.bodyLarge,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )

@@ -187,7 +187,7 @@ fun CreationsDietsPreviewScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    DietsOptions(meal = meal, navController = navController)
+                    DietsOptions(meal = meal, navController = navController, dietType = "Creaciones")
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -215,7 +215,7 @@ fun CreationsDietsPreviewScreen(
                                         verticalArrangement = Arrangement.Center
                                     ) {
                                         Text(
-                                            text = "No hay comidas disponibles",
+                                            text = "No tienes comidas creadas",
                                             style = MaterialTheme.typography.bodyLarge,
                                             color = MaterialTheme.colorScheme.onSurface
                                         )

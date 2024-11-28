@@ -95,9 +95,6 @@ fun IADietsPreviewScreen(
 
     val uiState by dietsPreviewViewModel.uiState.observeAsState(UiState.Idle)
 
-    var selectedOption by remember { mutableStateOf("Mi plan") }
-
-
     val meals by dietsPreviewViewModel.mealsIA.observeAsState(emptyList())
 
     val favorites by dietsPreviewViewModel.favorites.observeAsState(emptyList())
@@ -222,7 +219,7 @@ fun IADietsPreviewScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    DietsOptions(meal = meal, navController = navController)
+                    DietsOptions(meal = meal, navController = navController, dietType = "Mi plan")
 
                     Spacer(modifier = Modifier.height(16.dp))
 

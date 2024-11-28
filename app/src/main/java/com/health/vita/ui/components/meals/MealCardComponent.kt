@@ -65,10 +65,10 @@ fun MealCardComponent(
 
             Text(
                 text = name,
-                modifier = Modifier.padding(vertical = 10.dp)
+                modifier = Modifier.padding(vertical = 5.dp)
             )
 
-            Row(modifier = Modifier.padding(top = 10.dp)) {
+            Row {
                 MacronutrientDetails(
                     grams = protein,
                     totalGrams = totalWeight,

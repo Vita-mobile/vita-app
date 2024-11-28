@@ -172,7 +172,7 @@ fun NavGraph(navController: NavHostController){
 
         composable(
             route = Screen.IA_DIETS_PREVIEW,
-            arguments = listOf(navArgument("meal") { type = NavType.IntType })
+            arguments = listOf(navArgument("meal") { type = NavType.IntType }),
         ) { backStackEntry ->
             val meal = backStackEntry.arguments?.getInt("meal")
                 ?: throw IllegalArgumentException("meal argument is required")
@@ -181,7 +181,7 @@ fun NavGraph(navController: NavHostController){
 
         composable(
             route = Screen.FAVORITES_DIETS_PREVIEW,
-            arguments = listOf(navArgument("meal") { type = NavType.IntType })
+            arguments = listOf(navArgument("meal") { type = NavType.IntType }),
         ) { backStackEntry ->
             val meal = backStackEntry.arguments?.getInt("meal")
                 ?: throw IllegalArgumentException("meal argument is required")
@@ -190,7 +190,7 @@ fun NavGraph(navController: NavHostController){
 
         composable(
             route = Screen.CREATIONS_DIETS_PREVIEW,
-            arguments = listOf(navArgument("meal") { type = NavType.IntType })
+            arguments = listOf(navArgument("meal") { type = NavType.IntType }),
         ) { backStackEntry ->
             val meal = backStackEntry.arguments?.getInt("meal")
                 ?: throw IllegalArgumentException("meal argument is required")
