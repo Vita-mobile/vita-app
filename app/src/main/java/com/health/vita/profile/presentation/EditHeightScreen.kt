@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.health.vita.R
+import com.health.vita.core.navigation.Screen.PROFILE_EDITION
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.domain.model.User
 import com.health.vita.profile.presentation.viewModel.ProfileViewModel
@@ -77,6 +78,7 @@ fun EditHeightScreen(
             delay(2200)
             openDataUpdatePopup = false
             profileViewModel.resetUiState()
+            navController.navigateUp()
         }
     }
 

@@ -82,7 +82,7 @@ fun LoginScreen(
 
     val uiState by loginViewModel.uiState.observeAsState(UiState.Idle)
 
-    Scaffold() { innerPadding ->
+    Scaffold { innerPadding ->
 
 
         Box(
@@ -188,7 +188,7 @@ fun LoginScreen(
                     isPassword = true
                 )
 
-                Box(modifier = Modifier.size(10.dp))
+                Box(modifier = Modifier.weight(0.7f))
 
                 //Log-in button
 
@@ -222,8 +222,7 @@ fun LoginScreen(
                     }
                 }
 
-                Box(modifier = Modifier.size(2.dp))
-
+                Box(modifier = Modifier.weight(0.7f))
 
                 when (uiState) {
 
@@ -262,95 +261,38 @@ fun LoginScreen(
 
             }
 
-
-            //Google login
-
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
-                Text(
-                    "También podés iniciar sesión con:",
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Box(modifier = Modifier.size(12.dp))
-
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 Row(
-
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Box(
-                        modifier = Modifier
-                            .clip(shape = RoundedCornerShape(borderRadius))
-                            .border(
-                                4.dp,
-                                MaterialTheme.colorScheme.surfaceContainer,
-                                shape = RoundedCornerShape(borderRadius)
-                            )
-                            .clickable { }
-
-
-                    ) {
-
-                        Image(
-                            painterResource(id = R.drawable.google),
-                            contentDescription = "Google icon",
-                            modifier = Modifier
-                                .size(64.dp)
-                                .padding(12.dp)
-
-
-                        )
-                    }
-                }
-
-                Box(modifier = Modifier.size(12.dp))
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-
-
-                        Text(
-                            "¿No tienes cuenta? ",
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                        Box(modifier = Modifier.size(12.dp))
-                        Text(
-                            "Regístrate",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.secondary,
-                            textDecoration = TextDecoration.Underline,
-                            modifier = Modifier.clickable {
-
-                                navController.navigate(Screen.SIGN_UP)
-
-                            })
-
-                    }
-
-                    Box(modifier = Modifier.size(12.dp))
 
                     Text(
-                        "Olvidé mi contraseña",
+                        "¿No tienes cuenta? ",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    Box(modifier = Modifier.size(12.dp))
+                    Text(
+                        "Regístrate",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.secondary,
                         textDecoration = TextDecoration.Underline,
-                        modifier = Modifier.clickable { /*TODO*/ })
+                        modifier = Modifier.clickable {
+
+                            navController.navigate(Screen.SIGN_UP)
+
+                        })
 
                 }
 
-                Box(modifier = Modifier.size(32.dp))
-
-
             }
+
+            Box(modifier = Modifier.weight(0.2f))
 
 
         }

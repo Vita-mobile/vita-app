@@ -335,7 +335,9 @@ fun ProfileTextField(value: String, enable: Boolean, label: String, onValueChang
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledTextColor = Color.Gray,
                 disabledPlaceholderColor =  WhiteVariant,
-                disabledLabelColor = Color.Transparent
+                disabledLabelColor = Color.Transparent,
+                disabledContainerColor = WhiteVariant
+
             ),
 
         )

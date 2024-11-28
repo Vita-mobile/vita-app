@@ -7,11 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -24,8 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen
 import com.health.vita.core.navigation.Screen.LOGIN
@@ -33,27 +28,6 @@ import com.health.vita.core.navigation.Screen.SIGN_UP
 import com.health.vita.ui.components.general.PrimaryIconButton
 import com.health.vita.ui.theme.VitaTheme
 import kotlinx.coroutines.delay
-
-
-@Composable
-fun LoadSimulationScreen(navController: NavController = rememberNavController()){
-
-    var isLoading by remember { mutableStateOf(true) }
-
-
-    LaunchedEffect(Unit) {
-
-        delay(2500)
-        isLoading = false
-    }
-
-    if (isLoading) {
-        SplashScreen()
-    } else {
-
-        WelcomeScreen(navController)
-    }
-}
 
 @Composable
 fun WelcomeScreen(navController: NavController = rememberNavController()) {
