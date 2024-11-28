@@ -1,5 +1,6 @@
 package com.health.vita.meals.presentation.viewModels
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,6 +12,8 @@ import com.health.vita.meals.data.repository.DietsPreviewRepository
 import com.health.vita.meals.data.repository.DietsPreviewRepositoryImpl
 import com.health.vita.meals.data.repository.IngredientRepository
 import com.health.vita.meals.data.repository.IngredientRepositoryImpl
+import com.health.vita.meals.data.repository.MealsRepository
+import com.health.vita.meals.data.repository.MealsRepositoryImpl
 import com.health.vita.meals.data.repository.NutritionalPlanRepository
 import com.health.vita.meals.data.repository.NutritionalPlanRepositoryImpl
 import com.health.vita.meals.domain.model.Ingredient
@@ -21,6 +24,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class CreateMealViewModel (
+    context: Context,
+    private val mealsRepository: MealsRepository = MealsRepositoryImpl(context),
     private val nutritionalPlanRepository: NutritionalPlanRepository = NutritionalPlanRepositoryImpl(),
     private val ingredientRepository: IngredientRepository = IngredientRepositoryImpl(),
     private val dietsPreviewRepository: DietsPreviewRepository = DietsPreviewRepositoryImpl()
@@ -38,6 +43,12 @@ class CreateMealViewModel (
     private val _mealName = MutableLiveData<String>("")
     val mealName: LiveData<String> get() = _mealName
 
+    private val _lastCreatedMeal = MutableLiveData<Meal>(null)
+    val lastCreatedMeal: LiveData<Meal> get() = _lastCreatedMeal
+
+    private val _consumeMealState = MutableLiveData<Boolean>(false)
+    val consumeMealState: LiveData<Boolean> = _consumeMealState
+
     fun setMealName(name: String) {
         _mealName.value = name
     }
@@ -47,6 +58,10 @@ class CreateMealViewModel (
 
     init {
         getIngredients()
+    }
+
+    fun resetMealCreationSuccess() {
+        _mealCreationSuccess.value = false
     }
 
     fun addIngredientToMeal(ingredient: Ingredient, grams: Int) {
@@ -146,8 +161,11 @@ class CreateMealViewModel (
 
                 if (isCreated) {
                     withContext(Dispatchers.Main) {
+                        _lastCreatedMeal.postValue(meal)
                         _uiHandler.setSuccess()
                         _mealCreationSuccess.postValue(true)
+                        _addedIngredientsState.value = emptyList()
+                        _mealName.value = ""
                     }
                 } else {
                     withContext(Dispatchers.Main) {
@@ -160,6 +178,37 @@ class CreateMealViewModel (
                 withContext(Dispatchers.Main) {
                     _uiHandler.setErrorState(DatabaseError())
                     _mealCreationSuccess.postValue(false)
+                }
+            }
+        }
+    }
+
+    fun consumeMeal(meal: Meal){
+        viewModelScope.launch(Dispatchers.IO) {
+
+            withContext(Dispatchers.Main) {
+                _uiHandler.setLoadingState()
+            }
+
+            try {
+                val isConsumed = dietsPreviewRepository.consumeMeal(meal)
+                if (isConsumed) {
+                    withContext(Dispatchers.Main) {
+                        mealsRepository.incrementMealIndex()
+                        _uiHandler.setSuccess()
+                        _consumeMealState.value = true
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        _uiHandler.setErrorState(DatabaseError())
+                        _consumeMealState.value = false
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    _uiHandler.setErrorState(DatabaseError())
+                    _consumeMealState.value = false
                 }
             }
         }

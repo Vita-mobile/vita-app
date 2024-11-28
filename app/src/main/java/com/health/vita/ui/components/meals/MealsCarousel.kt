@@ -34,7 +34,6 @@ import androidx.compose.ui.util.lerp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.R
-import com.health.vita.core.navigation.Screen.DIETS_PREVIEW
 import com.health.vita.core.navigation.Screen.DIET_SELECTION
 import com.health.vita.ui.components.main.CircularIconOutlinedIconButton
 import com.health.vita.ui.theme.VitaTheme
@@ -126,7 +125,7 @@ fun DietCard(page: Int, navController: NavController = rememberNavController(), 
         .clickable {
             if (currentMeal < totalMeals) {
                 if (page == currentMeal) {
-                    navController.navigate("DietsPreview/${currentMeal+1}")
+                    navController.navigate("IADietsPreview/${currentMeal+1}")
                 } else if(page > currentMeal){
                     Toast
                         .makeText(
