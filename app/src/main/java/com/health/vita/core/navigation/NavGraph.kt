@@ -19,7 +19,6 @@ import com.health.vita.register.presentation.SignUpScreen
 import com.health.vita.register.presentation.viewmodel.SignupViewModel
 import com.health.vita.main.presentation.AccountSettingsScreen
 import com.health.vita.main.presentation.HomeScreen
-import com.health.vita.main.presentation.LoadSimulationScreen
 import com.health.vita.main.presentation.SplashScreen
 import com.health.vita.main.presentation.WelcomeScreen
 import com.health.vita.meals.presentation.AddedFoodScreen
@@ -69,7 +68,7 @@ fun NavGraph(navController: NavHostController){
     val profileViewModel: ProfileViewModel = viewModel()
     NavHost(
         navController = navController,
-        startDestination = Screen.LOGIN,
+        startDestination = Screen.SPLASH_SCREEN,
 
         enterTransition = {
             slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn()
@@ -87,7 +86,7 @@ fun NavGraph(navController: NavHostController){
         // Main
 
         composable(Screen.SPLASH_SCREEN) {
-            LoadSimulationScreen(navController)
+            HomeScreen(navController)
         }
 
         composable(Screen.HOME) {

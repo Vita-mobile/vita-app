@@ -20,18 +20,40 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen
 import com.health.vita.core.navigation.Screen.HOME
 import com.health.vita.core.navigation.Screen.PROFILE
 import com.health.vita.core.navigation.Screen.WELCOME_SCREEN
+import com.health.vita.main.presentation.viewmodels.HomeViewModel
 import com.health.vita.ui.theme.VitaTheme
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun SplashScreen(navController: NavController = rememberNavController()) {
+fun SplashScreen(navController: NavController = rememberNavController(),
+                 homeViewModel: HomeViewModel = viewModel()
+) {
+
+
+    LaunchedEffect(Unit) {
+
+        val user = homeViewModel.getCurrentUser()
+
+        delay(1000)
+
+        if (user != null) {
+            navController.navigate(HOME) {
+                popUpTo(Screen.SPLASH_SCREEN) { inclusive = true }
+            }
+        } else {
+            navController.navigate(Screen.LOGIN) {
+                popUpTo(Screen.SPLASH_SCREEN) { inclusive = true }
+            }
+        }
+    }
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -80,10 +102,7 @@ fun SplashScreen(navController: NavController = rememberNavController()) {
                 color = MaterialTheme.colorScheme.background,
                 strokeWidth = 10.dp
             )
-            LaunchedEffect(Unit) {
-                delay(1000) // 5000 milisegundos = 5 segundos
-                navController.navigate(HOME)
-            }
+
         }
     }
 }

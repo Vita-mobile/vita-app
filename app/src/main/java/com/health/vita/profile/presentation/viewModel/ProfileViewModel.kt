@@ -97,11 +97,6 @@ class ProfileViewModel(
     fun getCurrentUser() {
         viewModelScope.launch(Dispatchers.IO) {
 
-            withContext(Dispatchers.Main) {
-                uiHandler.setLoadingState()
-            }
-
-
             try {
                 val me = userRepository.getCurrentUser()
                 withContext(Dispatchers.Main) {
@@ -110,7 +105,6 @@ class ProfileViewModel(
                     _weight.value = me?.weight ?: 0f
                     _height.value = me?.height ?: 0f
 
-                    uiHandler.setSuccess()
                 }
 
             } catch (e: Exception) {
