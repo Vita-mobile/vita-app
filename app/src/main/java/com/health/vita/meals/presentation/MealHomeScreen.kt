@@ -85,7 +85,7 @@ fun MealHomeScreen(navController: NavController) {
     val context = LocalContext.current
 
     val mealsViewModel: MealsViewModel = viewModel(
-        factory = MealsViewModelFactory(context)
+        factory = MealsViewModelFactory()
     )
 
     val profileImage by mealsViewModel.profileImageUrl.observeAsState()

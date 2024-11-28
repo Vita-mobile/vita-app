@@ -8,6 +8,7 @@ import com.health.vita.meals.data.data_source.MealTrackingService
 import com.health.vita.meals.data.data_source.MealTrackingServiceImpl
 import com.health.vita.meals.domain.model.Meal
 import java.time.LocalDate
+import java.util.Calendar
 
 interface MealTrackingRepository {
 
@@ -75,7 +76,9 @@ class MealTrackingRepositoryImpl(
     }
 
     override suspend fun getLastEatenMealDate(): Timestamp {
-        return mealTrackingService.geatLastEatenMealDate(Firebase.auth.currentUser?.uid?:"")?:Timestamp.now()
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_YEAR, -1)
+        return mealTrackingService.geatLastEatenMealDate(Firebase.auth.currentUser?.uid?:"")?: Timestamp(calendar.time)
     }
 
 

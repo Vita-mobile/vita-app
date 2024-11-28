@@ -10,14 +10,12 @@ import com.health.vita.meals.data.repository.NutritionalPlanRepositoryImpl
 import com.health.vita.profile.data.repository.UserRepositoryImpl
 
 class MealsViewModelFactory (
-    private val context: Context
 ) : ViewModelProvider.Factory{
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MealsViewModel::class.java)) {
             return MealsViewModel(
-                context = context,
-                mealsRepository = MealsRepositoryImpl(context),
+                mealsRepository = MealsRepositoryImpl(),
                 userRepository = UserRepositoryImpl(),
                 nutritionalPlanRepository = NutritionalPlanRepositoryImpl(),
             ) as T

@@ -81,7 +81,7 @@ fun IADietsPreviewScreen(
     meal: Int
 ) {
     val dietsPreviewViewModel: IADietsPreviewViewModel = viewModel(
-        factory = DietsPreviewViewModelFactory(LocalContext.current)
+        factory = DietsPreviewViewModelFactory()
     )
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val scope = rememberCoroutineScope()

@@ -155,7 +155,7 @@
     ) {
 
         val mealDetailViewModel: MealDetailViewModel = viewModel(
-            factory = MealDetailViewModelFactory(LocalContext.current)
+            factory = MealDetailViewModelFactory()
         )
         var showConfirmDialog by remember { mutableStateOf(false) }
         val totalGrams by mealDetailViewModel.pesoTotal.observeAsState(0)

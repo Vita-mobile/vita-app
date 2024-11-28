@@ -21,10 +21,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MealDetailViewModel(
-    contex: Context,
     private val mealDetailRepository: MealDetailRepository = MealDetailRepositoryImpl(),
     private val mealPreviewRepository: DietsPreviewRepository = DietsPreviewRepositoryImpl(),
-    private val mealsRepository: MealsRepository = MealsRepositoryImpl(contex)
+    private val mealsRepository: MealsRepository = MealsRepositoryImpl()
 ) : ViewModel() {
 
     private val _uiHandler = UiHandler()
