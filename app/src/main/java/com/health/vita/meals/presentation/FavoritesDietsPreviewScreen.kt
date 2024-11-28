@@ -66,6 +66,7 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import com.health.vita.meals.utils.MacronutrientType
+import com.health.vita.ui.components.meals.DietsOptions
 import com.health.vita.ui.components.meals.MealCardComponent
 import com.health.vita.ui.components.meals.MealPager
 import kotlinx.coroutines.launch
@@ -183,6 +184,10 @@ fun FavoritesDietsPreviewScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
+                    DietsOptions(meal = meal, navController = navController)
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     when (uiState) {
                         is UiState.Loading -> {
                             Box(
@@ -213,7 +218,6 @@ fun FavoritesDietsPreviewScreen(
                                 selectedMeal = meals.getOrNull(currentPage)
 
                                 MealPager(
-                                    meal = meal,
                                     meals = meals,
                                     favorites = meals,
                                     pagerState = pagerState,

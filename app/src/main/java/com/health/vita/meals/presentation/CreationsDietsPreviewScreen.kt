@@ -67,6 +67,7 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import com.health.vita.meals.utils.MacronutrientType
+import com.health.vita.ui.components.meals.DietsOptions
 import com.health.vita.ui.components.meals.MealCardComponent
 import com.health.vita.ui.components.meals.MealPager
 import kotlinx.coroutines.launch
@@ -186,6 +187,10 @@ fun CreationsDietsPreviewScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
+                    DietsOptions(meal = meal, navController = navController)
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     when (uiState) {
                         is UiState.Loading -> {
                             Box(
@@ -205,18 +210,43 @@ fun CreationsDietsPreviewScreen(
                                         .fillMaxSize(),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text(
-                                        text = "No hay comidas disponibles",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        Text(
+                                            text = "No hay comidas disponibles",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+
+                                        Spacer(modifier = Modifier.height(10.dp))
+
+                                        Button(
+                                            onClick = { navController.navigate("CreateMeal/${meal}") },
+
+                                            modifier = Modifier
+                                                .clip(CircleShape)
+                                                .border(1.dp, Color.LightGray, CircleShape),
+                                            shape = CircleShape,
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = Color.Transparent,
+                                                contentColor = MaterialTheme.colorScheme.primary
+                                            )
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Outlined.Add,
+                                                contentDescription = "Add"
+                                            )
+                                        }
+                                    }
                                 }
+
                             }else {
                                 val currentPage = pagerState.currentPage.coerceIn(0, meals.size - 1)
                                 selectedMeal = meals.getOrNull(currentPage)
 
                                 MealPager(
-                                    meal = meal,
                                     meals = meals,
                                     favorites = favorites,
                                     pagerState = pagerState,
