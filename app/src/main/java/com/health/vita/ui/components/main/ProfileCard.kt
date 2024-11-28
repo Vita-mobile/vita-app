@@ -13,14 +13,24 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.firebase.Timestamp
 import com.health.vita.R
 import com.health.vita.ui.theme.VitaTheme
 import java.text.SimpleDateFormat
+
 import java.util.Locale
 val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale("es"))
 
@@ -35,7 +45,7 @@ fun ProfileCard(
     onClickButton2:  () -> Unit,
 
     ) {
-    Column(){
+    Column{
         Row(
             Modifier
 
@@ -55,11 +65,15 @@ fun ProfileCard(
             ) {
                 CircularPhoto(photo = R.drawable.userdefault, "profile picture", 78,  url     )
                 Column(Modifier.padding(horizontal = 12.dp)) {
-                    Text(
+
+                    AutoResizingText(
                         text = name,
                         style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.background
+                        color = MaterialTheme.colorScheme.background,
+                        maxLines = 1,
+                        minTextSize = 17.sp
                     )
+
                     Text(
                         text = dateFormat.format(date.toDate()),
                         style = MaterialTheme.typography.labelLarge,
@@ -95,6 +109,36 @@ fun ProfileCard(
                 )
         )
     }
+}
+
+@Composable
+fun AutoResizingText(
+    text: String,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.background,
+    style: TextStyle = MaterialTheme.typography.titleMedium,
+    maxLines: Int = 1,
+    minTextSize: TextUnit = 15.sp
+) {
+    var textSize by remember(text) { mutableStateOf(style.fontSize) }
+    var readyToDraw by remember(text) { mutableStateOf(false) }
+
+    Text(
+        text = text,
+        modifier = modifier,
+        color = color,
+        maxLines = maxLines,
+        overflow = TextOverflow.Clip,
+        softWrap = false,
+        style = style.copy(fontSize = textSize),
+        onTextLayout = { textLayoutResult ->
+            if (!readyToDraw && textLayoutResult.didOverflowWidth && textSize > minTextSize) {
+                textSize = (textSize.value - 1).sp
+            } else {
+                readyToDraw = true
+            }
+        }
+    )
 }
 
 @Preview(showBackground = false)

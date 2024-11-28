@@ -319,9 +319,9 @@ fun SignUpScreen(
                     onClick = {
                         navController.navigate(AGE_SELECTION)
 
-                        signupViewModel.setEmail(email?:"")
-                        signupViewModel.setName(name?:"")
-                        signupViewModel.setLastName(lastName?:"")
+                        signupViewModel.setEmail(email?.trim()?:"")
+                        signupViewModel.setName(name?.trim()?:"")
+                        signupViewModel.setLastName(lastName?.trim()?:"")
                         signupViewModel.setPassword(password?:"")
                     },
                     color = Color.Black,

@@ -1,3 +1,5 @@
+package com.health.vita.meals.presentation.viewModels
+
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -151,7 +153,7 @@ class MealsViewModel(context: Context,
             val nutritionalPlan = nutritionalPlanRepository.getNutritionalPlan()
 
             withContext(Dispatchers.Main){
-                _kcal.value = nutritionalPlan?.kcalGoal?.toInt()
+                _kcal.value = nutritionalPlan?.kcalGoal?.toInt() ?: 0
             }
 
         }

@@ -300,6 +300,7 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
                 PrimaryIconButton(
                     text = "Comenzar",
                     color = if (selectedAvatar != null || selectedUri!= null) Color.Black else Color.Gray,
+                    isLoading = uiState is UiState.Loading,
                     onClick = {
 
                         signupViewModel.registerOperation()
@@ -326,13 +327,6 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
                         infoSignup = ""
 
                     }
-
-                    is UiState.Loading -> {
-
-
-                        CircularProgressIndicator()
-                    }
-
                     is UiState.Success -> {
 
                         infoSignup = "Registro exitoso"
@@ -350,6 +344,9 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
 
                     }
 
+                    UiState.Loading -> {
+                        infoSignup = "Cargando..."
+                    }
                 }
 
             }

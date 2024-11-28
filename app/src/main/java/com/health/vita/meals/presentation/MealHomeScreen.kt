@@ -1,6 +1,6 @@
 package com.health.vita.meals.presentation
 
-import MealsViewModel
+import com.health.vita.meals.presentation.viewModels.MealsViewModel
 import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -32,7 +32,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -58,7 +57,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.health.vita.R
 import com.health.vita.core.navigation.Screen.ACCOUNT_SETTINGS

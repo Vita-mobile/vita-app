@@ -82,6 +82,7 @@ fun HomeScreen(
                         CardWithTitle("Entrenador IA", R.drawable.main_iacard) {
                             content(MaterialTheme.colorScheme.background)
                         }
+
                     }
                 }
             }
