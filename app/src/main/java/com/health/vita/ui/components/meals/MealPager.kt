@@ -22,17 +22,12 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun MealPager(
-    meal: Int,
     meals: List<Meal>,
     favorites: List<Meal>,
     pagerState: PagerState,
     dynamicHeightFraction: Float,
     navController: NavController
 ) {
-
-    DietsOptions(meal = meal, navController = navController)
-
-    Spacer(modifier = Modifier.height(16.dp))
 
     Box(
         modifier = Modifier
