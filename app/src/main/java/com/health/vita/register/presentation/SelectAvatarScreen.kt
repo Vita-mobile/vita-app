@@ -67,8 +67,18 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
                        signupViewModel: SignupViewModel = viewModel()
 ) {
 
-    LaunchedEffect(Unit) {
+
+    //Use to store the selected image from gallery
+    var selectedUri:Uri? by remember { mutableStateOf(null) }
+
+    //Use to store the selected image from default images
+    val selectedAvatar by signupViewModel.profileImage.observeAsState()
+
+
+
+    LaunchedEffect(true) {
         signupViewModel.loadDefaultImages()
+
     }
 
     val defaultAvatars by signupViewModel.defaultImages.observeAsState(emptyList())
@@ -79,11 +89,6 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
 
     var isLoading by remember { mutableStateOf(true) }
 
-    //Use to store the selected image from gallery
-    var selectedUri:Uri? by remember { mutableStateOf(null) }
-
-    //Use to store the selected image from default images
-    val selectedAvatar by signupViewModel.profileImage.observeAsState()
 
     var infoSignup by remember {
 
@@ -302,9 +307,11 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
                     color = if (selectedAvatar != null || selectedUri!= null) Color.Black else Color.Gray,
                     onClick = {
 
-                        signupViewModel.registerOperation()
+                        signupViewModel.registerOperation{
 
+                            navController.navigate(Screen.HOME)
 
+                        }
                     },
                     enabled = selectedAvatar != null || selectedUri != null,
                 )
@@ -335,9 +342,7 @@ fun SelectAvatarScreen(navController: NavController = rememberNavController(),
 
                     is UiState.Success -> {
 
-                        infoSignup = "Registro exitoso"
-
-                        navController.navigate(Screen.HOME)
+                        Log.e("SING-UP", "On success")
 
 
                     }
