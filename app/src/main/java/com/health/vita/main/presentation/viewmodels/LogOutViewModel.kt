@@ -1,5 +1,6 @@
 package com.health.vita.main.presentation.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,8 @@ import com.health.vita.core.utils.error_management.ErrorManager
 import com.health.vita.core.utils.error_management.UnknownError
 import com.health.vita.core.utils.states_management.UiHandler
 import com.health.vita.core.utils.states_management.UiState
+import com.health.vita.meals.data.datastore.DataStoreKeys
+import com.health.vita.meals.data.datastore.saveValueAndTimestamp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

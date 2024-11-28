@@ -9,11 +9,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
 fun DietsOptions(
+    dietType: String,
     meal: Int,
     navController: NavController
 ) {
@@ -22,9 +24,12 @@ fun DietsOptions(
         modifier = Modifier.fillMaxWidth()
     ) {
         listOf("Favoritas", "Mi plan", "Creaciones").forEach { option ->
+            val isSelected = dietType == option
             Text(
                 text = option,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                ),
                 modifier = Modifier
                     .clickable {
                         val route = when (option) {

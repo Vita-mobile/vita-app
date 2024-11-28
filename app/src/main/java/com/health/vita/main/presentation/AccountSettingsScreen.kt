@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,6 +46,8 @@ import com.health.vita.core.navigation.Screen.PROFILE
 import com.health.vita.core.navigation.Screen.PROFILE_EDITION
 import com.health.vita.core.utils.states_management.UiState
 import com.health.vita.main.presentation.viewmodels.LogOutViewModel
+import com.health.vita.meals.data.datastore.DataStoreKeys
+import com.health.vita.meals.data.datastore.saveValueAndTimestamp
 import com.health.vita.ui.components.general.CustomPopup
 import com.health.vita.ui.components.general.GeneralTopBar
 import com.health.vita.ui.theme.VitaTheme

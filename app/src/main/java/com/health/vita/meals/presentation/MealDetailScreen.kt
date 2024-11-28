@@ -62,6 +62,7 @@
     import com.health.vita.meals.presentation.viewModels.MealsViewModelFactory
     import com.health.vita.meals.utils.MacronutrientType
     import com.health.vita.ui.components.general.GeneralTopBar
+    import com.health.vita.ui.components.general.PrimaryIconButton
     import com.health.vita.ui.theme.VitaTheme
 
     @Composable
@@ -208,19 +209,6 @@
         }
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { showConfirmDialog = true },
-                    modifier = Modifier.size(48.dp),
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                ) {
-                    Icon(
-                        painterResource(id = R.drawable.baseline_restaurant_24),
-                        contentDescription = "Consumir Comida"
-                    )
-                }
-            },
             content = { innerPadding ->
                 Column(modifier = Modifier.padding(innerPadding)) {
                     Column(modifier = Modifier.padding(bottom = 40.dp, start = 16.dp, end = 16.dp)) {
@@ -355,6 +343,13 @@
                                     Ingredient(ingredient.name, ingredient.grams)
                                 }
                             }
+                            PrimaryIconButton(
+                                text = "Consumir",
+                                onClick = { showConfirmDialog = true },
+                                arrow = true,
+                                color = MaterialTheme.colorScheme.onTertiary,
+                                modifier = Modifier.padding(vertical = 10.dp)
+                            )
                         }
                         }
                     }
