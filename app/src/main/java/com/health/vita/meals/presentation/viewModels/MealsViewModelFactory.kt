@@ -1,10 +1,8 @@
 package com.health.vita.meals.presentation.viewModels
 
-import MealsViewModel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.health.vita.meals.data.repository.MealsRepository
 
 import com.health.vita.meals.data.repository.MealsRepositoryImpl
 import com.health.vita.meals.data.repository.NutritionalPlanRepositoryImpl

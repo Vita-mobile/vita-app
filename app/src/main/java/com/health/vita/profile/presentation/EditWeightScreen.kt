@@ -77,6 +77,7 @@ fun EditWeightScreen(navController: NavController = rememberNavController(), pro
             delay(2500)
             openDataUpdatePopup = false
             profileViewModel.resetUiState()
+            navController.navigateUp()
         }
     }
 

@@ -31,6 +31,7 @@ import com.health.vita.core.navigation.Screen.LOGIN
 import com.health.vita.core.navigation.Screen.MEAL_HOME
 import com.health.vita.core.navigation.Screen.PROFILE
 import com.health.vita.core.utils.states_management.UiState
+import com.health.vita.main.presentation.viewmodels.HomeViewModel
 import com.health.vita.profile.presentation.viewModel.ProfileViewModel
 import com.health.vita.ui.components.main.CardWithTitle
 import com.health.vita.ui.components.main.ProfileCard
@@ -40,38 +41,37 @@ import com.health.vita.ui.theme.VitaTheme
 @Composable
 fun HomeScreen(
     navController: NavController = rememberNavController(),
-    profileViewModel: ProfileViewModel = viewModel()
+    homeViewModel: HomeViewModel = viewModel()
 ) {
 
 
-    val screenState by profileViewModel.uiState.observeAsState(UiState.Idle)
-    val profileImage by profileViewModel.profileImageUrl.observeAsState()
+    val screenState by homeViewModel.uiState.observeAsState(UiState.Idle)
+    val profileImage by homeViewModel.profileImageUrl.observeAsState()
 
-    val userState by profileViewModel.user.observeAsState()
+    val userState by homeViewModel.user.observeAsState()
 
     LaunchedEffect(true) {
         Log.e("HomeScreen", "Obteniendo el usuario actual")
 
         FirebaseAuth.getInstance().currentUser?.let {
             Log.e("HomeScreen", "Current user UID: ${it.uid}")
-            profileViewModel.getCurrentUser()
+            homeViewModel.getCurrentUser()
         } ?: run {
             Log.e("HomeScreen", "Current user is null")
             navController.navigate(LOGIN)
         }
-        profileViewModel.getCurrentUser()
+        homeViewModel.getCurrentUser()
     }
 
     LaunchedEffect(userState) {
 
-
         if (userState?.id?.isEmpty() == false) {
             Log.e("HomeScreen", "El estado del usuario ha cambiado: $userState")
 
-            profileViewModel.getProfileImage()
+            homeViewModel.getProfileImage()
         }else{
 
-            profileViewModel.getCurrentUser()
+            homeViewModel.getCurrentUser()
         }
     }
 
